@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>EstudioFisio — App</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #FAF8F5;
+      --cream-dark: #F2EDE6;
+      --sage: #5C6F5C;
+      --sage-light: #7A8F7A;
+      --sage-pale: #EAF0EA;
+      --charcoal: #2B2B2B;
+      --charcoal-mid: #555555;
+      --charcoal-soft: #888888;
+      --gold: #C9966B;
+      --gold-pale: #F5EBE1;
+      --white: #FFFFFF;
+      --border: #E8E3DC;
+      --shadow: 0 2px 16px rgba(43,43,43,0.07);
+      --shadow-sm: 0 1px 6px rgba(43,43,43,0.06);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --radius-xs: 6px;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Playfair Display', Georgia, serif;
+    }
+
+    html, body {
+      height: 100%;
+      background: #E8E3DC;
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #root {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    @media (min-width: 480px) {
+      #root {
+        padding: 24px 0;
+        background: #D8D3CB;
+      }
+    }
+
+    .phone-shell {
+      width: 100%;
+      max-width: 430px;
+      min-height: 100vh;
+      background: var(--cream);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    @media (min-width: 480px) {
+      .phone-shell {
+        min-height: calc(100vh - 48px);
+        max-height: 900px;
+        border-radius: 40px;
+        box-shadow: 0 24px 80px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.12);
+      }
+    }
+
+    /* Status bar */
+    .status-bar {
+      background: var(--cream);
+      padding: 12px 24px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .status-bar-time {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--charcoal);
+      letter-spacing: -0.3px;
+    }
+
+    .status-bar-icons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    /* Scrollable content area */
+    .screen-content {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+    }
+
+    .screen-content::-webkit-scrollbar { display: none; }
+
+    /* Tab bar */
+    .tab-bar {
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      display: flex;
+      padding: 8px 0 20px;
+      flex-shrink: 0;
+    }
+
+    @media (min-width: 480px) {
+      .tab-bar { padding-bottom: 8px; }
+    }
+
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 4px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tab-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tab-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      transition: color 0.2s;
+    }
+
+    .tab-item.active .tab-label { color: var(--sage); }
+    .tab-item:not(.active) .tab-label { color: var(--charcoal-soft); }
+
+    /* Screen header */
+    .screen-header {
+      padding: 16px 24px 0;
+    }
+
+    .wordmark {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--sage);
+      letter-spacing: 0.5px;
+    }
+
+    .wordmark span { color: var(--gold); }
+
+    /* Cards */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+
+    .card-inner {
+      padding: 18px 20px;
+    }
+
+    /* Section labels */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--charcoal-soft);
+      margin-bottom: 12px;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: var(--sage);
+      color: var(--white);
+      border: none;
+      border-radius: 50px;
+      padding: 12px 24px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-primary:active { transform: scale(0.97); background: #4a5c4a; }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--sage);
+      border: 1.5px solid var(--sage);
+      border-radius: 50px;
+      padding: 10px 20px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-outline:active { background: var(--sage-pale); }
+
+    .btn-ghost {
+      background: var(--gold-pale);
+      color: var(--gold);
+      border: none;
+      border-radius: 50px;
+      padding: 8px 16px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      letter-spacing: 0.2px;
+    }
+
+    /* Avatar */
+    .avatar {
+      border-radius: 50%;
+      background: var(--sage-pale);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--sage);
+    }
+
+    /* Progress bar */
+    .progress-track {
+      height: 6px;
+      background: var(--cream-dark);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--sage);
+      border-radius: 99px;
+      transition: width 0.6s ease;
+    }
+
+    /* Slider */
+    .slider-container { position: relative; }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 99px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"].pain-slider {
+      background: linear-gradient(to right, var(--sage) 0%, var(--sage) var(--pct, 50%), var(--cream-dark) var(--pct, 50%), var(--cream-dark) 100%);
+    }
+
+    input[type="range"].mobility-slider {
+      background: linear-gradient(to right, var(--gold) 0%, var(--gold) var(--pct, 70%), var(--cream-dark) var(--pct, 70%), var(--cream-dark) 100%);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 2px solid;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      cursor: pointer;
+    }
+
+    input[type="range"].pain-slider::-webkit-slider-thumb { border-color: var(--sage); }
+    input[type="range"].mobility-slider::-webkit-slider-thumb { border-color: var(--gold); }
+
+    /* Chart */
+    .chart-container {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* Tags/chips */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+    }
+
+    .chip-sage { background: var(--sage-pale); color: var(--sage); }
+    .chip-gold { background: var(--gold-pale); color: #A87348; }
+
+    /* Exercise card */
+    .exercise-card {
+      background: var(--white);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+
+    .exercise-card:active { box-shadow: var(--shadow); }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 20px;
+    }
+
+    /* Message bubble */
+    .message-note {
+      background: var(--white);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      padding: 16px;
+    }
+
+    .message-note-date {
+      font-size: 11px;
+      color: var(--charcoal-soft);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .message-note-from {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--sage);
+      margin-bottom: 6px;
+    }
+
+    .message-note-text {
+      font-size: 14px;
+      color: var(--charcoal);
+      line-height: 1.55;
+    }
+
+    /* Input */
+    .message-input-wrap {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      gap: 10px;
+    }
+
+    .message-input-wrap input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--charcoal);
+      background: transparent;
+    }
+
+    .message-input-wrap input::placeholder { color: var(--charcoal-soft); }
+
+    /* Location cards */
+    .location-card {
+      background: var(--white);
+      border-radius: var(--radius-sm);
+      border: 2px solid var(--border);
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .location-card.selected {
+      border-color: var(--sage);
+      background: var(--sage-pale);
+    }
+
+    /* Time slots */
+    .time-slot {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-xs);
+      padding: 9px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--charcoal);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .time-slot.selected {
+      background: var(--sage);
+      border-color: var(--sage);
+      color: var(--white);
+    }
+
+    .time-slot.unavailable {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    /* SVG icons inline */
+    svg { display: block; }
+
+    /* Animation */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-up { animation: fadeUp 0.3s ease forwards; }
+
+    /* Notification dot */
+    .notif-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--gold);
+      border-radius: 50%;
+      position: absolute;
+      top: 0;
+      right: -1px;
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useRef, useEffect } = React;
+
+/* ─── Mock Data ─── */
+const PATIENT = { name: "Sofía", lastName: "Martín" };
+
+const APPOINTMENT = {
+  date: "Lunes, 30 de junio",
+  time: "10:30 h",
+  location: "Chamberí",
+  address: "Viriato 56",
+  physio: "María López",
+  specialty: "Fisioterapia deportiva",
+};
+
+const BONO = { used: 4, total: 10 };
+
+const EXERCISES = [
+  {
+    id: 1,
+    name: "Extensión cervical asistida",
+    icon: "🔄",
+    sets: "3 series × 10 repeticiones",
+    instruction: "Movimiento lento y controlado. Evitar tensión en hombros.",
+    description: "Coloca las manos entrelazadas en la nuca. Inclina la cabeza hacia atrás suavemente, manteniendo los hombros relajados. Regresa al centro con control. Este ejercicio mejora la movilidad del segmento C4-C6.",
+  },
+  {
+    id: 2,
+    name: "Puente glúteo",
+    icon: "🦵",
+    sets: "3 series × 12 repeticiones",
+    instruction: "Mantener pelvis nivelada durante todo el movimiento.",
+    description: "Tumbada boca arriba con rodillas flexionadas. Eleva la cadera formando una línea recta desde hombros hasta rodillas. Aprieta glúteos en la posición alta y desciende con control.",
+  },
+  {
+    id: 3,
+    name: "Estiramiento pectoral en marco",
+    icon: "🤸",
+    sets: "Mantener 30 segundos × 3 veces",
+    instruction: "Nota el estiramiento en la parte anterior del hombro.",
+    description: "De pie frente al marco de una puerta. Apoya el antebrazo en la jamba con el codo a 90°. Gira el cuerpo lentamente hacia el lado contrario hasta sentir el estiramiento. Respira con calma.",
+  },
+  {
+    id: 4,
+    name: "Ejercicio de diafragma",
+    icon: "🫁",
+    sets: "5 minutos × 2 veces al día",
+    instruction: "Inspiración nasal 4 seg · pausa 2 seg · espiración 6 seg.",
+    description: "Siéntate en una silla con la espalda recta. Coloca una mano en el pecho y otra en el abdomen. Respira con el abdomen, sintiendo cómo se eleva la mano inferior. La mano del pecho debe moverse lo mínimo posible.",
+  },
+  {
+    id: 5,
+    name: "Movilización escapular activa",
+    icon: "💪",
+    sets: "2 series × 15 repeticiones",
+    instruction: "Movimiento amplio y sin compensaciones de cuello.",
+    description: "De pie o sentada. Eleva los hombros hacia las orejas, luego llévalos hacia atrás y hacia abajo en movimiento circular. Este ejercicio estabiliza la escápula y mejora la postura cervical.",
+  },
+];
+
+const PAIN_DATA = [
+  { week: "S1", pain: 7.2, mobility: 4.0 },
+  { week: "S2", pain: 6.8, mobility: 4.5 },
+  { week: "S3", pain: 6.1, mobility: 5.2 },
+  { week: "S4", pain: 5.5, mobility: 5.8 },
+  { week: "S5", pain: 4.9, mobility: 6.5 },
+  { week: "S6", pain: 4.2, mobility: 7.0 },
+  { week: "S7", pain: 3.6, mobility: 7.8 },
+  { week: "S8", pain: 3.1, mobility: 8.2 },
+];
+
+const PHYSIO_NOTES_PROGRESS = [
+  { date: "23 jun 2025", text: "Muy buena evolución en la movilidad cervical. El arco de movimiento ha mejorado notablemente desde la primera sesión. Continuamos reforzando la musculatura estabilizadora." },
+  { date: "9 jun 2025", text: "Reducción significativa del dolor referido al hombro derecho. Trabajamos con técnica INDIBA para acelerar la recuperación tisular." },
+];
+
+const LOCATIONS = [
+  { id: "chamberi", name: "Chamberí", address: "Viriato 56", metro: "Iglesia / Quevedo" },
+  { id: "salamanca", name: "Barrio de Salamanca", address: "General Pardiñas 74", metro: "Lista / Goya" },
+  { id: "goya", name: "Goya", address: "Goya 66", metro: "Goya" },
+];
+
+const PHYSIOS_BY_LOCATION = {
+  chamberi: [
+    { name: "María López", specialty: "Fisioterapia deportiva", initials: "ML" },
+    { name: "Carlos Díaz", specialty: "Osteopatía", initials: "CD" },
+    { name: "Ana Ruiz", specialty: "Suelo pélvico y embarazo", initials: "AR" },
+    { name: "Javier Moreno", specialty: "Fisioterapia pediátrica", initials: "JM" },
+  ],
+  salamanca: [
+    { name: "Elena Torres", specialty: "Fisioterapia general", initials: "ET" },
+    { name: "Pablo Sánchez", specialty: "Drenaje linfático", initials: "PS" },
+    { name: "Laura Gil", specialty: "Diástasis abdominal", initials: "LG" },
+  ],
+  goya: [
+    { name: "Roberto Fernández", specialty: "Pilates individual", initials: "RF" },
+    { name: "Isabel Navarro", specialty: "Osteopatía", initials: "IN" },
+    { name: "Diego Martín", specialty: "Fisioterapia deportiva", initials: "DM" },
+  ],
+};
+
+const TIME_SLOTS = [
+  ["09:00", "09:55", "10:50", "11:45"],
+  ["12:40", "—", "16:00", "16:55"],
+  ["17:50", "18:45", "—", "19:40"],
+];
+
+const MESSAGES = [
+  {
+    date: "23 jun 2025",
+    physio: "María López",
+    initials: "ML",
+    text: "Buena evolución en la movilidad de hombro. Seguimos con el plan actual la próxima sesión. Recuerda hacer los ejercicios de diafragma dos veces al día.",
+  },
+  {
+    date: "16 jun 2025",
+    physio: "María López",
+    initials: "ML",
+    text: "Tras la sesión de hoy hemos trabajado la tensión miofascial cervical. El dolor ha bajado del 6 al 4 durante la exploración. ¡Muy buen trabajo!",
+  },
+  {
+    date: "9 jun 2025",
+    physio: "María López",
+    initials: "ML",
+    text: "Aplicamos INDIBA en la zona del manguito rotador. La respuesta fue muy positiva. He actualizado tu plan de ejercicios con dos ejercicios nuevos de estabilización escapular.",
+  },
+  {
+    date: "2 jun 2025",
+    physio: "María López",
+    initials: "ML",
+    text: "Primera valoración completada. Detectamos hipertonía en trapecio superior bilateral y limitación en la rotación cervical derecha. Iniciamos plan de tratamiento manual.",
+  },
+];
+
+/* ─── Icons (SVG) ─── */
+const Icon = ({ name, size = 22, color = "currentColor", strokeWidth = 1.8 }) => {
+  const icons = {
+    home: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"><path d="M3 9.5L12 3l9 6.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 22V12h6v10"/></svg>,
+    clipboard: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg>,
+    chart: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+    calendar: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+    message: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>,
+    chevronDown: <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>,
+    chevronUp: <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg>,
+    play: <svg width={size} height={size} viewBox="0 0 24 24" fill={color} stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
+    location: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>,
+    check: <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+    send: <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>,
+    bell: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>,
+    leaf: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"><path d="M17 8C8 10 5.9 16.17 3.82 19.5C2.39 20.5 2 21 2 21s4-1 7.5-3.5c3-2 4.5-5 4.5-5"/><path d="M2 21C2 21 7 8 22 3c0 4 0 9-5 12"/></svg>,
+  };
+  return icons[name] || null;
+};
+
+/* ─── Simple Line Chart ─── */
+const MiniChart = ({ data, dataKey, color }) => {
+  const width = 320;
+  const height = 90;
+  const pad = { top: 10, right: 10, bottom: 24, left: 10 };
+  const innerW = width - pad.left - pad.right;
+  const innerH = height - pad.top - pad.bottom;
+  const vals = data.map(d => d[dataKey]);
+  const minV = 0;
+  const maxV = 10;
+  const xStep = innerW / (data.length - 1);
+  const yScale = v => pad.top + innerH - ((v - minV) / (maxV - minV)) * innerH;
+  const xScale = i => pad.left + i * xStep;
+  const points = data.map((d, i) => `${xScale(i)},${yScale(d[dataKey])}`).join(" ");
+  const fillPoints = [
+    `${xScale(0)},${pad.top + innerH}`,
+    ...data.map((d, i) => `${xScale(i)},${yScale(d[dataKey])}`),
+    `${xScale(data.length - 1)},${pad.top + innerH}`,
+  ].join(" ");
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} style={{ width: "100%", height: "auto" }}>
+      <defs>
+        <linearGradient id={`grad-${dataKey}`} x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.18" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      {/* Grid lines */}
+      {[2.5, 5, 7.5].map(v => (
+        <line key={v} x1={pad.left} x2={width - pad.right} y1={yScale(v)} y2={yScale(v)}
+          stroke="#E8E3DC" strokeWidth="1" />
+      ))}
+      {/* Area fill */}
+      <polygon points={fillPoints} fill={`url(#grad-${dataKey})`} />
+      {/* Line */}
+      <polyline points={points} fill="none" stroke={color} strokeWidth="2.2"
+        strokeLinejoin="round" strokeLinecap="round" />
+      {/* Dots */}
+      {data.map((d, i) => (
+        <circle key={i} cx={xScale(i)} cy={yScale(d[dataKey])} r="3.5"
+          fill="white" stroke={color} strokeWidth="2" />
+      ))}
+      {/* X labels */}
+      {data.map((d, i) => (
+        <text key={i} x={xScale(i)} y={height - 4} textAnchor="middle"
+          fontSize="9" fill="#888888" fontFamily="Inter, sans-serif" fontWeight="500">
+          {d.week}
+        </text>
+      ))}
+    </svg>
+  );
+};
+
+/* ─── Tab Bar ─── */
+const TABS = [
+  { id: "home", label: "Inicio", icon: "home" },
+  { id: "plan", label: "Mi Plan", icon: "clipboard" },
+  { id: "progress", label: "Progreso", icon: "chart" },
+  { id: "bookings", label: "Citas", icon: "calendar" },
+  { id: "messages", label: "Mensajes", icon: "message" },
+];
+
+const TabBar = ({ active, setActive }) => (
+  <nav className="tab-bar">
+    {TABS.map(t => (
+      <button key={t.id} className={`tab-item${active === t.id ? " active" : ""}`}
+        onClick={() => setActive(t.id)}>
+        <div className="tab-icon" style={{ position: "relative" }}>
+          <Icon name={t.icon} size={22}
+            color={active === t.id ? "var(--sage)" : "var(--charcoal-soft)"}
+            strokeWidth={active === t.id ? 2 : 1.6} />
+          {t.id === "messages" && <span className="notif-dot" />}
+        </div>
+        <span className="tab-label">{t.label}</span>
+      </button>
+    ))}
+  </nav>
+);
+
+/* ─── Screen: Home ─── */
+const HomeScreen = ({ setTab }) => (
+  <div className="fade-up" style={{ padding: "0 20px 32px" }}>
+    {/* Header */}
+    <div style={{ paddingTop: 8, paddingBottom: 20 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div>
+          <p style={{ fontSize: 13, color: "var(--charcoal-soft)", fontWeight: 400, marginBottom: 4 }}>
+            Buenas tardes,
+          </p>
+          <h1 style={{ fontFamily: "var(--font-display)", fontSize: 26, fontWeight: 500, color: "var(--charcoal)", lineHeight: 1.2 }}>
+            {PATIENT.name} 👋
+          </h1>
+        </div>
+        <div style={{ marginTop: 4 }}>
+          <div className="avatar" style={{ width: 42, height: 42, fontSize: 16 }}>
+            {PATIENT.name[0]}{PATIENT.lastName[0]}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Next appointment */}
+    <p className="section-label">Próxima cita</p>
+    <div className="card" style={{ marginBottom: 20 }}>
+      <div className="card-inner">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
+          <div>
+            <p style={{ fontSize: 13, color: "var(--charcoal-soft)", marginBottom: 2 }}>{APPOINTMENT.date}</p>
+            <p style={{ fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 500, color: "var(--charcoal)" }}>
+              {APPOINTMENT.time}
+            </p>
+          </div>
+          <span className="chip chip-sage" style={{ marginTop: 4 }}>
+            <Icon name="location" size={11} color="var(--sage)" />
+            &nbsp;{APPOINTMENT.location}
+          </span>
+        </div>
+
+        <div style={{ background: "var(--cream)", borderRadius: 10, padding: "12px 14px", display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+          <div className="avatar" style={{ width: 38, height: 38, fontSize: 14 }}>
+            ML
+          </div>
+          <div>
+            <p style={{ fontSize: 14, fontWeight: 600, color: "var(--charcoal)" }}>{APPOINTMENT.physio}</p>
+            <p style={{ fontSize: 12, color: "var(--charcoal-soft)", marginTop: 1 }}>{APPOINTMENT.specialty}</p>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", gap: 10 }}>
+          <button className="btn-primary" style={{ flex: 1 }}>Ver detalles</button>
+          <button className="btn-ghost">Reagendar</button>
+        </div>
+      </div>
+
+      <div style={{ borderTop: "1px solid var(--border)", padding: "11px 20px", display: "flex", alignItems: "center", gap: 8 }}>
+        <Icon name="location" size={13} color="var(--charcoal-soft)" />
+        <p style={{ fontSize: 12, color: "var(--charcoal-soft)" }}>{APPOINTMENT.address}, Madrid · Sesión de 55 min</p>
+      </div>
+    </div>
+
+    {/* Bono */}
+    <p className="section-label">Tu bono</p>
+    <div className="card" style={{ marginBottom: 20 }}>
+      <div className="card-inner">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <div>
+            <p style={{ fontSize: 15, fontWeight: 600, color: "var(--charcoal)" }}>
+              {BONO.total - BONO.used} sesiones restantes
+            </p>
+            <p style={{ fontSize: 12, color: "var(--charcoal-soft)", marginTop: 2 }}>
+              Bono de {BONO.total} sesiones · sin caducidad
+            </p>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <span style={{ fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 600, color: "var(--sage)" }}>
+              {BONO.total - BONO.used}
+            </span>
+            <span style={{ fontSize: 13, color: "var(--charcoal-soft)" }}>/{BONO.total}</span>
+          </div>
+        </div>
+        <div className="progress-track">
+          <div className="progress-fill" style={{ width: `${((BONO.total - BONO.used) / BONO.total) * 100}%` }} />
+        </div>
+        <p style={{ fontSize: 11, color: "var(--charcoal-soft)", marginTop: 8 }}>
+          Has usado {BONO.used} de {BONO.total} sesiones
+        </p>
+      </div>
+    </div>
+
+    {/* Quick actions */}
+    <p className="section-label">Acceso rápido</p>
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+      {[
+        { label: "Reservar sesión", icon: "calendar", tab: "bookings", accent: "var(--sage)" },
+        { label: "Ver mi plan", icon: "clipboard", tab: "plan", accent: "var(--gold)" },
+        { label: "Historial", icon: "chart", tab: "progress", accent: "var(--charcoal-mid)" },
+      ].map(item => (
+        <button key={item.tab} onClick={() => setTab(item.tab)}
+          style={{ background: "var(--white)", border: "1px solid var(--border)", borderRadius: 12, padding: "16px 10px", display: "flex", flexDirection: "column", alignItems: "center", gap: 10, cursor: "pointer", transition: "all 0.15s" }}
+          onMouseDown={e => e.currentTarget.style.background = "var(--cream)"}
+          onMouseUp={e => e.currentTarget.style.background = "var(--white)"}>
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: item.accent === "var(--sage)" ? "var(--sage-pale)" : item.accent === "var(--gold)" ? "var(--gold-pale)" : "#F0F0F0", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Icon name={item.icon} size={19} color={item.accent} />
+          </div>
+          <p style={{ fontSize: 11, fontWeight: 500, color: "var(--charcoal)", textAlign: "center", lineHeight: 1.3 }}>{item.label}</p>
+        </button>
+      ))}
+    </div>
+
+    {/* Trust signal */}
+    <div style={{ marginTop: 20, background: "var(--sage-pale)", borderRadius: 12, padding: "14px 16px", display: "flex", gap: 12, alignItems: "center" }}>
+      <div style={{ width: 36, height: 36, borderRadius: 8, background: "var(--sage)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+        <Icon name="leaf" size={17} color="white" />
+      </div>
+      <p style={{ fontSize: 12, color: "var(--sage)", lineHeight: 1.5 }}>
+        Más del <strong>85%</strong> de nuestros nuevos pacientes llegan por recomendación directa. Gracias por confiar en EstudioFisio.
+      </p>
+    </div>
+  </div>
+);
+
+/* ─── Screen: My Plan ─── */
+const PlanScreen = () => {
+  const [expanded, setExpanded] = useState(null);
+  return (
+    <div className="fade-up" style={{ padding: "0 20px 32px" }}>
+      <div style={{ paddingTop: 8, paddingBottom: 6 }}>
+        <p style={{ fontSize: 12, color: "var(--charcoal-soft)", fontWeight: 500, marginBottom: 3 }}>
+          Tu plan de ejercicios
+        </p>
+        <h2 style={{ fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 500, color: "var(--charcoal)", lineHeight: 1.25, marginBottom: 4 }}>
+          Hombro y cervical
+        </h2>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <div className="avatar" style={{ width: 22, height: 22, fontSize: 9 }}>ML</div>
+          <p style={{ fontSize: 12, color: "var(--charcoal-soft)" }}>
+            María López · asignado el 23 jun 2025
+          </p>
+        </div>
+      </div>
+
+      <div style={{ background: "var(--gold-pale)", borderRadius: 10, padding: "11px 14px", display: "flex", gap: 10, alignItems: "center", marginBottom: 20, marginTop: 12 }}>
+        <span style={{ fontSize: 14 }}>📋</span>
+        <p style={{ fontSize: 12, color: "#A87348", lineHeight: 1.45 }}>
+          Realiza estos ejercicios diariamente, preferiblemente por la mañana. Si sientes dolor agudo, para y avisa a tu fisio.
+        </p>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {EXERCISES.map((ex, i) => (
+          <div key={ex.id} className="exercise-card">
+            <button onClick={() => setExpanded(expanded === ex.id ? null : ex.id)}
+              style={{ width: "100%", background: "none", border: "none", cursor: "pointer", textAlign: "left", padding: "16px" }}>
+              <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+                <div style={{ width: 44, height: 44, borderRadius: 10, background: "var(--sage-pale)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>
+                  {ex.icon}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 14, fontWeight: 600, color: "var(--charcoal)", marginBottom: 3 }}>{ex.name}</p>
+                  <p style={{ fontSize: 12, color: "var(--sage)", fontWeight: 500, marginBottom: 4 }}>{ex.sets}</p>
+                  <p style={{ fontSize: 12, color: "var(--charcoal-soft)", lineHeight: 1.4, paddingRight: 20 }}>{ex.instruction}</p>
+                </div>
+                <div style={{ color: "var(--charcoal-soft)", flexShrink: 0, marginTop: 2 }}>
+                  {expanded === ex.id ? <Icon name="chevronUp" /> : <Icon name="chevronDown" />}
+                </div>
+              </div>
+            </button>
+
+            {expanded === ex.id && (
+              <div style={{ borderTop: "1px solid var(--border)", padding: "0 16px 16px" }}>
+                {/* Mock video placeholder */}
+                <div style={{ width: "100%", aspectRatio: "16/9", background: "var(--cream-dark)", borderRadius: 10, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 14, marginTop: 14, position: "relative", overflow: "hidden" }}>
+                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, #EAF0EA 0%, #E8E3DC 100%)" }} />
+                  <div style={{ position: "relative", zIndex: 1, width: 44, height: 44, borderRadius: "50%", background: "rgba(92,111,92,0.85)", display: "flex", alignItems: "center", justifyContent: "center", paddingLeft: 3 }}>
+                    <Icon name="play" size={18} color="white" />
+                  </div>
+                  <p style={{ position: "relative", zIndex: 1, fontSize: 11, color: "var(--charcoal-soft)", fontWeight: 500 }}>
+                    Vídeo demostrativo
+                  </p>
+                </div>
+                <p style={{ fontSize: 13, color: "var(--charcoal-mid)", lineHeight: 1.6 }}>{ex.description}</p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div style={{ marginTop: 20, padding: "14px 16px", borderTop: "2px solid var(--border)" }}>
+        <p style={{ fontSize: 12, color: "var(--charcoal-soft)", lineHeight: 1.5, fontStyle: "italic" }}>
+          Plan actualizado tras tu última sesión con <strong style={{ fontStyle: "normal", color: "var(--sage)" }}>María López</strong> el 23 de junio.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+/* ─── Screen: Progress ─── */
+const ProgressScreen = () => {
+  const [pain, setPain] = useState(3);
+  const [mobility, setMobility] = useState(8);
+  const [submitted, setSubmitted] = useState(false);
+  const handleSubmit = () => setSubmitted(true);
+  return (
+    <div className="fade-up" style={{ padding: "0 20px 32px" }}>
+      <div style={{ paddingTop: 8, paddingBottom: 20 }}>
+        <p style={{ fontSize: 12, color: "var(--charcoal-soft)", fontWeight: 500, marginBottom: 3 }}>
+          Seguimiento
+        </p>
+        <h2 style={{ fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 500, color: "var(--charcoal)" }}>
+          Tu progreso
+        </h2>
+      </div>
+
+      {/* Weekly check-in */}
+      <p className="section-label">Check-in semanal</p>
+      <div className="card" style={{ marginBottom: 20 }}>
+        <div className="card-inner">
+          {!submitted ? (
+            <>
+              <p style={{ fontSize: 13, color: "var(--charcoal-mid)", marginBottom: 20, lineHeight: 1.5 }}>
+                ¿Cómo te encuentras esta semana? Tómate un momento para evaluar tu estado.
+              </p>
+
+              {/* Pain slider */}
+              <div style={{ marginBottom: 22 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 10 }}>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: "var(--charcoal)" }}>Nivel de dolor hoy</p>
+                  <span style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 500, color: "var(--sage)" }}>{pain}<span style={{ fontSize: 12, color: "var(--charcoal-soft)" }}>/10</span></span>
+                </div>
+                <input type="range" min="0" max="10" step="0.5" value={pain}
+                  className="pain-slider"
+                  style={{ "--pct": `${pain * 10}%` }}
+                  onChange={e => setPain(Number(e.target.value))} />
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
+                  <span style={{ fontSize: 10, color: "var(--charcoal-soft)" }}>Sin dolor</span>
+                  <span style={{ fontSize: 10, color: "var(--charcoal-soft)" }}>Dolor máximo</span>
+                </div>
+              </div>
+
+              {/* Mobility slider */}
+              <div style={{ marginBottom: 22 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 10 }}>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: "var(--charcoal)" }}>Movilidad percibida</p>
+                  <span style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 500, color: "var(--gold)" }}>{mobility}<span style={{ fontSize: 12, color: "var(--charcoal-soft)" }}>/10</span></span>
+                </div>
+                <input type="range" min="0" max="10" step="0.5" value={mobility}
+                  className="mobility-slider"
+                  style={{ "--pct": `${mobility * 10}%` }}
+                  onChange={e => setMobility(Number(e.target.value))} />
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
+                  <span style={{ fontSize: 10, color: "var(--charcoal-soft)" }}>Muy limitada</span>
+                  <span style={{ fontSize: 10, color: "var(--charcoal-soft)" }}>Movilidad total</span>
+                </div>
+              </div>
+
+              <button className="btn-primary" style={{ width: "100%" }} onClick={handleSubmit}>
+                Guardar check-in
+              </button>
+            </>
+          ) : (
+            <div style={{ textAlign: "center", padding: "20px 0 8px" }}>
+              <div style={{ width: 52, height: 52, borderRadius: "50%", background: "var(--sage-pale)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
+                <Icon name="check" size={24} color="var(--sage)" />
+              </div>
+              <p style={{ fontFamily: "var(--font-display)", fontSize: 18, color: "var(--charcoal)", marginBottom: 6 }}>¡Check-in guardado!</p>
+              <p style={{ fontSize: 13, color: "var(--charcoal-soft)" }}>Tu fisio verá tus valores esta semana.</p>
+              <button className="btn-outline" style={{ marginTop: 16 }} onClick={() => setSubmitted(false)}>Editar</button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Pain chart */}
+      <p className="section-label">Evolución — últimas 8 semanas</p>
+      <div className="card" style={{ marginBottom: 20 }}>
+        <div className="card-inner" style={{ paddingBottom: 10 }}>
+          <div style={{ display: "flex", gap: 16, marginBottom: 14 }}>
+            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+              <div style={{ width: 10, height: 3, borderRadius: 2, background: "var(--sage)" }} />
+              <span style={{ fontSize: 11, color: "var(--charcoal-soft)" }}>Dolor</span>
+            </div>
+            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+              <div style={{ width: 10, height: 3, borderRadius: 2, background: "var(--gold)" }} />
+              <span style={{ fontSize: 11, color: "var(--charcoal-soft)" }}>Movilidad</span>
+            </div>
+          </div>
+          <div style={{ position: "relative" }}>
+            <MiniChart data={PAIN_DATA} dataKey="pain" color="var(--sage)" />
+          </div>
+          <div className="divider" style={{ margin: "4px 0 12px" }} />
+          <div style={{ position: "relative" }}>
+            <MiniChart data={PAIN_DATA} dataKey="mobility" color="var(--gold)" />
+          </div>
+          <div style={{ background: "var(--sage-pale)", borderRadius: 8, padding: "10px 12px", marginTop: 8 }}>
+            <p style={{ fontSize: 12, color: "var(--sage)", fontWeight: 500 }}>
+              📉 Dolor reducido un <strong>57%</strong> en 8 semanas · 📈 Movilidad mejorada un <strong>105%</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Physio notes */}
+      <p className="section-label">Notas de tu fisioterapeuta</p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {PHYSIO_NOTES_PROGRESS.map((note, i) => (
+          <div key={i} style={{ background: "var(--white)", border: "1px solid var(--border)", borderRadius: 12, padding: "14px 16px" }}>
+            <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+              <div className="avatar" style={{ width: 34, height: 34, fontSize: 12, flexShrink: 0 }}>ML</div>
+              <div>
+                <p style={{ fontSize: 11, color: "var(--charcoal-soft)", marginBottom: 4 }}>{note.date} · María López</p>
+                <p style={{ fontSize: 13, color: "var(--charcoal)", lineHeight: 1.55 }}>{note.text}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+/* ─── Screen: Bookings ─── */
+const BookingsScreen = () => {
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [selectedPhysio, setSelectedPhysio] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [booked, setBooked] = useState(false);
+
+  const dates = [
+    { day: "Lun", num: 30, month: "Jun" },
+    { day: "Mar", num: 1, month: "Jul" },
+    { day: "Mié", num: 2, month: "Jul" },
+    { day: "Jue", num: 3, month: "Jul" },
+    { day: "Vie", num: 4, month: "Jul" },
+  ];
+
+  const physios = selectedLocation ? PHYSIOS_BY_LOCATION[selectedLocation] : [];
+
+  if (booked) {
+    return (
+      <div className="fade-up" style={{ padding: "0 20px 32px", display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 60 }}>
+        <div style={{ width: 72, height: 72, borderRadius: "50%", background: "var(--sage-pale)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+          <Icon name="check" size={32} color="var(--sage)" />
+        </div>
+        <h2 style={{ fontFamily: "var(--font-display)", fontSize: 24, color: "var(--charcoal)", textAlign: "center", marginBottom: 8 }}>
+          ¡Cita reservada!
+        </h2>
+        <p style={{ fontSize: 14, color: "var(--charcoal-soft)", textAlign: "center", lineHeight: 1.6, marginBottom: 32, maxWidth: 280 }}>
+          Tu sesión ha sido confirmada. Recibirás un recordatorio 24 horas antes.
+        </p>
+        <div className="card" style={{ width: "100%", marginBottom: 24 }}>
+          <div className="card-inner">
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {[
+                ["Ubicación", LOCATIONS.find(l => l.id === selectedLocation)?.name],
+                ["Fisioterapeuta", physios.find(p => p.name === selectedPhysio)?.name],
+                ["Fecha", dates.find(d => d.num === selectedDate)?.day + " " + selectedDate + " " + dates.find(d => d.num === selectedDate)?.month],
+                ["Hora", selectedSlot],
+                ["Duración", "55 minutos"],
+              ].map(([k, v]) => (
+                <div key={k} style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ fontSize: 13, color: "var(--charcoal-soft)" }}>{k}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "var(--charcoal)" }}>{v}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <button className="btn-outline" onClick={() => { setBooked(false); setSelectedLocation(null); setSelectedPhysio(null); setSelectedDate(null); setSelectedSlot(null); }}>
+          Reservar otra cita
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fade-up" style={{ padding: "0 20px 32px" }}>
+      <div style={{ paddingTop: 8, paddingBottom: 20 }}>
+        <p style={{ fontSize: 12, color: "var(--charcoal-soft)", fontWeight: 500, marginBottom: 3 }}>Nueva reserva</p>
+        <h2 style={{ fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 500, color: "var(--charcoal)" }}>
+          Reservar sesión
+        </h2>
+      </div>
+
+      {/* Bono reminder */}
+      <div style={{ background: "var(--gold-pale)", borderRadius: 10, padding: "12px 14px", display: "flex", gap: 10, alignItems: "center", marginBottom: 22 }}>
+        <span style={{ fontSize: 15 }}>🎫</span>
+        <p style={{ fontSize: 12, color: "#A87348", lineHeight: 1.4 }}>
+          Te quedan <strong>6 sesiones</strong> en tu bono actual. La próxima se descontará automáticamente.
+        </p>
+      </div>
+
+      {/* Step 1: Location */}
+      <p className="section-label">1. Elige clínica</p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 22 }}>
+        {LOCATIONS.map(loc => (
+          <button key={loc.id} className={`location-card${selectedLocation === loc.id ? " selected" : ""}`}
+            onClick={() => { setSelectedLocation(loc.id); setSelectedPhysio(null); }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--charcoal)", marginBottom: 2 }}>{loc.name}</p>
+                <p style={{ fontSize: 12, color: "var(--charcoal-soft)" }}>{loc.address} · Metro {loc.metro}</p>
+              </div>
+              {selectedLocation === loc.id && (
+                <div style={{ width: 22, height: 22, borderRadius: "50%", background: "var(--sage)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Icon name="check" size={12} color="white" />
+                </div>
+              )}
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {/* Step 2: Physio */}
+      {selectedLocation && (
+        <>
+          <p className="section-label">2. Elige fisioterapeuta</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 22 }}>
+            {physios.map(p => (
+              <button key={p.name} onClick={() => setSelectedPhysio(p.name)}
+                style={{ background: "var(--white)", border: `1.5px solid ${selectedPhysio === p.name ? "var(--sage)" : "var(--border)"}`, borderRadius: 10, padding: "12px 14px", display: "flex", alignItems: "center", gap: 12, cursor: "pointer", textAlign: "left", transition: "border-color 0.15s" }}>
+                <div className="avatar" style={{ width: 38, height: 38, fontSize: 13, background: selectedPhysio === p.name ? "var(--sage)" : "var(--sage-pale)", color: selectedPhysio === p.name ? "white" : "var(--sage)" }}>
+                  {p.initials}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: "var(--charcoal)", marginBottom: 3 }}>{p.name}</p>
+                  <span className="chip chip-sage" style={{ fontSize: 10, padding: "3px 8px" }}>{p.specialty}</span>
+                </div>
+                <p style={{ fontSize: 11, color: "var(--charcoal-soft)" }}>Colegiado/a</p>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Step 3: Date */}
+      {selectedPhysio && (
+        <>
+          <p className="section-label">3. Elige fecha</p>
+          <div style={{ display: "flex", gap: 8, marginBottom: 22, overflowX: "auto", paddingBottom: 4 }}>
+            {dates.map(d => (
+              <button key={d.num} onClick={() => { setSelectedDate(d.num); setSelectedSlot(null); }}
+                style={{ flexShrink: 0, width: 58, padding: "10px 6px", borderRadius: 10, border: `1.5px solid ${selectedDate === d.num ? "var(--sage)" : "var(--border)"}`, background: selectedDate === d.num ? "var(--sage)" : "var(--white)", cursor: "pointer", textAlign: "center", transition: "all 0.15s" }}>
+                <p style={{ fontSize: 10, fontWeight: 500, color: selectedDate === d.num ? "rgba(255,255,255,0.75)" : "var(--charcoal-soft)", marginBottom: 4, textTransform: "uppercase" }}>{d.day}</p>
+                <p style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 500, color: selectedDate === d.num ? "white" : "var(--charcoal)", lineHeight: 1 }}>{d.num}</p>
+                <p style={{ fontSize: 9, color: selectedDate === d.num ? "rgba(255,255,255,0.7)" : "var(--charcoal-soft)", marginTop: 4 }}>{d.month}</p>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Step 4: Time slots */}
+      {selectedDate && (
+        <>
+          <p className="section-label">4. Elige hora</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 24 }}>
+            {TIME_SLOTS.map((row, ri) => (
+              <div key={ri} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8 }}>
+                {row.map((slot, si) => (
+                  <div key={si}
+                    className={`time-slot${slot === "—" ? " unavailable" : ""}${selectedSlot === slot ? " selected" : ""}`}
+                    onClick={() => slot !== "—" && setSelectedSlot(slot)}>
+                    {slot}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          {selectedSlot && (
+            <button className="btn-primary" style={{ width: "100%", padding: "14px", fontSize: 15 }}
+              onClick={() => setBooked(true)}>
+              Confirmar reserva · {selectedSlot} h
+            </button>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+/* ─── Screen: Messages ─── */
+const MessagesScreen = () => {
+  const [message, setMessage] = useState("");
+  const [sent, setSent] = useState(false);
+  const handleSend = () => {
+    if (message.trim()) {
+      setSent(true);
+      setMessage("");
+      setTimeout(() => setSent(false), 3000);
+    }
+  };
+  return (
+    <div className="fade-up" style={{ padding: "0 20px 32px", display: "flex", flexDirection: "column" }}>
+      <div style={{ paddingTop: 8, paddingBottom: 20 }}>
+        <p style={{ fontSize: 12, color: "var(--charcoal-soft)", fontWeight: 500, marginBottom: 3 }}>Comunicación</p>
+        <h2 style={{ fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 500, color: "var(--charcoal)" }}>
+          Notas de sesión
+        </h2>
+      </div>
+
+      {sent && (
+        <div style={{ background: "var(--sage-pale)", borderRadius: 10, padding: "12px 16px", marginBottom: 16, display: "flex", gap: 10, alignItems: "center" }}>
+          <Icon name="check" size={16} color="var(--sage)" />
+          <p style={{ fontSize: 13, color: "var(--sage)", fontWeight: 500 }}>Mensaje enviado a María López.</p>
+        </div>
+      )}
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {MESSAGES.map((msg, i) => (
+          <div key={i} className="message-note">
+            <p className="message-note-date">{msg.date}</p>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 10 }}>
+              <div className="avatar" style={{ width: 28, height: 28, fontSize: 10 }}>{msg.initials}</div>
+              <p className="message-note-from">{msg.physio}</p>
+            </div>
+            <p className="message-note-text">{msg.text}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Message input */}
+      <div style={{ marginTop: 24 }}>
+        <p style={{ fontSize: 11, color: "var(--charcoal-soft)", fontWeight: 600, letterSpacing: "0.6px", textTransform: "uppercase", marginBottom: 10 }}>
+          Enviar mensaje a tu fisio
+        </p>
+        <div className="message-input-wrap">
+          <input
+            type="text"
+            placeholder="Escribe tu pregunta a María López..."
+            value={message}
+            onChange={e => setMessage(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && handleSend()}
+          />
+          <button onClick={handleSend} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: message ? "var(--sage)" : "var(--charcoal-soft)", transition: "color 0.15s" }}>
+            <Icon name="send" size={18} color={message ? "var(--sage)" : "var(--charcoal-soft)"} />
+          </button>
+        </div>
+        <p style={{ fontSize: 11, color: "var(--charcoal-soft)", marginTop: 8, textAlign: "center" }}>
+          Respuesta habitual en menos de 24 horas
+        </p>
+      </div>
+    </div>
+  );
+};
+
+/* ─── Status Bar Icons ─── */
+const BatteryIcon = () => (
+  <svg width="24" height="12" viewBox="0 0 24 12" fill="none">
+    <rect x="0.5" y="0.5" width="20" height="11" rx="2.5" stroke="var(--charcoal)" strokeOpacity="0.4"/>
+    <rect x="1.5" y="1.5" width="15" height="9" rx="1.5" fill="var(--charcoal)" fillOpacity="0.85"/>
+    <path d="M22 4.5v3a1.5 1.5 0 000-3z" fill="var(--charcoal)" fillOpacity="0.4"/>
+  </svg>
+);
+
+const WifiIcon = () => (
+  <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+    <path d="M8 9a1 1 0 100 2 1 1 0 000-2z" fill="var(--charcoal)" fillOpacity="0.85"/>
+    <path d="M5.17 6.17a4 4 0 015.66 0" stroke="var(--charcoal)" strokeOpacity="0.85" strokeWidth="1.5" strokeLinecap="round"/>
+    <path d="M2.34 3.34a8 8 0 0111.32 0" stroke="var(--charcoal)" strokeOpacity="0.5" strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
+
+/* ─── App Shell ─── */
+const App = () => {
+  const [activeTab, setActiveTab] = useState("home");
+  const contentRef = useRef(null);
+
+  useEffect(() => {
+    if (contentRef.current) contentRef.current.scrollTop = 0;
+  }, [activeTab]);
+
+  const screens = {
+    home: <HomeScreen setTab={setActiveTab} />,
+    plan: <PlanScreen />,
+    progress: <ProgressScreen />,
+    bookings: <BookingsScreen />,
+    messages: <MessagesScreen />,
+  };
+
+  return (
+    <div className="phone-shell">
+      {/* Status bar */}
+      <div className="status-bar">
+        <span className="status-bar-time">9:41</span>
+        <div className="status-bar-icons">
+          <WifiIcon />
+          <BatteryIcon />
+        </div>
+      </div>
+
+      {/* Wordmark header */}
+      <div className="screen-header">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: 14, borderBottom: "1px solid var(--border)" }}>
+          <span className="wordmark">estudio<span>fisio</span></span>
+          <button style={{ background: "none", border: "none", cursor: "pointer", position: "relative" }}>
+            <Icon name="bell" size={20} color="var(--charcoal-mid)" strokeWidth={1.6} />
+            <span className="notif-dot" style={{ top: 1, right: 1 }} />
+          </button>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="screen-content" ref={contentRef}>
+        <div style={{ padding: "18px 0 0" }}>
+          {screens[activeTab]}
+        </div>
+      </div>
+
+      {/* Tab bar */}
+      <TabBar active={activeTab} setActive={setActiveTab} />
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
