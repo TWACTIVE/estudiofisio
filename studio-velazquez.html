@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>Studio Velázquez</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F2EDE5;
+  --surface:#FDFAF6;
+  --forest:#2D4A2D;
+  --forest-mid:#3D6040;
+  --forest-pale:#E8F0E8;
+  --stone:#7A6E62;
+  --stone-light:#A09488;
+  --charcoal:#221E18;
+  --copper:#A0643A;
+  --copper-pale:#F5EBE0;
+  --border:#DDD6CB;
+  --shadow:0 2px 14px rgba(44,74,44,0.09);
+  --radius:14px;
+  --font-body:'Jost',system-ui,sans-serif;
+  --font-display:'Cormorant Garamond',Georgia,serif;
+}
+html,body{height:100%;background:#C8C0B4;font-family:var(--font-body);-webkit-font-smoothing:antialiased}
+#root{display:flex;justify-content:center;min-height:100vh}
+@media(min-width:480px){#root{padding:24px 0;background:#BDB5A8}}
+.shell{width:100%;max-width:430px;min-height:100vh;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+@media(min-width:480px){.shell{min-height:auto;max-height:900px;border-radius:38px;box-shadow:0 28px 80px rgba(44,74,44,0.22)}}
+.sbar{background:var(--bg);padding:12px 24px 6px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.sbar-time{font-size:15px;font-weight:500;color:var(--charcoal);letter-spacing:0.1px}
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.content::-webkit-scrollbar{display:none}
+.tabs{background:var(--surface);border-top:1px solid var(--border);display:flex;padding:8px 0 20px;flex-shrink:0}
+@media(min-width:480px){.tabs{padding-bottom:8px}}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;cursor:pointer;border:none;background:none;-webkit-tap-highlight-color:transparent}
+.tab-label{font-size:10px;font-weight:500;letter-spacing:.3px}
+.tab.on .tab-label{color:var(--forest)}
+.tab:not(.on) .tab-label{color:var(--stone-light)}
+.hdr{padding:14px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;background:var(--bg)}
+.wordmark{font-family:var(--font-display);font-size:20px;font-weight:400;color:var(--forest);letter-spacing:.5px}
+.wordmark span{color:var(--copper);font-style:italic}
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow)}
+.p{padding:18px 20px}
+.lbl{font-size:10px;font-weight:500;letter-spacing:1.1px;text-transform:uppercase;color:var(--stone-light);margin-bottom:10px}
+.btn{background:var(--forest);color:#fff;border:none;border-radius:4px;padding:13px 22px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;letter-spacing:.3px}
+.btn-out{background:transparent;color:var(--forest);border:1.5px solid var(--forest);border-radius:4px;padding:10px 18px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer}
+.btn-sm{background:var(--copper-pale);color:var(--copper);border:none;border-radius:4px;padding:7px 14px;font-size:12px;font-weight:500;cursor:pointer}
+.chip{display:inline-flex;align-items:center;padding:3px 9px;border-radius:3px;font-size:11px;font-weight:500}
+.chip-f{background:var(--forest-pale);color:var(--forest)}
+.chip-c{background:var(--copper-pale);color:var(--copper)}
+.avt{border-radius:50%;background:var(--forest-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font-display);font-size:14px;color:var(--forest)}
+.trk{height:5px;background:var(--border);border-radius:2px}
+.fill{height:100%;background:var(--forest);border-radius:2px}
+.fade{animation:fu .3s ease forwards}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;border-radius:99px;outline:none;cursor:pointer;background:linear-gradient(to right,var(--forest) 0%,var(--forest) var(--pct,50%),var(--border) var(--pct,50%),var(--border) 100%)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--surface);border:2px solid var(--forest);box-shadow:0 1px 5px rgba(44,74,44,.15)}
+.slot{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:8px;font-size:12px;font-weight:500;color:var(--charcoal);cursor:pointer;text-align:center}
+.slot.on{background:var(--forest);border-color:var(--forest);color:#fff}
+.slot.off{opacity:.35;cursor:default}
+.ndot{width:7px;height:7px;background:var(--copper);border-radius:50%;position:absolute;top:0;right:-1px}
+</style>
+</head>
+<body><div id="root"></div>
+<script type="text/babel">
+const{useState,useRef,useEffect}=React;
+const PAT={name:"Laura",last:"Mendoza"};
+const APT={date:"Miércoles, 2 de julio",time:"09:00 h",loc:"Velázquez 44",inst:"Elena Vidal",spec:"Pilates terapéutico"};
+const BONO={used:6,total:10,label:"Bono individual · 10 sesiones"};
+const EX=[
+  {id:1,n:"Hundred",phase:"100 bombeos · nivel principiante",icon:"○","inst":"Respiración constante, abdomen activado, barbilla hacia el pecho.",desc:"Punto de partida clásico del método Pilates. Activa el powerhouse central — abdomen, suelo pélvico y multífidos. Mantén los hombros lejos de las orejas durante toda la serie."},
+  {id:2,n:"Roll-Up",phase:"5 repeticiones",icon:"◡","inst":"Movimiento vertebra a vertebra. Sin tirones ni impulsos.",desc:"Moviliza toda la columna vertebral en flexión y extensión. Especialmente útil para desbloquear la zona lumbar y trabajar la coordinación entre el core y los flexores de cadera."},
+  {id:3,n:"Leg Circles",phase:"5 círculos × 2 lados",icon:"◻","inst":"Pelvis estable durante todo el movimiento. Círculo amplio y controlado.",desc:"Trabaja la articulación coxofemoral en todo su rango. El reto es mantener la estabilidad de la pelvis mientras la pierna describe el círculo. Excelente para liberar la tensión del psoas."},
+  {id:4,n:"Swan",phase:"3 repeticiones",icon:"◠","inst":"Extensión desde el centro, no solo desde el cuello.",desc:"Extensión activa de columna en decúbito prono. Fortalece los extensores dorsales y estira la cadena anterior. Contraindicado en hernias discales agudas — consultar con Elena."},
+];
+const DATA=[
+  {w:"S1",flex:3.5,core:3},{w:"S2",flex:4,core:3.8},{w:"S3",flex:4.8,core:4.5},
+  {w:"S4",flex:5.5,core:5},{w:"S5",flex:6,core:5.8},{w:"S6",flex:6.8,core:6.5},
+  {w:"S7",flex:7.5,core:7.2},{w:"S8",flex:8,core:7.8},
+];
+const INSTS=[
+  {loc:"Velázquez 44",is:[{n:"Elena Vidal",s:"Pilates terapéutico",i:"EV"},{n:"Marcos Gil",s:"Pilates reformer",i:"MG"},{n:"Nuria Castro",s:"Pilates prenatal",i:"NC"}]},
+  {loc:"Príncipe de Vergara 88",is:[{n:"Sofía Lara",s:"Pilates funcional",i:"SL"},{n:"Iñaki Rueda",s:"Biomecánica deportiva",i:"IR"}]},
+];
+const TIMES=[["08:00","09:00","10:00","11:00"],["12:00","—","17:00","18:00"],["19:00","—","20:00","21:00"]];
+const DATES=[{d:"Lun",n:30,m:"Jun"},{d:"Mar",n:1,m:"Jul"},{d:"Mié",n:2,m:"Jul"},{d:"Jue",n:3,m:"Jul"},{d:"Vie",n:4,m:"Jul"}];
+const MSGS=[
+  {d:"23 jun",i:"EV",who:"Elena Vidal",txt:"Gran sesión de hoy. Has conseguido mantener la pelvis neutra en el Leg Circles durante toda la serie — un gran avance. Seguimos con el plan actual."},
+  {d:"16 jun",i:"EV",who:"Elena Vidal",txt:"Trabajamos la flexibilidad de isquiotibiales con Roll-Up. Veo tensión en la zona lumbar baja. He añadido el Swan al plan para compensar."},
+  {d:"9 jun",i:"MG",who:"Marcos Gil",txt:"Sesión en Reformer de introducción. Buena respuesta a la resistencia media. Coordinación en desarrollo — normal para las primeras sesiones con el equipo."},
+];
+
+const MChart=({data,k,color})=>{
+  const W=320,H=78,pl=6,pr=6,pt=6,pb=18;
+  const iw=W-pl-pr,ih=H-pt-pb;
+  const xs=i=>pl+i*(iw/(data.length-1));
+  const ys=v=>pt+ih-((v)/10)*ih;
+  const pts=data.map((d,i)=>`${xs(i)},${ys(d[k])}`).join(" ");
+  const fp=[`${xs(0)},${pt+ih}`,...data.map((d,i)=>`${xs(i)},${ys(d[k])}`),`${xs(data.length-1)},${pt+ih}`].join(" ");
+  return(<svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%",height:"auto"}}>
+    <defs><linearGradient id={`g${k}`} x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor={color} stopOpacity=".12"/><stop offset="100%" stopColor={color} stopOpacity="0"/></linearGradient></defs>
+    {[2.5,5,7.5].map(v=><line key={v} x1={pl} x2={W-pr} y1={ys(v)} y2={ys(v)} stroke={color} strokeOpacity=".12" strokeWidth="1"/>)}
+    <polygon points={fp} fill={`url(#g${k})`}/>
+    <polyline points={pts} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"/>
+    {data.map((d,i)=><circle key={i} cx={xs(i)} cy={ys(d[k])} r="2.8" fill="var(--surface)" stroke={color} strokeWidth="1.8"/>)}
+    {data.map((d,i)=><text key={i} x={xs(i)} y={H-3} textAnchor="middle" fontSize="8" fill="var(--stone-light)" fontFamily="Jost,sans-serif">{d.w}</text>)}
+  </svg>);
+};
+
+const Icon=({n,sz=22,c="currentColor"})=>{
+  const I={
+    home:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9.5L12 3l9 6.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 22V12h6v10"/></svg>,
+    clip:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg>,
+    chart:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+    cal:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+    msg:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>,
+    dn:<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>,
+    up:<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg>,
+    chk:<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+    loc:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>,
+    send:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>,
+    bell:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>,
+  };
+  return I[n]||null;
+};
+
+const TABS=[{id:"home",l:"Inicio",ic:"home"},{id:"plan",l:"Mi Plan",ic:"clip"},{id:"prog",l:"Progreso",ic:"chart"},{id:"citas",l:"Clases",ic:"cal"},{id:"msgs",l:"Mensajes",ic:"msg"}];
+const TabBar=({active,set})=>(
+  <nav className="tabs">
+    {TABS.map(t=>(
+      <button key={t.id} className={`tab${active===t.id?" on":""}`} onClick={()=>set(t.id)}>
+        <div style={{position:"relative"}}><Icon n={t.ic} sz={21} c={active===t.id?"var(--forest)":"var(--stone-light)"}/>{t.id==="msgs"&&<span className="ndot"/>}</div>
+        <span className="tab-label">{t.l}</span>
+      </button>
+    ))}
+  </nav>
+);
+
+const Home=({setTab})=>(
+  <div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:20}}>
+      <p style={{fontSize:12,color:"var(--stone-light)",fontWeight:400,marginBottom:2}}>Buenas tardes,</p>
+      <h1 style={{fontFamily:"var(--font-display)",fontSize:28,fontWeight:400,color:"var(--charcoal)",lineHeight:1.2,fontStyle:"italic"}}>{PAT.name}</h1>
+      <p style={{fontSize:13,color:"var(--stone)",marginTop:3}}>Semana 7 de tu programa · ¡Buen ritmo!</p>
+    </div>
+    <p className="lbl">Próxima sesión</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p">
+        <div style={{display:"flex",justifyContent:"space-between",marginBottom:14}}>
+          <div><p style={{fontSize:12,color:"var(--stone-light)",marginBottom:2}}>{APT.date}</p><p style={{fontFamily:"var(--font-display)",fontSize:26,color:"var(--charcoal)",fontWeight:400}}>{APT.time}</p></div>
+          <span className="chip chip-f"><Icon n="loc" sz={10} c="var(--forest)"/>&nbsp;{APT.loc}</span>
+        </div>
+        <div style={{background:"var(--bg)",borderRadius:8,padding:"11px 13px",display:"flex",gap:11,alignItems:"center",marginBottom:14}}>
+          <div className="avt" style={{width:36,height:36}}>EV</div>
+          <div><p style={{fontSize:13,fontWeight:500,color:"var(--charcoal)"}}>{APT.inst}</p><p style={{fontSize:11,color:"var(--stone-light)",marginTop:1}}>{APT.spec}</p></div>
+        </div>
+        <div style={{display:"flex",gap:8}}><button className="btn" style={{flex:1}}>Ver detalles</button><button className="btn-sm">Reagendar</button></div>
+      </div>
+    </div>
+    <p className="lbl">Tu membresía</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p">
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+          <div><p style={{fontSize:14,fontWeight:500,color:"var(--charcoal)"}}>{BONO.total-BONO.used} sesiones restantes</p><p style={{fontSize:11,color:"var(--stone-light)",marginTop:2}}>{BONO.label}</p></div>
+          <span style={{fontFamily:"var(--font-display)",fontSize:32,color:"var(--forest)",fontWeight:400}}>{BONO.total-BONO.used}<span style={{fontSize:14,color:"var(--stone-light)"}}>/{BONO.total}</span></span>
+        </div>
+        <div className="trk"><div className="fill" style={{width:`${((BONO.total-BONO.used)/BONO.total)*100}%`}}/></div>
+        <p style={{fontSize:11,color:"var(--stone-light)",marginTop:7}}>Sin caducidad · se puede compartir</p>
+      </div>
+    </div>
+    <p className="lbl">Acceso rápido</p>
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
+      {[["Reservar","cal","citas","var(--forest)","var(--forest-pale)"],["Mi rutina","clip","plan","var(--copper)","var(--copper-pale)"],["Progreso","chart","prog","var(--stone)","#EAE5DE"]].map(([l,ic,tab,c,bg])=>(
+        <button key={tab} onClick={()=>setTab(tab)} style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:10,padding:"14px 8px",display:"flex",flexDirection:"column",alignItems:"center",gap:9,cursor:"pointer"}}>
+          <div style={{width:38,height:38,borderRadius:8,background:bg,display:"flex",alignItems:"center",justifyContent:"center"}}><Icon n={ic} sz={18} c={c}/></div>
+          <p style={{fontSize:11,fontWeight:500,color:"var(--charcoal)",textAlign:"center",lineHeight:1.3}}>{l}</p>
+        </button>
+      ))}
+    </div>
+    <div style={{marginTop:20,padding:"14px 16px",background:"var(--forest-pale)",borderRadius:10,borderLeft:"3px solid var(--forest)"}}>
+      <p style={{fontSize:12,color:"var(--forest)",lineHeight:1.55}}><strong>Recuerda:</strong> esta semana iniciamos el trabajo en Reformer. Trae ropa cómoda y calcetines antideslizantes.</p>
+    </div>
+  </div>
+);
+
+const Plan=()=>{
+  const[exp,setExp]=useState(null);
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:18}}>
+      <p style={{fontSize:12,color:"var(--stone-light)",marginBottom:2}}>Tu programa</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:24,fontWeight:400,color:"var(--charcoal)",fontStyle:"italic",lineHeight:1.2}}>Método Pilates</h2>
+      <div style={{display:"flex",gap:8,alignItems:"center",marginTop:6}}>
+        <div className="avt" style={{width:20,height:20,fontSize:9}}>EV</div>
+        <p style={{fontSize:11,color:"var(--stone-light)"}}>Elena Vidal · actualizado 23 jun 2025</p>
+      </div>
+    </div>
+    <div style={{background:"var(--copper-pale)",borderRadius:9,padding:"11px 14px",marginBottom:18,display:"flex",gap:9}}>
+      <span style={{fontSize:13}}>🌿</span>
+      <p style={{fontSize:12,color:"var(--copper)",lineHeight:1.5}}>Practica diariamente si es posible — incluso 10 minutos de respiración consciente cuenta como sesión.</p>
+    </div>
+    <div style={{display:"flex",flexDirection:"column",gap:9}}>
+      {EX.map(e=>(
+        <div key={e.id} style={{background:"var(--surface)",borderRadius:11,border:"1px solid var(--border)",overflow:"hidden"}}>
+          <button onClick={()=>setExp(exp===e.id?null:e.id)} style={{width:"100%",background:"none",border:"none",cursor:"pointer",textAlign:"left",padding:"15px"}}>
+            <div style={{display:"flex",gap:12,alignItems:"flex-start"}}>
+              <div style={{width:40,height:40,borderRadius:8,background:"var(--forest-pale)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,color:"var(--forest)",flexShrink:0}}>{e.icon}</div>
+              <div style={{flex:1}}>
+                <p style={{fontFamily:"var(--font-display)",fontSize:16,fontWeight:500,color:"var(--charcoal)",marginBottom:1}}>{e.n}</p>
+                <p style={{fontSize:12,color:"var(--forest)",fontWeight:500,marginBottom:3}}>{e.phase}</p>
+                <p style={{fontSize:12,color:"var(--stone-light)",lineHeight:1.4,paddingRight:16}}>{e.inst}</p>
+              </div>
+              <div style={{color:"var(--stone-light)",flexShrink:0,marginTop:2}}>{exp===e.id?<Icon n="up"/>:<Icon n="dn"/>}</div>
+            </div>
+          </button>
+          {exp===e.id&&<div style={{borderTop:"1px solid var(--border)",padding:"12px 15px"}}>
+            <div style={{background:"var(--bg)",borderRadius:8,aspectRatio:"16/9",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:6,marginBottom:12,overflow:"hidden",position:"relative"}}>
+              <div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,var(--forest-pale),var(--bg))"}}/>
+              <div style={{position:"relative",width:40,height:40,borderRadius:"50%",background:"rgba(45,74,45,.8)",display:"flex",alignItems:"center",justifyContent:"center",paddingLeft:3}}><svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+              <p style={{position:"relative",fontSize:11,color:"var(--stone)",fontWeight:500}}>Vídeo demostrativo</p>
+            </div>
+            <p style={{fontSize:13,color:"var(--stone)",lineHeight:1.6}}>{e.desc}</p>
+          </div>}
+        </div>
+      ))}
+    </div>
+  </div>);
+};
+
+const Prog=()=>{
+  const[flex,setFlex]=useState(8);const[core,setCore]=useState(8);const[sub,setSub]=useState(false);
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:18}}>
+      <p style={{fontSize:12,color:"var(--stone-light)",marginBottom:2}}>Seguimiento</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:24,fontWeight:400,color:"var(--charcoal)",fontStyle:"italic"}}>Tu evolución</h2>
+    </div>
+    <p className="lbl">Check-in semanal</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p">
+        {!sub?(<>
+          <div style={{marginBottom:20}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:9}}>
+              <p style={{fontSize:13,fontWeight:500,color:"var(--charcoal)"}}>Flexibilidad percibida</p>
+              <span style={{fontFamily:"var(--font-display)",fontSize:22,color:"var(--forest)"}}>{flex}<span style={{fontSize:12,color:"var(--stone-light)"}}>/ 10</span></span>
+            </div>
+            <input type="range" min="0" max="10" step=".5" value={flex} style={{"--pct":`${flex*10}%`}} onChange={e=>setFlex(Number(e.target.value))}/>
+          </div>
+          <div style={{marginBottom:20}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:9}}>
+              <p style={{fontSize:13,fontWeight:500,color:"var(--charcoal)"}}>Fuerza de core</p>
+              <span style={{fontFamily:"var(--font-display)",fontSize:22,color:"var(--copper)"}}>{core}<span style={{fontSize:12,color:"var(--stone-light)"}}>/ 10</span></span>
+            </div>
+            <input type="range" min="0" max="10" step=".5" value={core} style={{"--pct":`${core*10}%`,"background":`linear-gradient(to right,var(--copper) 0%,var(--copper) ${core*10}%,var(--border) ${core*10}%,var(--border) 100%)`}} onChange={e=>setCore(Number(e.target.value))}/>
+          </div>
+          <button className="btn" style={{width:"100%"}} onClick={()=>setSub(true)}>Guardar check-in</button>
+        </>):(
+          <div style={{textAlign:"center",padding:"18px 0 6px"}}>
+            <p style={{fontFamily:"var(--font-display)",fontSize:20,color:"var(--charcoal)",marginBottom:5,fontStyle:"italic"}}>¡Perfecto!</p>
+            <p style={{fontSize:13,color:"var(--stone-light)"}}>Elena revisará tus datos antes de tu próxima clase.</p>
+            <button className="btn-out" style={{marginTop:14}} onClick={()=>setSub(false)}>Editar</button>
+          </div>
+        )}
+      </div>
+    </div>
+    <p className="lbl">Curva de progreso — 8 semanas</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p" style={{paddingBottom:10}}>
+        <div style={{display:"flex",gap:14,marginBottom:10}}>
+          <div style={{display:"flex",gap:5,alignItems:"center"}}><div style={{width:9,height:2,borderRadius:1,background:"var(--forest)"}}/><span style={{fontSize:11,color:"var(--stone-light)"}}>Flexibilidad</span></div>
+          <div style={{display:"flex",gap:5,alignItems:"center"}}><div style={{width:9,height:2,borderRadius:1,background:"var(--copper)"}}/><span style={{fontSize:11,color:"var(--stone-light)"}}>Core</span></div>
+        </div>
+        <svg viewBox="0 0 320 78" style={{width:"100%",height:"auto"}}>
+          <defs>
+            <linearGradient id="gf" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="var(--forest)" stopOpacity=".12"/><stop offset="100%" stopColor="var(--forest)" stopOpacity="0"/></linearGradient>
+            <linearGradient id="gc" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="var(--copper)" stopOpacity=".12"/><stop offset="100%" stopColor="var(--copper)" stopOpacity="0"/></linearGradient>
+          </defs>
+          {DATA.map((d,i)=>{
+            const xs=j=>6+j*(308/7);const ys=v=>6+60-v*6;
+            if(i===0)return null;
+            const prev=DATA[i-1];
+            return(<g key={i}>
+              <line x1={xs(i-1)} y1={ys(prev.flex)} x2={xs(i)} y2={ys(d.flex)} stroke="var(--forest)" strokeWidth="2" strokeLinecap="round"/>
+              <line x1={xs(i-1)} y1={ys(prev.core)} x2={xs(i)} y2={ys(d.core)} stroke="var(--copper)" strokeWidth="2" strokeLinecap="round"/>
+            </g>);
+          })}
+          {DATA.map((d,i)=>{const xs=j=>6+j*(308/7);const ys=v=>6+60-v*6;return(<g key={i}><circle cx={xs(i)} cy={ys(d.flex)} r="2.5" fill="var(--surface)" stroke="var(--forest)" strokeWidth="1.8"/><circle cx={xs(i)} cy={ys(d.core)} r="2.5" fill="var(--surface)" stroke="var(--copper)" strokeWidth="1.8"/><text x={xs(i)} y={72} textAnchor="middle" fontSize="8" fill="var(--stone-light)" fontFamily="Jost,sans-serif">{d.w}</text></g>)})}
+        </svg>
+        <div style={{background:"var(--forest-pale)",borderRadius:7,padding:"9px 11px",marginTop:10}}>
+          <p style={{fontSize:12,color:"var(--forest)"}}>Flexibilidad +<strong>129%</strong> · Fuerza de core +<strong>160%</strong> en 8 semanas</p>
+        </div>
+      </div>
+    </div>
+    <p className="lbl">Notas de Elena</p>
+    {[{d:"23 jun",txt:"Semana 7 completada. La coordinación entre respiración y movimiento ha mejorado notablemente. El objetivo de esta última fase es estabilizar la pelvis en Leg Circles, algo en lo que ya se nota el progreso."}].map((n,i)=>(
+      <div key={i} style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:11,padding:"14px 15px"}}>
+        <div style={{display:"flex",gap:9,alignItems:"center",marginBottom:8}}><div className="avt" style={{width:28,height:28,fontSize:10}}>EV</div><p style={{fontSize:11,color:"var(--stone-light)"}}>{n.d} · Elena Vidal</p></div>
+        <p style={{fontSize:13,color:"var(--charcoal)",lineHeight:1.6,fontStyle:"italic"}}>{n.txt}</p>
+      </div>
+    ))}
+  </div>);
+};
+
+const Citas=()=>{
+  const[loc,setLoc]=useState(null);const[inst,setInst]=useState(null);const[dt,setDt]=useState(null);const[sl,setSl]=useState(null);const[done,setDone]=useState(false);
+  if(done)return(<div className="fade" style={{padding:"0 20px 32px",display:"flex",flexDirection:"column",alignItems:"center",paddingTop:56}}>
+    <div style={{width:68,height:68,borderRadius:"50%",background:"var(--forest-pale)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:18}}><Icon n="chk" sz={28} c="var(--forest)"/></div>
+    <h2 style={{fontFamily:"var(--font-display)",fontSize:26,fontWeight:400,color:"var(--charcoal)",marginBottom:6,fontStyle:"italic"}}>¡Sesión reservada!</h2>
+    <p style={{fontSize:13,color:"var(--stone-light)",textAlign:"center",lineHeight:1.6,marginBottom:26}}>Recibirás un recordatorio 24 horas antes. Recuerda calcetines antideslizantes.</p>
+    <button className="btn-out" onClick={()=>{setDone(false);setLoc(null);setInst(null);setDt(null);setSl(null)}}>Reservar otra sesión</button>
+  </div>);
+  const ins=loc?INSTS.find(l=>l.loc===loc)?.is:[];
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:18}}>
+      <p style={{fontSize:12,color:"var(--stone-light)",marginBottom:2}}>Nueva reserva</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:24,fontWeight:400,color:"var(--charcoal)",fontStyle:"italic"}}>Reservar sesión</h2>
+    </div>
+    <div style={{background:"var(--copper-pale)",borderRadius:9,padding:"11px 13px",display:"flex",gap:9,marginBottom:20}}>
+      <span style={{fontSize:13}}>🎫</span>
+      <p style={{fontSize:12,color:"var(--copper)",lineHeight:1.4}}>Te quedan <strong>4 sesiones</strong> en tu bono.</p>
+    </div>
+    <p className="lbl">1. Estudio</p>
+    <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
+      {INSTS.map(l=>(
+        <button key={l.loc} onClick={()=>{setLoc(l.loc);setInst(null)}} style={{background:"var(--surface)",border:`1.5px solid ${loc===l.loc?"var(--forest)":"var(--border)"}`,borderRadius:9,padding:"13px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer",textAlign:"left"}}>
+          <div><p style={{fontSize:13,fontWeight:500,color:"var(--charcoal)"}}>{l.loc}</p><p style={{fontSize:11,color:"var(--stone-light)",marginTop:2}}>Studio Velázquez · Madrid</p></div>
+          {loc===l.loc&&<div style={{width:20,height:20,borderRadius:"50%",background:"var(--forest)",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon n="chk" sz={11} c="white"/></div>}
+        </button>
+      ))}
+    </div>
+    {loc&&(<>
+      <p className="lbl">2. Instructora</p>
+      <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
+        {ins.map(p=>(
+          <button key={p.n} onClick={()=>setInst(p.n)} style={{background:"var(--surface)",border:`1.5px solid ${inst===p.n?"var(--forest)":"var(--border)"}`,borderRadius:9,padding:"12px 13px",display:"flex",alignItems:"center",gap:11,cursor:"pointer",textAlign:"left"}}>
+            <div className="avt" style={{width:36,height:36,background:inst===p.n?"var(--forest)":"var(--forest-pale)",color:inst===p.n?"white":"var(--forest)"}}>{p.i}</div>
+            <div style={{flex:1}}><p style={{fontSize:13,fontWeight:500,color:"var(--charcoal)"}}>{p.n}</p><span className="chip chip-f" style={{fontSize:10,padding:"2px 7px",marginTop:3,display:"inline-flex"}}>{p.s}</span></div>
+          </button>
+        ))}
+      </div>
+    </>)}
+    {inst&&(<>
+      <p className="lbl">3. Fecha</p>
+      <div style={{display:"flex",gap:8,marginBottom:20,overflowX:"auto",paddingBottom:4}}>
+        {DATES.map(d=>(
+          <button key={d.n} onClick={()=>{setDt(d.n);setSl(null)}} style={{flexShrink:0,width:55,padding:"9px 4px",borderRadius:9,border:`1.5px solid ${dt===d.n?"var(--forest)":"var(--border)"}`,background:dt===d.n?"var(--forest)":"var(--surface)",cursor:"pointer",textAlign:"center"}}>
+            <p style={{fontSize:9,fontWeight:500,color:dt===d.n?"rgba(255,255,255,.65)":"var(--stone-light)",textTransform:"uppercase",marginBottom:3}}>{d.d}</p>
+            <p style={{fontFamily:"var(--font-display)",fontSize:20,color:dt===d.n?"white":"var(--charcoal)",lineHeight:1}}>{d.n}</p>
+            <p style={{fontSize:9,color:dt===d.n?"rgba(255,255,255,.6)":"var(--stone-light)",marginTop:3}}>{d.m}</p>
+          </button>
+        ))}
+      </div>
+    </>)}
+    {dt&&(<>
+      <p className="lbl">4. Hora</p>
+      <div style={{display:"flex",flexDirection:"column",gap:7,marginBottom:22}}>
+        {TIMES.map((row,ri)=>(
+          <div key={ri} style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:7}}>
+            {row.map((s,si)=><div key={si} className={`slot${s==="—"?" off":""}${sl===s?" on":""}`} onClick={()=>s!=="—"&&setSl(s)}>{s}</div>)}
+          </div>
+        ))}
+      </div>
+      {sl&&<button className="btn" style={{width:"100%",padding:"13px"}} onClick={()=>setDone(true)}>Confirmar · {sl} h</button>}
+    </>)}
+  </div>);
+};
+
+const Msgs=()=>{
+  const[m,setM]=useState("");const[sent,setSent]=useState(false);
+  const send=()=>m.trim()&&(setSent(true),setM(""),setTimeout(()=>setSent(false),3000));
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:18}}>
+      <p style={{fontSize:12,color:"var(--stone-light)",marginBottom:2}}>Comunicación</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:24,fontWeight:400,color:"var(--charcoal)",fontStyle:"italic"}}>Notas de clase</h2>
+    </div>
+    {sent&&<div style={{background:"var(--forest-pale)",borderRadius:8,padding:"11px 13px",marginBottom:14,display:"flex",gap:8,alignItems:"center"}}><Icon n="chk" sz={14} c="var(--forest)"/><p style={{fontSize:13,color:"var(--forest)",fontWeight:500}}>Mensaje enviado.</p></div>}
+    <div style={{display:"flex",flexDirection:"column",gap:10}}>
+      {MSGS.map((msg,i)=>(
+        <div key={i} style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:11,padding:"14px 15px"}}>
+          <p style={{fontSize:10,color:"var(--stone-light)",marginBottom:4,textTransform:"uppercase",letterSpacing:".6px",fontWeight:500}}>{msg.d}</p>
+          <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:8}}><div className="avt" style={{width:26,height:26,fontSize:9}}>{msg.i}</div><p style={{fontSize:12,fontWeight:500,color:"var(--forest)"}}>{msg.who}</p></div>
+          <p style={{fontSize:13,color:"var(--charcoal)",lineHeight:1.6,fontStyle:"italic"}}>{msg.txt}</p>
+        </div>
+      ))}
+    </div>
+    <div style={{marginTop:22}}>
+      <p style={{fontSize:10,color:"var(--stone-light)",fontWeight:500,letterSpacing:".7px",textTransform:"uppercase",marginBottom:9}}>Mensaje a tu instructora</p>
+      <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:9,display:"flex",alignItems:"center",padding:"10px 14px",gap:9}}>
+        <input type="text" placeholder="Pregunta a Elena..." value={m} onChange={e=>setM(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} style={{flex:1,border:"none",outline:"none",fontFamily:"var(--font-body)",fontSize:13,color:"var(--charcoal)",background:"transparent"}}/>
+        <button onClick={send} style={{background:"none",border:"none",cursor:"pointer",color:m?"var(--forest)":"var(--stone-light)"}}><Icon n="send" sz={16} c={m?"var(--forest)":"var(--stone-light)"}/></button>
+      </div>
+    </div>
+  </div>);
+};
+
+const App=()=>{
+  const[tab,setTab]=useState("home");const ref=useRef(null);
+  useEffect(()=>{if(ref.current)ref.current.scrollTop=0},[tab]);
+  const S={home:<Home setTab={setTab}/>,plan:<Plan/>,prog:<Prog/>,citas:<Citas/>,msgs:<Msgs/>};
+  return(<div className="shell">
+    <div className="sbar"><span className="sbar-time">9:41</span><div style={{display:"flex",gap:5,alignItems:"center"}}><svg width="15" height="11" viewBox="0 0 15 11" fill="none"><path d="M7.5 2.5C10.5 2.5 13 4 14.5 6.5" stroke="#221E18" strokeOpacity=".4" strokeWidth="1.4" strokeLinecap="round"/><path d="M7.5 5C9.5 5 11.3 6 12.5 7.5" stroke="#221E18" strokeOpacity=".7" strokeWidth="1.4" strokeLinecap="round"/><circle cx="7.5" cy="9" r="1.3" fill="#221E18"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none"><rect x=".5" y=".5" width="18" height="10" rx="2" stroke="#221E18" strokeOpacity=".4"/><rect x="1.5" y="1.5" width="13" height="8" rx="1.5" fill="#221E18" fillOpacity=".85"/><path d="M20 4v3a1.5 1.5 0 000-3z" fill="#221E18" fillOpacity=".4"/></svg></div></div>
+    <div className="hdr"><span className="wordmark">studio <span>velázquez</span></span><button style={{background:"none",border:"none",cursor:"pointer",position:"relative"}}><Icon n="bell" sz={19} c="var(--stone)"/><span className="ndot" style={{top:1,right:1}}/></button></div>
+    <div className="content" ref={ref}><div style={{padding:"18px 0 0"}}>{S[tab]}</div></div>
+    <TabBar active={tab} set={setTab}/>
+  </div>);
+};
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script></body></html>

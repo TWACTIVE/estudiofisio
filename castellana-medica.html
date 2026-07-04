@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Castellana Médica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,500;0,700;1,300;1,500&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F8FAF8;
+  --teal:#1E4D3A;
+  --teal-mid:#2E6B50;
+  --gold:#C9A84C;
+  --text:#1A2420;
+  --muted:#5A6A62;
+  --surface:#FFFFFF;
+  --border:#D8E4DE;
+  --radius:12px;
+  --radius-sm:6px;
+}
+body{background:#CBD8D2;font-family:'Source Sans 3',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.phone{width:390px;height:844px;background:var(--bg);border-radius:44px;overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,0.28),0 0 0 1px rgba(0,0,0,0.08)}
+.status-bar{background:var(--teal);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:14px 24px 10px;font-size:12px;font-weight:500;flex-shrink:0}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth}
+.screen::-webkit-scrollbar{display:none}
+.tab-bar{background:var(--surface);border-top:1px solid var(--border);display:flex;flex-shrink:0;padding-bottom:16px}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0 4px;cursor:pointer;transition:color 0.2s}
+.tab span{font-size:10px;font-weight:500;font-family:'Source Sans 3',sans-serif}
+.tab.active{color:var(--teal)}
+.tab:not(.active){color:var(--muted)}
+.tab-icon{width:22px;height:22px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.screen > *{animation:fadeUp 0.25s ease forwards}
+/* Header */
+.app-header{background:var(--teal);padding:20px 24px 28px;color:#fff}
+.header-wordmark{font-family:'Spectral',serif;font-size:18px;font-weight:500;letter-spacing:0.02em;display:flex;align-items:baseline;gap:6px}
+.header-wordmark span{font-weight:300;font-size:13px;opacity:0.65;font-style:italic}
+.header-greeting{font-size:13px;font-weight:300;opacity:0.75;margin-top:14px}
+.header-patient{font-family:'Spectral',serif;font-size:20px;font-weight:500;margin-top:3px}
+.header-ref{font-size:11px;opacity:0.55;margin-top:3px;font-variant-numeric:tabular-nums;letter-spacing:0.04em}
+/* Vitals strip */
+.vitals-strip{background:rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;margin-top:14px;display:flex;gap:2px}
+.vital-item{flex:1;text-align:center;padding:0 8px;border-right:1px solid rgba(255,255,255,0.15)}
+.vital-item:last-child{border-right:none}
+.vital-val{font-family:'Spectral',serif;font-size:17px;font-weight:500;font-variant-numeric:tabular-nums}
+.vital-key{font-size:10px;opacity:0.6;margin-top:3px;text-transform:uppercase;letter-spacing:0.06em}
+/* Cards */
+.card{background:var(--surface);border-radius:var(--radius);padding:18px;margin:0 16px 12px;box-shadow:0 1px 6px rgba(0,0,0,0.06)}
+.section-label{font-size:11px;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);padding:20px 20px 8px}
+/* Next appt */
+.appt-card{background:var(--teal);color:#fff;border-radius:var(--radius);padding:18px;margin:16px 16px 12px}
+.appt-label{font-size:11px;opacity:0.65;text-transform:uppercase;letter-spacing:0.07em}
+.appt-date{font-family:'Spectral',serif;font-size:20px;font-weight:500;margin-top:4px}
+.appt-detail{font-size:13px;opacity:0.8;margin-top:2px}
+.appt-badge{background:var(--gold);border-radius:4px;padding:4px 10px;font-size:11px;font-weight:600;color:#1A2420;float:right;margin-top:-32px}
+/* Referrals */
+.referral-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.referral-row:last-child{border-bottom:none}
+.ref-badge{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ref-name{font-size:13px;font-weight:600;color:var(--text)}
+.ref-detail{font-size:11px;color:var(--muted);margin-top:2px}
+.ref-status{font-size:10px;font-weight:600;border-radius:4px;padding:3px 7px;background:#EAF3EF;color:#1E4D3A}
+/* Plan screen */
+.rx-card{background:var(--surface);border-radius:var(--radius);padding:18px;margin:0 16px 12px;box-shadow:0 1px 6px rgba(0,0,0,0.06)}
+.rx-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.rx-name{font-family:'Spectral',serif;font-size:16px;font-weight:500;color:var(--text)}
+.rx-dose{font-size:12px;color:var(--muted);margin-top:3px}
+.rx-pill{font-size:11px;font-weight:600;background:#EAF3EF;color:#1E4D3A;border-radius:4px;padding:3px 8px;flex-shrink:0}
+.rx-progress{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:12px}
+.rx-progress-fill{height:100%;background:var(--teal);border-radius:2px}
+/* Progress */
+.chart-svg{width:100%;height:100px;display:block}
+.chart-label{font-size:10px;fill:var(--muted);font-family:'Source Sans 3',sans-serif;font-variant-numeric:tabular-nums}
+.metric-row-big{display:flex;gap:10px;margin:0 16px 12px}
+.metric-box{flex:1;background:var(--surface);border-radius:var(--radius-sm);padding:14px;box-shadow:0 1px 6px rgba(0,0,0,0.06)}
+.metric-box-val{font-family:'Spectral',serif;font-size:22px;font-weight:500;color:var(--teal);font-variant-numeric:tabular-nums}
+.metric-box-unit{font-size:11px;color:var(--muted)}
+.metric-box-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-top:6px}
+.metric-box-trend{font-size:11px;color:var(--teal-mid);margin-top:4px}
+/* Booking */
+.booking-step-label{font-size:11px;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);padding:20px 20px 10px}
+.option-card{background:var(--surface);border-radius:var(--radius-sm);padding:14px 16px;margin:0 16px 8px;display:flex;align-items:center;gap:12px;cursor:pointer;border:1.5px solid var(--border);transition:all 0.18s}
+.option-card.selected{border-color:var(--teal);background:#EAF3EF}
+.option-label{font-size:14px;font-weight:500;color:var(--text)}
+.option-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 16px}
+.time-chip{background:var(--surface);border-radius:6px;padding:10px 6px;text-align:center;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);color:var(--text);transition:all 0.15s;font-variant-numeric:tabular-nums}
+.time-chip.selected{background:var(--teal);color:#fff;border-color:var(--teal)}
+.time-chip.unavailable{background:#EEF2F0;color:#B0BDB7;cursor:default}
+.confirm-btn{background:var(--teal);color:#fff;border-radius:6px;padding:16px;text-align:center;font-size:15px;font-weight:600;margin:8px 16px 20px;cursor:pointer;font-family:'Source Sans 3',sans-serif;letter-spacing:0.02em}
+.confirm-success{background:linear-gradient(135deg,var(--teal),var(--teal-mid));color:#fff;border-radius:var(--radius);padding:28px;margin:20px 16px;text-align:center}
+.success-icon{font-size:42px;margin-bottom:12px}
+.success-title{font-family:'Spectral',serif;font-size:22px;font-weight:500;margin-bottom:6px}
+.success-detail{font-size:13px;opacity:0.8;margin-top:4px}
+/* Messages */
+.msg-bubble{max-width:78%;padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.55;margin:4px 16px}
+.msg-bubble.doctor{background:var(--surface);color:var(--text);border-bottom-left-radius:3px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.msg-bubble.user{background:var(--teal);color:#fff;border-bottom-right-radius:3px;margin-left:auto}
+.msg-time{font-size:10px;color:var(--muted);margin:2px 16px 10px}
+.msg-time.right{text-align:right}
+.msg-sender{font-size:11px;font-weight:600;color:var(--teal);margin:12px 16px 4px}
+.msg-input-row{background:var(--surface);border-top:1px solid var(--border);padding:12px 16px;display:flex;gap:10px;align-items:center;flex-shrink:0}
+.msg-input{flex:1;background:var(--bg);border-radius:6px;padding:10px 14px;font-size:13px;font-family:'Source Sans 3',sans-serif;border:1px solid var(--border);outline:none;color:var(--text)}
+.msg-send-btn{width:36px;height:36px;border-radius:6px;background:var(--teal);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+/* Expandable */
+.care-header{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer}
+.care-chevron{color:var(--muted);transition:transform 0.2s}
+.care-chevron.open{transform:rotate(180deg)}
+.care-detail-txt{background:#F2F7F4;padding:14px 18px;font-size:13px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border)}
+.doc-note{background:linear-gradient(135deg,#EAF3EF,#E0EDE8);border-radius:var(--radius);padding:16px;margin:0 16px 12px;border-left:3px solid var(--teal)}
+.doc-note-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--teal);margin-bottom:6px}
+.doc-note-text{font-size:13px;color:var(--text);line-height:1.55}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const SVGIcons = {
+  home: (active) => (
+    <svg viewBox="0 0 24 24" fill={active?"#1E4D3A":"none"} stroke={active?"#1E4D3A":"#5A6A62"} strokeWidth="1.8" className="tab-icon">
+      <path d="M3 9.5L12 3l9 6.5V21H3V9.5z" strokeLinejoin="round"/>
+    </svg>
+  ),
+  plan: (active) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke={active?"#1E4D3A":"#5A6A62"} strokeWidth="1.8" className="tab-icon">
+      <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+      <rect x="9" y="3" width="6" height="4" rx="1"/>
+      <path d="M9 12h6M9 16h4" strokeLinecap="round"/>
+    </svg>
+  ),
+  progress: (active) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke={active?"#1E4D3A":"#5A6A62"} strokeWidth="1.8" className="tab-icon">
+      <path d="M3 17l5-5 4 4 9-9" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  book: (active) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke={active?"#1E4D3A":"#5A6A62"} strokeWidth="1.8" className="tab-icon">
+      <rect x="3" y="4" width="18" height="18" rx="2"/>
+      <path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/>
+    </svg>
+  ),
+  msg: (active) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke={active?"#1E4D3A":"#5A6A62"} strokeWidth="1.8" className="tab-icon">
+      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" strokeLinejoin="round"/>
+    </svg>
+  )
+};
+
+function HomeScreen() {
+  return (
+    <div>
+      <div className="app-header">
+        <div className="header-wordmark">Castellana Médica <span>Medicina Privada</span></div>
+        <div className="header-greeting">Buenos días,</div>
+        <div className="header-patient">D. Fernando Alcázar</div>
+        <div className="header-ref">Nº paciente: CM-2024-1847 · Dr. Ignacio Saura</div>
+        <div className="vitals-strip">
+          <div className="vital-item">
+            <div className="vital-val">120/78</div>
+            <div className="vital-key">TA (mmHg)</div>
+          </div>
+          <div className="vital-item">
+            <div className="vital-val">98</div>
+            <div className="vital-key">Glucosa</div>
+          </div>
+          <div className="vital-item">
+            <div className="vital-val">72</div>
+            <div className="vital-key">FC (bpm)</div>
+          </div>
+          <div className="vital-item">
+            <div className="vital-val">97%</div>
+            <div className="vital-key">SpO₂</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="appt-card">
+        <div className="appt-label">Próxima consulta</div>
+        <div className="appt-badge">Confirmada</div>
+        <div className="appt-date">Lunes, 7 julio</div>
+        <div className="appt-detail">Dr. Ignacio Saura · 10:30h</div>
+        <div className="appt-detail" style={{opacity:0.65,fontSize:12,marginTop:3}}>Revisión semestral + analítica de control</div>
+      </div>
+
+      <div className="section-label">Derivaciones activas</div>
+      <div className="card">
+        {[
+          {icon:'❤️',bg:'#FFF0F0',name:'Cardiología',detail:'Dr. Enrique Valls · Pendiente 15 jul',status:'Programada'},
+          {icon:'👁',bg:'#F0F4FF',name:'Oftalmología',detail:'Dra. Marta Ibáñez · Completada',status:'Completada'},
+          {icon:'🦴',bg:'#FFF8EE',name:'Traumatología',detail:'Dr. Jorge Pons · Pendiente',status:'Pendiente'},
+        ].map(r=>(
+          <div key={r.name} className="referral-row">
+            <div className="ref-badge" style={{background:r.bg}}>{r.icon}</div>
+            <div style={{flex:1}}>
+              <div className="ref-name">{r.name}</div>
+              <div className="ref-detail">{r.detail}</div>
+            </div>
+            <div className="ref-status" style={r.status==='Completada'?{background:'#EAF3EF',color:'#1E4D3A'}:r.status==='Pendiente'?{background:'#FEF3E2',color:'#B86D0A'}:{}}>{r.status}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="section-label">Alertas clínicas</div>
+      <div className="card" style={{marginBottom:24}}>
+        {[
+          {icon:'💊',text:'Analítica de control programada para el 7 julio',type:'info'},
+          {icon:'📋',text:'Informe de cardiología pendiente de revisión',type:'warn'},
+        ].map((a,i)=>(
+          <div key={i} style={{background:a.type==='warn'?'#FEF3E2':'#EAF3EF',borderRadius:6,padding:'10px 12px',marginBottom:i===0?8:0,display:'flex',gap:10,alignItems:'flex-start'}}>
+            <span style={{fontSize:15}}>{a.icon}</span>
+            <span style={{fontSize:12,color:'#1A2420',lineHeight:1.5}}>{a.text}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PlanScreen() {
+  const [open, setOpen] = useState(null);
+  const meds = [
+    {name:'Atorvastatina 40mg',dose:'1 comprimido · Noche',fill:80,detail:'Tomar con o sin alimentos, preferiblemente por la noche. Evitar zumo de pomelo. Control hepático a los 3 meses.'},
+    {name:'Ramipril 5mg',dose:'1 comprimido · Mañana en ayunas',fill:65,detail:'Tomar con agua, antes del desayuno. Si aparece tos seca persistente, comunicar al médico. No suspender bruscamente.'},
+    {name:'AAS 100mg',dose:'1 comprimido · Con desayuno',fill:90,detail:'Tomar siempre con alimentos para proteger el estómago. Precaución ante procedimientos quirúrgicos.'},
+    {name:'Metformina 850mg',dose:'1 comprimido · Comida y cena',fill:55,detail:'Tomar con las comidas para minimizar molestias gastrointestinales. Suspender 48h antes de procedimientos con contraste.'},
+  ];
+  const recs = [
+    {icon:'🏃',bg:'#EAF3EF',name:'Ejercicio aeróbico moderado',freq:'30 min · 5 días/semana',detail:'Caminar a paso ligero, natación o bicicleta estática. Monitorizar la frecuencia cardíaca (objetivo: 100-130 bpm). Evitar ejercicio de alta intensidad sin supervisión.'},
+    {icon:'🥗',bg:'#F5F8EF',name:'Dieta mediterránea',freq:'Pautas nutricionales diarias',detail:'Reducir ingesta de sodio (<5g/día). Limitar grasas saturadas. Priorizar aceite de oliva, legumbres, pescado azul y verduras. Alcohol máximo 1 UBE/día.'},
+  ];
+  return (
+    <div>
+      <div style={{background:'#fff',borderBottom:'1px solid var(--border)',padding:'20px 20px 16px'}}>
+        <div style={{fontFamily:"'Spectral',serif",fontSize:22,fontWeight:500,color:'var(--teal)'}}>Plan terapéutico</div>
+        <div style={{fontSize:13,color:'var(--muted)',marginTop:4}}>Dr. Ignacio Saura · Actualizado 15 junio</div>
+      </div>
+      <div className="section-label">Medicación activa</div>
+      {meds.map((m,i)=>(
+        <div key={i} className="rx-card" style={{cursor:'pointer'}} onClick={()=>setOpen(open===i?null:i)}>
+          <div className="rx-header">
+            <div>
+              <div className="rx-name">{m.name}</div>
+              <div className="rx-dose">{m.dose}</div>
+            </div>
+            <div className="rx-pill">Activa</div>
+          </div>
+          <div style={{display:'flex',alignItems:'center',gap:10}}>
+            <div className="rx-progress" style={{flex:1}}><div className="rx-progress-fill" style={{width:`${m.fill}%`}}/></div>
+            <span style={{fontSize:11,color:'var(--muted)',fontVariantNumeric:'tabular-nums'}}>{m.fill}%</span>
+          </div>
+          {open===i && <div style={{fontSize:13,color:'var(--muted)',marginTop:12,lineHeight:1.6,paddingTop:12,borderTop:'1px solid var(--border)'}}>{m.detail}</div>}
+        </div>
+      ))}
+      <div className="section-label">Recomendaciones</div>
+      {recs.map((r,i)=>(
+        <div key={i} style={{background:'#fff',borderRadius:12,margin:'0 16px 10px',overflow:'hidden',boxShadow:'0 1px 6px rgba(0,0,0,0.06)'}}>
+          <div className="care-header" onClick={()=>setOpen(open===(i+10)?null:i+10)}>
+            <div style={{width:40,height:40,borderRadius:8,background:r.bg,display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,flexShrink:0}}>{r.icon}</div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:14,fontWeight:600,color:'var(--text)'}}>{r.name}</div>
+              <div style={{fontSize:12,color:'var(--muted)',marginTop:1}}>{r.freq}</div>
+            </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#5A6A62" strokeWidth="2" width="18" height="18" className={`care-chevron${open===(i+10)?' open':''}`}><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          {open===(i+10) && <div className="care-detail-txt">{r.detail}</div>}
+        </div>
+      ))}
+      <div className="doc-note" style={{marginBottom:24}}>
+        <div className="doc-note-label">Nota médica</div>
+        <div className="doc-note-text">La tensión arterial ha mejorado notablemente. Mantenemos la pauta actual. En la próxima revisión valoraremos reducir la dosis de Ramipril si el control sigue siendo bueno.</div>
+        <div style={{fontSize:11,color:'var(--muted)',marginTop:8}}>— Dr. Ignacio Saura, 15 junio 2025</div>
+      </div>
+    </div>
+  );
+}
+
+function ProgressScreen() {
+  const bpSys = [145,141,138,135,132,128,124,120];
+  const bpDia = [92,90,88,86,85,82,80,78];
+  const glucose = [112,108,105,102,104,100,99,98];
+  const minV=60,maxV=160,range=maxV-minV;
+  const syspts = bpSys.map((v,i)=>`${32+i*40},${95-(((v-minV)/range)*80)}`).join(' ');
+  const diaPts = bpDia.map((v,i)=>`${32+i*40},${95-(((v-minV)/range)*80)}`).join(' ');
+  return (
+    <div>
+      <div style={{background:'#fff',borderBottom:'1px solid var(--border)',padding:'20px 20px 16px'}}>
+        <div style={{fontFamily:"'Spectral',serif",fontSize:22,fontWeight:500,color:'var(--teal)'}}>Seguimiento clínico</div>
+        <div style={{fontSize:13,color:'var(--muted)',marginTop:4}}>Últimas 8 semanas</div>
+      </div>
+
+      <div className="section-label">Tensión arterial</div>
+      <div className="card" style={{marginBottom:12}}>
+        <div style={{display:'flex',justifyContent:'space-between',marginBottom:14}}>
+          <div>
+            <div style={{fontFamily:"'Spectral',serif",fontSize:26,fontWeight:500,color:'var(--teal)',fontVariantNumeric:'tabular-nums'}}>120/78 <span style={{fontSize:13,color:'var(--muted)',fontFamily:'Source Sans 3'}}>mmHg</span></div>
+            <div style={{fontSize:12,color:'#4A9B6F',fontWeight:600,marginTop:2}}>Óptima ✓</div>
+          </div>
+          <div style={{display:'flex',gap:12,alignItems:'center'}}>
+            <div style={{display:'flex',alignItems:'center',gap:5,fontSize:11,color:'var(--muted)'}}><div style={{width:12,height:2.5,background:'var(--teal)',borderRadius:1}}/> Sistólica</div>
+            <div style={{display:'flex',alignItems:'center',gap:5,fontSize:11,color:'var(--muted)'}}><div style={{width:12,height:2.5,background:'var(--gold)',borderRadius:1}}/> Diastólica</div>
+          </div>
+        </div>
+        <svg viewBox="0 0 332 100" className="chart-svg">
+          {[80,100,120,140].map(v=>(
+            <g key={v}>
+              <line x1="32" y1={95-(((v-minV)/range)*80)} x2="312" y2={95-(((v-minV)/range)*80)} stroke="#E8EDE9" strokeWidth="1"/>
+              <text x="8" y={98-(((v-minV)/range)*80)} className="chart-label">{v}</text>
+            </g>
+          ))}
+          <polyline points={syspts} fill="none" stroke="#1E4D3A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <polyline points={diaPts} fill="none" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="4,3"/>
+          {bpSys.map((v,i)=>(<circle key={i} cx={32+i*40} cy={95-(((v-minV)/range)*80)} r={i===7?4:2.5} fill="#1E4D3A"/>))}
+          {['May','Jun','Jul','Ago'].map((m,i)=>(<text key={m} x={32+i*80} y="100" className="chart-label" textAnchor="middle">{m}</text>))}
+        </svg>
+      </div>
+
+      <div className="section-label">Parámetros metabólicos</div>
+      <div className="metric-row-big">
+        {[
+          {val:'98',unit:'mg/dL',label:'Glucosa',trend:'↓ desde 112 · Bien'},
+          {val:'4.8',unit:'mmol/L',label:'Colesterol LDL',trend:'↓ desde 6.2 · Bien'},
+        ].map(m=>(
+          <div key={m.label} className="metric-box">
+            <div className="metric-box-val">{m.val} <span className="metric-box-unit">{m.unit}</span></div>
+            <div className="metric-box-label">{m.label}</div>
+            <div className="metric-box-trend">{m.trend}</div>
+          </div>
+        ))}
+      </div>
+      <div className="metric-row-big" style={{marginBottom:12}}>
+        {[
+          {val:'72',unit:'bpm',label:'Frec. cardíaca',trend:'Ritmo sinusal normal'},
+          {val:'24.8',unit:'IMC',label:'Peso corporal',trend:'83.2 kg · Normopeso'},
+        ].map(m=>(
+          <div key={m.label} className="metric-box">
+            <div className="metric-box-val">{m.val} <span className="metric-box-unit">{m.unit}</span></div>
+            <div className="metric-box-label">{m.label}</div>
+            <div className="metric-box-trend">{m.trend}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="section-label">Historial de analíticas</div>
+      <div className="card" style={{marginBottom:24}}>
+        {[
+          {date:'15 Jun 2025',params:'Bioquímica + Hemograma',result:'Normal'},
+          {date:'10 Mar 2025',params:'Perfil lipídico completo',result:'LDL en objetivo'},
+          {date:'12 Dic 2024',params:'HbA1c + Glucosa',result:'HbA1c 5.9%'},
+        ].map(a=>(
+          <div key={a.date} style={{display:'flex',alignItems:'center',padding:'10px 0',borderBottom:'1px solid var(--border)'}}>
+            <div style={{flex:1}}>
+              <div style={{fontSize:13,fontWeight:500,color:'var(--text)'}}>{a.params}</div>
+              <div style={{fontSize:11,color:'var(--muted)',marginTop:2}}>{a.date}</div>
+            </div>
+            <div style={{fontSize:11,fontWeight:600,background:'#EAF3EF',color:'#1E4D3A',borderRadius:4,padding:'3px 8px'}}>{a.result}</div>
+          </div>
+        ))}
+        <div style={{height:0,borderBottom:'none'}}/>
+      </div>
+    </div>
+  );
+}
+
+function BookingsScreen() {
+  const [step,setStep]=useState(0);
+  const [loc,setLoc]=useState(null);
+  const [doc,setDoc]=useState(null);
+  const [svc,setSvc]=useState(null);
+  const [time,setTime]=useState(null);
+  const [done,setDone]=useState(false);
+
+  const locs=[{id:0,name:'Castellana 180',addr:'Pº de la Castellana 180, Madrid'},{id:1,name:'Serrano 62',addr:'Serrano 62, Madrid'}];
+  const docs=[{id:0,name:'Dr. Ignacio Saura',role:'Medicina interna'},{id:1,name:'Dra. Carmen Vidal',role:'Endocrinología'},{id:2,name:'Dr. Rafael Torres',role:'Cardiología'}];
+  const svcs=[{id:0,name:'Consulta médica general',price:'120€'},{id:1,name:'Revisión anual completa',price:'180€'},{id:2,name:'Consulta con analítica',price:'150€'},{id:3,name:'Segunda opinión',price:'100€'}];
+  const times=['8:30','9:00','9:30','10:00','10:30','11:00','12:00','12:30','17:00','18:00','18:30'];
+  const unavail=['9:00','10:30','12:00'];
+
+  if(done) return (
+    <div>
+      <div style={{background:'#fff',borderBottom:'1px solid var(--border)',padding:'20px 20px 16px'}}>
+        <div style={{fontFamily:"'Spectral',serif",fontSize:22,fontWeight:500,color:'var(--teal)'}}>Citas</div>
+      </div>
+      <div className="confirm-success">
+        <div className="success-icon">✓</div>
+        <div className="success-title">Cita confirmada</div>
+        <div className="success-detail">{locs[loc]?.name} · {docs[doc]?.name}</div>
+        <div className="success-detail">{svcs[svc]?.name} · {time}</div>
+      </div>
+      <div className="confirm-btn" onClick={()=>{setDone(false);setStep(0);setLoc(null);setDoc(null);setSvc(null);setTime(null)}}>Nueva cita</div>
+    </div>
+  );
+
+  return (
+    <div>
+      <div style={{background:'#fff',borderBottom:'1px solid var(--border)',padding:'20px 20px 16px'}}>
+        <div style={{fontFamily:"'Spectral',serif",fontSize:22,fontWeight:500,color:'var(--teal)'}}>Citas</div>
+        <div style={{display:'flex',gap:6,marginTop:12}}>
+          {['Centro','Médico','Servicio','Hora'].map((s,i)=>(
+            <div key={s} style={{flex:1,height:3,borderRadius:1,background:i<=step?'var(--teal)':'var(--border)'}}/>
+          ))}
+        </div>
+      </div>
+
+      {step===0 && <>
+        <div className="booking-step-label">Selecciona centro</div>
+        {locs.map(l=>(
+          <div key={l.id} className={`option-card${loc===l.id?' selected':''}`} onClick={()=>{setLoc(l.id);setStep(1)}}>
+            <div style={{width:36,height:36,background:'#EAF3EF',borderRadius:6,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,flexShrink:0}}>🏥</div>
+            <div><div className="option-label">{l.name}</div><div className="option-sub">{l.addr}</div></div>
+          </div>
+        ))}
+      </>}
+      {step===1 && <>
+        <div className="booking-step-label">Selecciona especialista</div>
+        {docs.map(d=>(
+          <div key={d.id} className={`option-card${doc===d.id?' selected':''}`} onClick={()=>{setDoc(d.id);setStep(2)}}>
+            <div style={{width:36,height:36,background:'#EAF3EF',borderRadius:6,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,flexShrink:0}}>👨‍⚕️</div>
+            <div><div className="option-label">{d.name}</div><div className="option-sub">{d.role}</div></div>
+          </div>
+        ))}
+      </>}
+      {step===2 && <>
+        <div className="booking-step-label">Selecciona servicio</div>
+        {svcs.map(s=>(
+          <div key={s.id} className={`option-card${svc===s.id?' selected':''}`} onClick={()=>{setSvc(s.id);setStep(3)}}>
+            <div style={{width:36,height:36,background:'#EAF3EF',borderRadius:6,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,flexShrink:0}}>🩺</div>
+            <div style={{flex:1}}><div className="option-label">{s.name}</div></div>
+            <div style={{fontWeight:600,color:'var(--teal)',fontVariantNumeric:'tabular-nums'}}>{s.price}</div>
+          </div>
+        ))}
+      </>}
+      {step===3 && <>
+        <div className="booking-step-label">Selecciona hora · Lunes 7 julio</div>
+        <div className="time-grid">
+          {times.map(t=>(
+            <div key={t} className={`time-chip${unavail.includes(t)?' unavailable':time===t?' selected':''}`} onClick={()=>!unavail.includes(t)&&setTime(t)}>{t}</div>
+          ))}
+        </div>
+        {time && <div className="confirm-btn" onClick={()=>setDone(true)}>Confirmar cita</div>}
+      </>}
+    </div>
+  );
+}
+
+function MessagesScreen() {
+  const msgs=[
+    {from:'doctor',name:'Dr. Ignacio Saura',text:'Estimado Fernando, le adjunto el resumen de su última analítica. Los valores lipídicos han mejorado considerablemente con la Atorvastatina.',time:'Hace 4 días'},
+    {from:'user',text:'Muchas gracias, doctor. ¿Debo continuar con la misma dosis?',time:'Hace 4 días'},
+    {from:'doctor',name:'Dr. Ignacio Saura',text:'Por ahora sí. En la revisión del 7 de julio valoraremos si podemos optimizar la pauta. La tensión arterial también ha evolucionado muy bien.',time:'Hace 4 días'},
+    {from:'doctor',name:'Dr. Ignacio Saura',text:'Recuerde acudir en ayunas para la analítica de control. Si tiene alguna duda antes de la cita, no dude en escribirme.',time:'Ayer'},
+    {from:'user',text:'Entendido. Hasta el lunes.',time:'Hoy'},
+  ];
+  return (
+    <div style={{display:'flex',flexDirection:'column',height:'100%'}}>
+      <div style={{background:'#fff',borderBottom:'1px solid var(--border)',padding:'20px 20px 16px',flexShrink:0}}>
+        <div style={{fontFamily:"'Spectral',serif",fontSize:22,fontWeight:500,color:'var(--teal)'}}>Mensajes</div>
+        <div style={{fontSize:13,color:'var(--muted)',marginTop:2}}>Dr. Ignacio Saura · Medicina Interna</div>
+      </div>
+      <div style={{flex:1,overflowY:'auto',padding:'12px 0'}}>
+        {msgs.map((m,i)=>(
+          <div key={i}>
+            {m.from==='doctor' && <div className="msg-sender">Dr. {m.name?.split(' ')[1]}</div>}
+            <div className={`msg-bubble ${m.from}`}>{m.text}</div>
+            <div className={`msg-time${m.from==='user'?' right':''}`}>{m.time}</div>
+          </div>
+        ))}
+      </div>
+      <div className="msg-input-row">
+        <input className="msg-input" placeholder="Escriba su consulta…" readOnly/>
+        <div className="msg-send-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [tab,setTab]=useState(0);
+  const screens=[HomeScreen,PlanScreen,ProgressScreen,BookingsScreen,MessagesScreen];
+  const Screen=screens[tab];
+  const tabs=[
+    {label:'Inicio',icon:SVGIcons.home},
+    {label:'Plan',icon:SVGIcons.plan},
+    {label:'Evolución',icon:SVGIcons.progress},
+    {label:'Citas',icon:SVGIcons.book},
+    {label:'Mensajes',icon:SVGIcons.msg},
+  ];
+  return (
+    <div className="phone">
+      <div className="status-bar">
+        <span>9:41</span>
+        <div style={{display:'flex',gap:6,alignItems:'center'}}>
+          <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="3" width="3" height="9" rx="1" fill="white" opacity="0.4"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white" opacity="0.6"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="white" opacity="0.8"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="white"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="22" height="10" rx="2" stroke="white" strokeWidth="1" fill="none" opacity="0.5"/><rect x="23" y="3.5" width="2" height="5" rx="1" fill="white" opacity="0.5"/><rect x="1.5" y="2.5" width="16" height="7" rx="1" fill="white"/></svg>
+        </div>
+      </div>
+      <div className="screen" key={tab}><Screen/></div>
+      <div className="tab-bar">
+        {tabs.map((t,i)=>(
+          <div key={i} className={`tab${tab===i?' active':''}`} onClick={()=>setTab(i)}>
+            {t.icon(tab===i)}
+            <span>{t.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

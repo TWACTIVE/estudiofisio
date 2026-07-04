@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>Claudio Coello Óptica</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F2F5F8;
+  --surface:#FFFFFF;
+  --ink:#1A1A1A;
+  --ink-mid:#444444;
+  --ink-soft:#7A7A7A;
+  --silver:#B0BAC5;
+  --silver-pale:#E8ECF0;
+  --amber:#C4751A;
+  --amber-pale:#FBF0E4;
+  --teal:#2A5C6B;
+  --teal-pale:#E4EEF1;
+  --border:#DDE2E8;
+  --shadow:0 1px 10px rgba(26,26,26,0.07);
+  --radius:12px;
+  --font-body:'IBM Plex Sans',system-ui,sans-serif;
+  --font-display:'IBM Plex Serif',Georgia,serif;
+}
+html,body{height:100%;background:#C0C8D0;font-family:var(--font-body);-webkit-font-smoothing:antialiased}
+#root{display:flex;justify-content:center;min-height:100vh}
+@media(min-width:480px){#root{padding:24px 0;background:#B4BCC4}}
+.shell{width:100%;max-width:430px;min-height:100vh;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+@media(min-width:480px){.shell{min-height:auto;max-height:900px;border-radius:38px;box-shadow:0 28px 80px rgba(26,26,26,0.2)}}
+.sbar{background:var(--bg);padding:12px 24px 6px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.sbar-t{font-size:15px;font-weight:500;color:var(--ink);letter-spacing:-.2px}
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.content::-webkit-scrollbar{display:none}
+.tabs{background:var(--surface);border-top:1px solid var(--border);display:flex;padding:8px 0 20px;flex-shrink:0}
+@media(min-width:480px){.tabs{padding-bottom:8px}}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;cursor:pointer;border:none;background:none;-webkit-tap-highlight-color:transparent}
+.tab-l{font-size:10px;font-weight:500;letter-spacing:.3px}
+.tab.on .tab-l{color:var(--ink)}
+.tab:not(.on) .tab-l{color:var(--silver)}
+.hdr{padding:14px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;background:var(--surface)}
+.wm{font-family:var(--font-body);font-size:12px;font-weight:600;color:var(--ink);letter-spacing:3px;text-transform:uppercase}
+.wm-s{font-family:var(--font-display);font-size:10px;font-style:italic;color:var(--ink-soft);margin-top:1px;letter-spacing:.5px}
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow)}
+.p{padding:18px 20px}
+.lbl{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--silver);margin-bottom:11px}
+.btn{background:var(--ink);color:#fff;border:none;border-radius:6px;padding:13px 22px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;letter-spacing:.2px}
+.btn-out{background:transparent;color:var(--ink);border:1.5px solid var(--ink);border-radius:6px;padding:10px 18px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer}
+.btn-a{background:var(--amber-pale);color:var(--amber);border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:500;cursor:pointer}
+.chip{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.3px}
+.chip-i{background:var(--silver-pale);color:var(--ink-mid)}
+.chip-a{background:var(--amber-pale);color:var(--amber)}
+.chip-t{background:var(--teal-pale);color:var(--teal)}
+.avt{border-radius:4px;background:var(--silver-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font-body);font-size:12px;font-weight:600;color:var(--ink-mid)}
+.trk{height:4px;background:var(--silver-pale);border-radius:2px}
+.fill{height:100%;background:var(--ink);border-radius:2px}
+.fade{animation:fu .3s ease forwards}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;border-radius:2px;outline:none;cursor:pointer;background:linear-gradient(to right,var(--ink) 0%,var(--ink) var(--pct,50%),var(--border) var(--pct,50%),var(--border) 100%)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:3px;background:var(--surface);border:2px solid var(--ink);box-shadow:0 1px 4px rgba(26,26,26,.12)}
+.slot{background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:8px;font-size:12px;font-weight:500;color:var(--ink);cursor:pointer;text-align:center}
+.slot.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.slot.off{opacity:.3;cursor:default}
+.ndot{width:6px;height:6px;background:var(--amber);border-radius:50%;position:absolute;top:0;right:-1px}
+</style>
+</head>
+<body><div id="root"></div>
+<script type="text/babel">
+const{useState,useRef,useEffect}=React;
+const PAT={name:"Roberto",last:"Casas"};
+const APT={date:"Lunes, 30 de junio",time:"09:30 h",loc:"Claudio Coello 76",opto:"Dr. Sergio Navarro",spec:"Optometría avanzada · lentes de contacto"};
+const ORDER={item:"Gafas progresivas · montura Lindberg",status:"En taller",eta:"Listo el 5 de julio"};
+const CARE=[
+  {id:1,n:"Revisión de agudeza visual",fase:"Anual recomendado",ico:"👁",inst:"Avisa si notas cambios de visión entre revisiones.",desc:"Revisión completa con topografía corneal, campo visual computarizado y presión intraocular. En tu caso, importante monitorizar la presión ocular por antecedentes familiares de glaucoma. Próxima revisión: junio 2026."},
+  {id:2,n:"Higiene de lentes de contacto",fase:"Protocolo diario",ico:"◉",inst:"Máx. 8 h de uso. No dormir con las lentillas puestas.",desc:"Lentes mensuales desechables. Limpieza con solución multipropósito cada noche. Frotado mecánico obligatorio durante 20 seg. Si nota enrojecimiento u opacidad, retirar inmediatamente y contactar con la óptica."},
+  {id:3,n:"Ejercicios de relajación ocular",fase:"Cada 2 horas de pantalla",ico:"○",inst:"Regla 20-20-20: cada 20 min, mira 20 seg a 6 m.",desc:"Fatiga visual digital: cierre los ojos 20 seg, luego parpadee 20 veces. Alterne entre visión próxima y lejana. Iluminación del entorno de trabajo mínimo a 300 lux para reducir el esfuerzo del cristalino."},
+  {id:4,n:"Seguimiento de progresivos",fase:"Revisión a los 3 meses",ico:"◊",inst:"Adaptación habitual: 2-4 semanas. Normal mareo inicial.",desc:"Progresivos de adición +1.50 con zona de lectura ampliada. Montura titanio Lindberg 2000T. El periodo de adaptación puede incluir sensación de suelo inestable — es normal. Si persiste más de 30 días, contacte para revisar el centrado."},
+];
+const DATA=[
+  {w:"S1",fatiga:7,agudeza:6.5},{w:"S2",fatiga:6.2,agudeza:6.8},{w:"S3",fatiga:5.5,agudeza:7},
+  {w:"S4",fatiga:4.8,agudeza:7.2},{w:"S5",fatiga:4,agudeza:7.5},{w:"S6",fatiga:3.4,agudeza:7.8},
+  {w:"S7",fatiga:2.8,agudeza:8},{w:"S8",fatiga:2.2,agudeza:8.5},
+];
+const OPTOS=[
+  {loc:"Claudio Coello 76",os:[{n:"Dr. Sergio Navarro",s:"Optometría avanzada",i:"SN"},{n:"Dra. Marta Ibáñez",s:"Contactología",i:"MI"},{n:"Dr. Álvaro Pons",s:"Baja visión",i:"AP"}]},
+  {loc:"Lagasca 88",os:[{n:"Dra. Carmen Díaz",s:"Optometría pediátrica",i:"CD"},{n:"Dr. Luis Mora",s:"Visión deportiva",i:"LM"}]},
+];
+const TIMES=[["09:00","09:30","10:00","10:30"],["11:00","11:30","—","16:00"],["16:30","17:00","—","17:30"]];
+const DATES=[{d:"Lun",n:30,m:"Jun"},{d:"Mar",n:1,m:"Jul"},{d:"Mié",n:2,m:"Jul"},{d:"Jue",n:3,m:"Jul"},{d:"Vie",n:4,m:"Jul"}];
+const MSGS=[
+  {d:"23 jun",i:"SN",who:"Dr. Sergio Navarro",txt:"Revisión completada. La graduación ha variado ligeramente en el ojo izquierdo (+0.25 Dc). Las gafas progresivas ya están en fabricación con la nueva graduación. ETA 5 julio."},
+  {d:"16 jun",i:"MI",who:"Dra. Marta Ibáñez",txt:"Topografía corneal sin cambios relevantes. Puede continuar con las lentes mensuales actuales. Recuerde la importancia del frotado mecánico — reduce el riesgo de queratitis."},
+  {d:"26 may",i:"SN",who:"Dr. Sergio Navarro",txt:"Presión intraocular: OD 14 mmHg / OI 15 mmHg. Dentro del rango normal. Dado el antecedente familiar de glaucoma, continuamos con revisión anual de campo visual."},
+];
+
+const Icon=({n,sz=22,c="currentColor"})=>{
+  const I={
+    home:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9.5L12 3l9 6.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 22V12h6v10"/></svg>,
+    clip:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg>,
+    chart:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+    cal:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+    msg:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>,
+    dn:<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>,
+    up:<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg>,
+    chk:<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+    loc:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>,
+    send:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>,
+    bell:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>,
+    pkg:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>,
+  };
+  return I[n]||null;
+};
+
+const TABS=[{id:"home",l:"Inicio",ic:"home"},{id:"plan",l:"Mi Plan",ic:"clip"},{id:"prog",l:"Visión",ic:"chart"},{id:"citas",l:"Citas",ic:"cal"},{id:"msgs",l:"Mensajes",ic:"msg"}];
+const TabBar=({active,set})=>(
+  <nav className="tabs">
+    {TABS.map(t=>(
+      <button key={t.id} className={`tab${active===t.id?" on":""}`} onClick={()=>set(t.id)}>
+        <div style={{position:"relative"}}><Icon n={t.ic} sz={21} c={active===t.id?"var(--ink)":"var(--silver)"}/>{t.id==="msgs"&&<span className="ndot"/>}</div>
+        <span className="tab-l">{t.l}</span>
+      </button>
+    ))}
+  </nav>
+);
+
+const Home=({setTab})=>(
+  <div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:20}}>
+      <p style={{fontSize:12,color:"var(--ink-soft)",marginBottom:2}}>Buenos días,</p>
+      <h1 style={{fontFamily:"var(--font-display)",fontSize:26,color:"var(--ink)",lineHeight:1.2,fontWeight:500}}>{PAT.name} {PAT.last}</h1>
+    </div>
+    <p className="lbl">Próxima cita</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p">
+        <div style={{display:"flex",justifyContent:"space-between",marginBottom:14}}>
+          <div><p style={{fontSize:12,color:"var(--ink-soft)",marginBottom:2}}>{APT.date}</p><p style={{fontFamily:"var(--font-display)",fontSize:24,color:"var(--ink)"}}>{APT.time}</p></div>
+          <span className="chip chip-i"><Icon n="loc" sz={9} c="var(--ink-mid)"/>&nbsp;{APT.loc}</span>
+        </div>
+        <div style={{background:"var(--bg)",borderRadius:8,padding:"11px 13px",display:"flex",gap:11,alignItems:"center",marginBottom:14}}>
+          <div className="avt" style={{width:36,height:36}}>SN</div>
+          <div><p style={{fontSize:13,fontWeight:500,color:"var(--ink)"}}>{APT.opto}</p><p style={{fontSize:11,color:"var(--ink-soft)",marginTop:1}}>{APT.spec}</p></div>
+        </div>
+        <div style={{display:"flex",gap:9}}><button className="btn" style={{flex:1}}>Ver detalles</button><button className="btn-a">Reagendar</button></div>
+      </div>
+    </div>
+    <p className="lbl">Estado de tu pedido</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p" style={{display:"flex",gap:14,alignItems:"center"}}>
+        <div style={{width:44,height:44,borderRadius:8,background:"var(--silver-pale)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Icon n="pkg" sz={20} c="var(--ink-mid)"/></div>
+        <div style={{flex:1}}>
+          <p style={{fontSize:13,fontWeight:500,color:"var(--ink)",marginBottom:2}}>{ORDER.item}</p>
+          <div style={{display:"flex",gap:8,alignItems:"center"}}>
+            <span className="chip chip-a">{ORDER.status}</span>
+            <p style={{fontSize:12,color:"var(--ink-soft)"}}>{ORDER.eta}</p>
+          </div>
+        </div>
+      </div>
+      <div style={{borderTop:"1px solid var(--border)",padding:"10px 20px"}}>
+        <div style={{display:"flex",gap:0}}>
+          {[["Pedido","chk"],["Fabricación","chk"],["Taller","chk"],["Listo","○"],["Entrega","○"]].map(([l,done],i)=>(
+            <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+              <div style={{width:22,height:22,borderRadius:"50%",background:i<3?"var(--ink)":"var(--silver-pale)",display:"flex",alignItems:"center",justifyContent:"center"}}>{i<3?<Icon n="chk" sz={10} c="white"/>:<div style={{width:6,height:6,borderRadius:"50%",background:"var(--silver)"}}/>}</div>
+              <p style={{fontSize:8,color:i<3?"var(--ink)":"var(--silver)",fontWeight:600,textAlign:"center"}}>{l}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+    <p className="lbl">Acceso rápido</p>
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
+      {[["Cita","cal","citas","var(--ink)","var(--silver-pale)"],["Mi plan","clip","plan","var(--amber)","var(--amber-pale)"],["Evolución","chart","prog","var(--teal)","var(--teal-pale)"]].map(([l,ic,tab,c,bg])=>(
+        <button key={tab} onClick={()=>setTab(tab)} style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:10,padding:"14px 8px",display:"flex",flexDirection:"column",alignItems:"center",gap:9,cursor:"pointer"}}>
+          <div style={{width:38,height:38,borderRadius:8,background:bg,display:"flex",alignItems:"center",justifyContent:"center"}}><Icon n={ic} sz={18} c={c}/></div>
+          <p style={{fontSize:11,fontWeight:500,color:"var(--ink)",textAlign:"center",lineHeight:1.3}}>{l}</p>
+        </button>
+      ))}
+    </div>
+    <div style={{marginTop:20,background:"var(--teal-pale)",borderRadius:10,padding:"13px 15px",display:"flex",gap:11,alignItems:"center"}}>
+      <span style={{fontSize:18}}>👁</span>
+      <p style={{fontSize:12,color:"var(--teal)",lineHeight:1.5}}>Tu revisión anual de fondo de ojo está programada. Te avisaremos en septiembre para concertar cita.</p>
+    </div>
+  </div>
+);
+
+const Plan=()=>{
+  const[exp,setExp]=useState(null);
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:18}}>
+      <p style={{fontSize:12,color:"var(--ink-soft)",marginBottom:2}}>Plan de cuidado visual</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:22,color:"var(--ink)"}}>Seguimiento y rutinas</h2>
+      <div style={{display:"flex",gap:8,alignItems:"center",marginTop:5}}>
+        <div className="avt" style={{width:20,height:20,fontSize:9}}>SN</div>
+        <p style={{fontSize:11,color:"var(--ink-soft)"}}>Dr. Sergio Navarro · actualizado 23 jun 2025</p>
+      </div>
+    </div>
+    <div style={{background:"var(--amber-pale)",borderRadius:9,padding:"11px 14px",marginBottom:16,display:"flex",gap:9}}>
+      <span style={{fontSize:13}}>ℹ</span>
+      <p style={{fontSize:12,color:"var(--amber)",lineHeight:1.5}}>Graduación actualizada: OD −3.25 Dc / OI −3.50 Dc +0.50 Cyl. Siempre use la corrección actualizada.</p>
+    </div>
+    <div style={{display:"flex",flexDirection:"column",gap:9}}>
+      {CARE.map(c=>(
+        <div key={c.id} style={{background:"var(--surface)",borderRadius:10,border:"1px solid var(--border)",overflow:"hidden"}}>
+          <button onClick={()=>setExp(exp===c.id?null:c.id)} style={{width:"100%",background:"none",border:"none",cursor:"pointer",textAlign:"left",padding:"15px 16px"}}>
+            <div style={{display:"flex",gap:12,alignItems:"flex-start"}}>
+              <div style={{width:40,height:40,borderRadius:7,background:"var(--silver-pale)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>{c.ico}</div>
+              <div style={{flex:1}}>
+                <p style={{fontSize:14,fontWeight:500,color:"var(--ink)",marginBottom:2}}>{c.n}</p>
+                <p style={{fontSize:12,color:"var(--amber)",fontWeight:500,marginBottom:3}}>{c.fase}</p>
+                <p style={{fontSize:12,color:"var(--ink-soft)",lineHeight:1.4,paddingRight:16}}>{c.inst}</p>
+              </div>
+              <div style={{color:"var(--silver)",flexShrink:0,marginTop:2}}>{exp===c.id?<Icon n="up"/>:<Icon n="dn"/>}</div>
+            </div>
+          </button>
+          {exp===c.id&&<div style={{borderTop:"1px solid var(--border)",padding:"12px 16px"}}><p style={{fontSize:13,color:"var(--ink-mid)",lineHeight:1.65}}>{c.desc}</p></div>}
+        </div>
+      ))}
+    </div>
+  </div>);
+};
+
+const Prog=()=>{
+  const[fat,setFat]=useState(2);const[cla,setCla]=useState(8);const[sub,setSub]=useState(false);
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:18}}>
+      <p style={{fontSize:12,color:"var(--ink-soft)",marginBottom:2}}>Seguimiento ocular</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:22,color:"var(--ink)"}}>Evolución visual</h2>
+    </div>
+    <p className="lbl">Check-in semanal</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p">
+        {!sub?(<>
+          <div style={{marginBottom:20}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:9}}>
+              <p style={{fontSize:13,fontWeight:500,color:"var(--ink)"}}>Fatiga visual hoy</p>
+              <span style={{fontFamily:"var(--font-display)",fontSize:20,color:"var(--ink)"}}>{fat}<span style={{fontSize:12,color:"var(--ink-soft)"}}>/ 10</span></span>
+            </div>
+            <input type="range" min="0" max="10" step=".5" value={fat} style={{"--pct":`${fat*10}%`}} onChange={e=>setFat(Number(e.target.value))}/>
+            <div style={{display:"flex",justifyContent:"space-between",marginTop:5}}><span style={{fontSize:10,color:"var(--ink-soft)"}}>Sin fatiga</span><span style={{fontSize:10,color:"var(--ink-soft)"}}>Fatiga extrema</span></div>
+          </div>
+          <div style={{marginBottom:20}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:9}}>
+              <p style={{fontSize:13,fontWeight:500,color:"var(--ink)"}}>Claridad de visión</p>
+              <span style={{fontFamily:"var(--font-display)",fontSize:20,color:"var(--amber)"}}>{cla}<span style={{fontSize:12,color:"var(--ink-soft)"}}>/ 10</span></span>
+            </div>
+            <input type="range" min="0" max="10" step=".5" value={cla} style={{"--pct":`${cla*10}%`,"background":`linear-gradient(to right,var(--amber) 0%,var(--amber) ${cla*10}%,var(--border) ${cla*10}%,var(--border) 100%)`}} onChange={e=>setCla(Number(e.target.value))}/>
+          </div>
+          <button className="btn" style={{width:"100%"}} onClick={()=>setSub(true)}>Guardar check-in</button>
+        </>):(
+          <div style={{textAlign:"center",padding:"18px 0 6px"}}>
+            <p style={{fontFamily:"var(--font-display)",fontSize:18,color:"var(--ink)",marginBottom:5}}>Registrado</p>
+            <p style={{fontSize:13,color:"var(--ink-soft)"}}>El Dr. Navarro revisará tus datos en la próxima visita.</p>
+            <button className="btn-out" style={{marginTop:14}} onClick={()=>setSub(false)}>Editar</button>
+          </div>
+        )}
+      </div>
+    </div>
+    <p className="lbl">Tendencia — 8 semanas</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p" style={{paddingBottom:10}}>
+        <div style={{display:"flex",gap:14,marginBottom:10}}>
+          <div style={{display:"flex",gap:5,alignItems:"center"}}><div style={{width:9,height:2,borderRadius:1,background:"var(--ink)"}}/><span style={{fontSize:11,color:"var(--ink-soft)"}}>Fatiga</span></div>
+          <div style={{display:"flex",gap:5,alignItems:"center"}}><div style={{width:9,height:2,borderRadius:1,background:"var(--amber)"}}/><span style={{fontSize:11,color:"var(--ink-soft)"}}>Claridad</span></div>
+        </div>
+        <svg viewBox="0 0 310 75" style={{width:"100%",height:"auto"}}>
+          {DATA.map((d,i)=>{
+            if(i===0)return null;
+            const xs=j=>5+j*(300/7);const ys=v=>5+60-(v/10)*60;const prev=DATA[i-1];
+            return(<g key={i}><line x1={xs(i-1)} y1={ys(prev.fatiga)} x2={xs(i)} y2={ys(d.fatiga)} stroke="var(--ink)" strokeWidth="1.8" strokeLinecap="round"/><line x1={xs(i-1)} y1={ys(prev.agudeza)} x2={xs(i)} y2={ys(d.agudeza)} stroke="var(--amber)" strokeWidth="1.8" strokeLinecap="round"/></g>);
+          })}
+          {DATA.map((d,i)=>{const xs=j=>5+j*(300/7);const ys=v=>5+60-(v/10)*60;return(<g key={i}><circle cx={xs(i)} cy={ys(d.fatiga)} r="2.5" fill="var(--surface)" stroke="var(--ink)" strokeWidth="1.6"/><circle cx={xs(i)} cy={ys(d.agudeza)} r="2.5" fill="var(--surface)" stroke="var(--amber)" strokeWidth="1.6"/><text x={xs(i)} y={70} textAnchor="middle" fontSize="8" fill="var(--silver)" fontFamily="IBM Plex Sans,sans-serif">{d.w}</text></g>)})}
+        </svg>
+        <div style={{background:"var(--silver-pale)",borderRadius:6,padding:"9px 11px",marginTop:8,display:"flex",justifyContent:"space-between"}}>
+          <p style={{fontSize:11,color:"var(--ink-mid)",fontWeight:500}}>Fatiga −<strong>69%</strong></p>
+          <p style={{fontSize:11,color:"var(--amber)",fontWeight:500}}>Claridad +<strong>31%</strong></p>
+        </div>
+      </div>
+    </div>
+    <p className="lbl">Graduación actual</p>
+    <div className="card">
+      <div className="p">
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,textAlign:"center"}}>
+          {[["OD",−3.25,"Dc"],["OI",−3.50,"Dc +0.50 Cyl"],["Adición","+1.50","progresivos"]].map(([k,v,u])=>(
+            <div key={k} style={{background:"var(--bg)",borderRadius:7,padding:"10px 6px"}}>
+              <p style={{fontSize:10,fontWeight:600,color:"var(--ink-soft)",letterSpacing:".5px",marginBottom:4}}>{k}</p>
+              <p style={{fontFamily:"var(--font-display)",fontSize:16,color:"var(--ink)",fontWeight:500,fontVariantNumeric:"tabular-nums"}}>{v}</p>
+              <p style={{fontSize:9,color:"var(--ink-soft)",marginTop:2}}>{u}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>);
+};
+
+const Citas=()=>{
+  const[loc,setLoc]=useState(null);const[opto,setOpto]=useState(null);const[dt,setDt]=useState(null);const[sl,setSl]=useState(null);const[done,setDone]=useState(false);
+  if(done)return(<div className="fade" style={{padding:"0 20px 32px",display:"flex",flexDirection:"column",alignItems:"center",paddingTop:56}}>
+    <div style={{width:64,height:64,borderRadius:12,background:"var(--silver-pale)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:18}}><Icon n="chk" sz={28} c="var(--ink)"/></div>
+    <h2 style={{fontFamily:"var(--font-display)",fontSize:22,color:"var(--ink)",marginBottom:7}}>Cita confirmada</h2>
+    <p style={{fontSize:13,color:"var(--ink-soft)",textAlign:"center",lineHeight:1.6,marginBottom:28}}>Recibirás confirmación por email. Trae tus gafas actuales a la revisión.</p>
+    <button className="btn-out" onClick={()=>{setDone(false);setLoc(null);setOpto(null);setDt(null);setSl(null)}}>Reservar otra cita</button>
+  </div>);
+  const os=loc?OPTOS.find(l=>l.loc===loc)?.os:[];
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:18}}>
+      <p style={{fontSize:12,color:"var(--ink-soft)",marginBottom:2}}>Nueva reserva</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:22,color:"var(--ink)"}}>Reservar cita</h2>
+    </div>
+    <p className="lbl">1. Óptica</p>
+    <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
+      {OPTOS.map(l=>(
+        <button key={l.loc} onClick={()=>{setLoc(l.loc);setOpto(null)}} style={{background:"var(--surface)",border:`1.5px solid ${loc===l.loc?"var(--ink)":"var(--border)"}`,borderRadius:9,padding:"13px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer",textAlign:"left"}}>
+          <div><p style={{fontSize:13,fontWeight:500,color:"var(--ink)"}}>{l.loc}</p><p style={{fontSize:11,color:"var(--ink-soft)",marginTop:2}}>Claudio Coello Óptica · Madrid</p></div>
+          {loc===l.loc&&<div style={{width:20,height:20,borderRadius:4,background:"var(--ink)",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon n="chk" sz={11} c="white"/></div>}
+        </button>
+      ))}
+    </div>
+    {loc&&(<>
+      <p className="lbl">2. Optometrista</p>
+      <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
+        {os.map(o=>(
+          <button key={o.n} onClick={()=>setOpto(o.n)} style={{background:"var(--surface)",border:`1.5px solid ${opto===o.n?"var(--ink)":"var(--border)"}`,borderRadius:9,padding:"12px 13px",display:"flex",alignItems:"center",gap:11,cursor:"pointer",textAlign:"left"}}>
+            <div className="avt" style={{width:36,height:36,borderRadius:6,background:opto===o.n?"var(--ink)":"var(--silver-pale)",color:opto===o.n?"white":"var(--ink-mid)"}}>{o.i}</div>
+            <div style={{flex:1}}><p style={{fontSize:13,fontWeight:500,color:"var(--ink)"}}>{o.n}</p><span className="chip chip-t" style={{fontSize:10,marginTop:3,display:"inline-flex"}}>{o.s}</span></div>
+          </button>
+        ))}
+      </div>
+    </>)}
+    {opto&&(<>
+      <p className="lbl">3. Fecha</p>
+      <div style={{display:"flex",gap:8,marginBottom:20,overflowX:"auto",paddingBottom:4}}>
+        {DATES.map(d=>(
+          <button key={d.n} onClick={()=>{setDt(d.n);setSl(null)}} style={{flexShrink:0,width:55,padding:"9px 4px",borderRadius:8,border:`1.5px solid ${dt===d.n?"var(--ink)":"var(--border)"}`,background:dt===d.n?"var(--ink)":"var(--surface)",cursor:"pointer",textAlign:"center"}}>
+            <p style={{fontSize:9,fontWeight:500,color:dt===d.n?"rgba(255,255,255,.65)":"var(--silver)",textTransform:"uppercase",marginBottom:3}}>{d.d}</p>
+            <p style={{fontFamily:"var(--font-display)",fontSize:20,color:dt===d.n?"white":"var(--ink)",lineHeight:1}}>{d.n}</p>
+            <p style={{fontSize:9,color:dt===d.n?"rgba(255,255,255,.6)":"var(--silver)",marginTop:3}}>{d.m}</p>
+          </button>
+        ))}
+      </div>
+    </>)}
+    {dt&&(<>
+      <p className="lbl">4. Hora</p>
+      <div style={{display:"flex",flexDirection:"column",gap:7,marginBottom:22}}>
+        {TIMES.map((row,ri)=>(
+          <div key={ri} style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:7}}>
+            {row.map((s,si)=><div key={si} className={`slot${s==="—"?" off":""}${sl===s?" on":""}`} onClick={()=>s!=="—"&&setSl(s)}>{s}</div>)}
+          </div>
+        ))}
+      </div>
+      {sl&&<button className="btn" style={{width:"100%",padding:"13px"}} onClick={()=>setDone(true)}>Confirmar · {sl} h</button>}
+    </>)}
+  </div>);
+};
+
+const Msgs=()=>{
+  const[m,setM]=useState("");const[sent,setSent]=useState(false);
+  const send=()=>m.trim()&&(setSent(true),setM(""),setTimeout(()=>setSent(false),3000));
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:18}}>
+      <p style={{fontSize:12,color:"var(--ink-soft)",marginBottom:2}}>Comunicación</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:22,color:"var(--ink)"}}>Notas clínicas</h2>
+    </div>
+    {sent&&<div style={{background:"var(--silver-pale)",borderRadius:8,padding:"11px 13px",marginBottom:14,display:"flex",gap:8,alignItems:"center"}}><Icon n="chk" sz={14} c="var(--ink)"/><p style={{fontSize:13,color:"var(--ink)",fontWeight:500}}>Mensaje enviado.</p></div>}
+    <div style={{display:"flex",flexDirection:"column",gap:10}}>
+      {MSGS.map((msg,i)=>(
+        <div key={i} style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:10,padding:"14px 16px"}}>
+          <p style={{fontSize:10,color:"var(--silver)",marginBottom:4,fontWeight:600,letterSpacing:".6px",textTransform:"uppercase"}}>{msg.d}</p>
+          <div style={{display:"flex",gap:9,alignItems:"center",marginBottom:8}}><div className="avt" style={{width:26,height:26,borderRadius:4,fontSize:9}}>{msg.i}</div><p style={{fontSize:12,fontWeight:500,color:"var(--ink)"}}>{msg.who}</p></div>
+          <p style={{fontSize:13,color:"var(--ink-mid)",lineHeight:1.6,fontVariantNumeric:"tabular-nums"}}>{msg.txt}</p>
+        </div>
+      ))}
+    </div>
+    <div style={{marginTop:22}}>
+      <p style={{fontSize:10,color:"var(--silver)",fontWeight:600,letterSpacing:".7px",textTransform:"uppercase",marginBottom:9}}>Consulta al equipo</p>
+      <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:8,display:"flex",alignItems:"center",padding:"10px 14px",gap:9}}>
+        <input type="text" placeholder="Escribe tu pregunta..." value={m} onChange={e=>setM(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} style={{flex:1,border:"none",outline:"none",fontFamily:"var(--font-body)",fontSize:13,color:"var(--ink)",background:"transparent"}}/>
+        <button onClick={send} style={{background:"none",border:"none",cursor:"pointer"}}><Icon n="send" sz={16} c={m?"var(--ink)":"var(--silver)"}/></button>
+      </div>
+    </div>
+  </div>);
+};
+
+const App=()=>{
+  const[tab,setTab]=useState("home");const ref=useRef(null);
+  useEffect(()=>{if(ref.current)ref.current.scrollTop=0},[tab]);
+  const S={home:<Home setTab={setTab}/>,plan:<Plan/>,prog:<Prog/>,citas:<Citas/>,msgs:<Msgs/>};
+  return(<div className="shell">
+    <div className="sbar"><span className="sbar-t">9:41</span><div style={{display:"flex",gap:5,alignItems:"center"}}><svg width="15" height="11" viewBox="0 0 15 11" fill="none"><circle cx="7.5" cy="9" r="1.2" fill="#1A1A1A"/><path d="M7.5 5C9.5 5 11.3 6 12.5 7.5" stroke="#1A1A1A" strokeOpacity=".7" strokeWidth="1.3" strokeLinecap="round"/><path d="M7.5 2.5C10.5 2.5 13 4 14.5 6.5" stroke="#1A1A1A" strokeOpacity=".35" strokeWidth="1.3" strokeLinecap="round"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none"><rect x=".5" y=".5" width="18" height="10" rx="2" stroke="#1A1A1A" strokeOpacity=".35"/><rect x="1.5" y="1.5" width="13" height="8" rx="1.5" fill="#1A1A1A" fillOpacity=".85"/><path d="M20 4v3a1.5 1.5 0 000-3z" fill="#1A1A1A" fillOpacity=".35"/></svg></div></div>
+    <div className="hdr">
+      <div><p className="wm">Claudio Coello</p><p className="wm-s">Óptica · Optometría</p></div>
+      <button style={{background:"none",border:"none",cursor:"pointer",position:"relative"}}><Icon n="bell" sz={19} c="var(--ink-mid)"/><span className="ndot" style={{top:1,right:1}}/></button>
+    </div>
+    <div className="content" ref={ref}><div style={{padding:"18px 0 0"}}>{S[tab]}</div></div>
+    <TabBar active={tab} set={setTab}/>
+  </div>);
+};
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script></body></html>

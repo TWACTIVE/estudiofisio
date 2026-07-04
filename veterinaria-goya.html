@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veterinaria Goya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;1,300;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#FAF6EF;
+  --navy:#1E3356;
+  --amber:#D4831A;
+  --amber-light:#F5C07A;
+  --text:#1A1A2E;
+  --muted:#6B6E82;
+  --surface:#FFFFFF;
+  --border:#E4DDD3;
+  --radius:14px;
+  --radius-sm:8px;
+}
+body{background:#E8E2D8;font-family:'Outfit',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.phone{width:390px;height:844px;background:var(--cream);border-radius:44px;overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,0.28),0 0 0 1px rgba(0,0,0,0.08)}
+.status-bar{background:var(--navy);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:14px 24px 10px;font-size:12px;font-weight:500;flex-shrink:0}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth}
+.screen::-webkit-scrollbar{display:none}
+.tab-bar{background:var(--surface);border-top:1px solid var(--border);display:flex;flex-shrink:0;padding-bottom:16px}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0 4px;cursor:pointer;transition:color 0.2s}
+.tab span{font-size:10px;font-family:'Outfit',sans-serif;font-weight:500}
+.tab.active{color:var(--navy)}
+.tab:not(.active){color:var(--muted)}
+.tab-icon{width:22px;height:22px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.screen > *{animation:fadeUp 0.25s ease forwards}
+/* Header */
+.app-header{background:var(--navy);padding:20px 24px 28px;color:#fff}
+.header-pet-row{display:flex;align-items:center;gap:14px;margin-top:12px}
+.pet-avatar{width:52px;height:52px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center;font-size:26px;border:2.5px solid rgba(255,255,255,0.3);flex-shrink:0}
+.header-greeting{font-size:13px;opacity:0.75;font-weight:300}
+.header-name{font-size:22px;font-family:'Fraunces',serif;font-weight:600;margin-top:2px}
+.header-sub{font-size:12px;opacity:0.65;margin-top:3px}
+.header-badge{background:rgba(255,255,255,0.15);border-radius:20px;padding:4px 10px;font-size:11px;margin-top:8px;display:inline-flex;align-items:center;gap:5px}
+/* Cards */
+.card{background:var(--surface);border-radius:var(--radius);padding:18px;margin:0 16px 12px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+.card-title{font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.section-label{font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);padding:20px 20px 8px}
+/* Next appointment */
+.appt-card{background:var(--navy);border-radius:var(--radius);padding:18px;margin:0 16px 12px;color:#fff}
+.appt-top{display:flex;justify-content:space-between;align-items:flex-start}
+.appt-title{font-size:12px;opacity:0.7;font-weight:300;letter-spacing:0.05em;text-transform:uppercase}
+.appt-date{font-family:'Fraunces',serif;font-size:20px;font-weight:600;margin-top:4px}
+.appt-detail{font-size:13px;opacity:0.8;margin-top:2px}
+.appt-badge{background:var(--amber);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:600;color:#fff;flex-shrink:0}
+/* Vaccine tracker */
+.vaccine-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.vaccine-row:last-child{border-bottom:none}
+.vaccine-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.vaccine-dot.ok{background:#4A9B6F}
+.vaccine-dot.soon{background:var(--amber)}
+.vaccine-dot.due{background:#C45C3A}
+.vaccine-name{font-size:14px;font-weight:500;flex:1;color:var(--text)}
+.vaccine-date{font-size:12px;color:var(--muted)}
+.vaccine-status{font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px}
+.vaccine-status.ok{background:#EAF6EF;color:#2D7A50}
+.vaccine-status.soon{background:#FEF3E2;color:#B86D0A}
+.vaccine-status.due{background:#FEECE8;color:#A03020}
+/* Weight chart */
+.chart-svg{width:100%;height:100px;display:block}
+.chart-label{font-size:10px;fill:var(--muted);font-family:'Outfit',sans-serif}
+/* Quick actions */
+.quick-grid{display:grid;grid-columns:1fr 1fr;grid-template-columns:1fr 1fr;gap:10px;margin:0 16px 16px}
+.quick-btn{background:var(--surface);border-radius:var(--radius-sm);padding:16px;display:flex;flex-direction:column;gap:6px;cursor:pointer;border:1.5px solid var(--border);transition:border-color 0.2s}
+.quick-btn:hover{border-color:var(--navy)}
+.quick-icon{font-size:22px}
+.quick-label{font-size:12px;font-weight:600;color:var(--text)}
+/* Plan screen */
+.care-item{display:flex;flex-direction:column}
+.care-header{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer}
+.care-icon-box{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.care-meta{flex:1}
+.care-name{font-size:14px;font-weight:600;color:var(--text)}
+.care-freq{font-size:12px;color:var(--muted);margin-top:1px}
+.care-chevron{color:var(--muted);transition:transform 0.2s}
+.care-chevron.open{transform:rotate(180deg)}
+.care-detail{background:#F7F4F0;padding:14px 18px;font-size:13px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border)}
+/* Progress */
+.metric-card{background:var(--surface);border-radius:var(--radius);padding:18px;margin:0 16px 12px}
+.metric-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.metric-label{font-size:13px;font-weight:600;color:var(--text)}
+.metric-value{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--navy)}
+.metric-unit{font-size:12px;color:var(--muted);margin-left:3px}
+.progress-bar-wrap{height:8px;background:#EDE8E0;border-radius:4px;overflow:hidden}
+.progress-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--navy),var(--amber))}
+.vet-note{background:linear-gradient(135deg,#EEF1F8,#E8EDF6);border-radius:var(--radius);padding:16px;margin:0 16px 12px;border-left:3px solid var(--navy)}
+.vet-note-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--navy);margin-bottom:6px}
+.vet-note-text{font-size:13px;color:var(--text);line-height:1.55}
+/* Bookings */
+.booking-step-label{font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);padding:20px 20px 10px}
+.option-card{background:var(--surface);border-radius:var(--radius-sm);padding:14px 16px;margin:0 16px 8px;display:flex;align-items:center;gap:12px;cursor:pointer;border:1.5px solid var(--border);transition:all 0.18s}
+.option-card.selected{border-color:var(--navy);background:#EEF1F8}
+.option-label{font-size:14px;font-weight:500;color:var(--text)}
+.option-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.option-icon-box{width:38px;height:38px;border-radius:10px;background:#EEF1F8;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 16px}
+.time-chip{background:var(--surface);border-radius:8px;padding:10px 6px;text-align:center;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);color:var(--text);transition:all 0.15s}
+.time-chip.selected{background:var(--navy);color:#fff;border-color:var(--navy)}
+.time-chip.unavailable{background:#F0EDEA;color:#BDB8B0;cursor:default}
+.confirm-btn{background:var(--navy);color:#fff;border-radius:50px;padding:16px;text-align:center;font-size:15px;font-weight:600;margin:8px 16px 20px;cursor:pointer;font-family:'Outfit',sans-serif}
+.confirm-success{background:linear-gradient(135deg,var(--navy),#2A4A7A);color:#fff;border-radius:var(--radius);padding:24px;margin:20px 16px;text-align:center}
+.success-icon{font-size:48px;margin-bottom:12px}
+.success-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin-bottom:6px}
+.success-detail{font-size:13px;opacity:0.8}
+/* Messages */
+.msg-bubble{max-width:78%;padding:10px 14px;border-radius:16px;font-size:13px;line-height:1.5;margin:4px 16px}
+.msg-bubble.vet{background:var(--surface);color:var(--text);border-bottom-left-radius:4px;align-self:flex-start;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.msg-bubble.user{background:var(--navy);color:#fff;border-bottom-right-radius:4px;margin-left:auto}
+.msg-time{font-size:10px;color:var(--muted);margin:2px 16px 10px}
+.msg-time.right{text-align:right}
+.msg-sender{font-size:11px;font-weight:600;color:var(--navy);margin:12px 16px 4px}
+.msg-input-row{background:var(--surface);border-top:1px solid var(--border);padding:12px 16px;display:flex;gap:10px;align-items:center}
+.msg-input{flex:1;background:#F4F0EB;border-radius:22px;padding:10px 16px;font-size:13px;font-family:'Outfit',sans-serif;border:none;outline:none;color:var(--text)}
+.msg-send-btn{width:38px;height:38px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+.pet-profile-card{background:var(--navy);border-radius:var(--radius);padding:20px;margin:16px 16px 12px;color:#fff;display:flex;gap:16px;align-items:center}
+.pet-profile-img{width:70px;height:70px;border-radius:50%;background:var(--amber);font-size:36px;display:flex;align-items:center;justify-content:center;border:3px solid rgba(255,255,255,0.25);flex-shrink:0}
+.pet-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.pet-detail-item{background:rgba(255,255,255,0.1);border-radius:8px;padding:8px 10px}
+.pet-detail-label{font-size:10px;opacity:0.65;text-transform:uppercase;letter-spacing:0.05em}
+.pet-detail-value{font-size:13px;font-weight:600;margin-top:2px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const SVGIcons = {
+  home: (active) => (
+    <svg viewBox="0 0 24 24" fill={active?"#1E3356":"none"} stroke={active?"#1E3356":"#6B6E82"} strokeWidth="1.8" className="tab-icon">
+      <path d="M3 9.5L12 3l9 6.5V21H3V9.5z" strokeLinejoin="round"/>
+    </svg>
+  ),
+  plan: (active) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke={active?"#1E3356":"#6B6E82"} strokeWidth="1.8" className="tab-icon">
+      <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+      <rect x="9" y="3" width="6" height="4" rx="1"/>
+      <path d="M9 12h6M9 16h4" strokeLinecap="round"/>
+    </svg>
+  ),
+  progress: (active) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke={active?"#1E3356":"#6B6E82"} strokeWidth="1.8" className="tab-icon">
+      <path d="M3 17l5-5 4 4 9-9" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  book: (active) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke={active?"#1E3356":"#6B6E82"} strokeWidth="1.8" className="tab-icon">
+      <rect x="3" y="4" width="18" height="18" rx="2"/>
+      <path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/>
+    </svg>
+  ),
+  msg: (active) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke={active?"#1E3356":"#6B6E82"} strokeWidth="1.8" className="tab-icon">
+      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" strokeLinejoin="round"/>
+    </svg>
+  )
+};
+
+function HomeScreen() {
+  return (
+    <div>
+      <div className="app-header">
+        <div className="header-greeting">Bienvenida de nuevo, Carmen</div>
+        <div className="header-pet-row">
+          <div className="pet-avatar">🐕</div>
+          <div>
+            <div className="header-name">Luna</div>
+            <div className="header-sub">Labrador · 4 años · 27.3 kg</div>
+            <div className="header-badge">
+              <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#4A9B6F"/></svg>
+              Vacunas al día
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{padding:'16px 16px 8px'}}>
+        <div className="appt-card">
+          <div className="appt-top">
+            <div>
+              <div className="appt-title">Próxima cita</div>
+              <div className="appt-date">Martes, 8 julio</div>
+              <div className="appt-detail">Dr. Marcos Gil · 11:00h</div>
+              <div className="appt-detail" style={{opacity:0.65,fontSize:12,marginTop:2}}>Revisión anual + desparasitación</div>
+            </div>
+            <div className="appt-badge">Confirmada</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="section-label">Perfil de Luna</div>
+      <div style={{margin:'0 16px 12px'}}>
+        <div style={{background:'#fff',borderRadius:14,padding:18}}>
+          <div className="pet-detail-grid">
+            {[
+              {label:'Microchip',value:'941000024581977'},
+              {label:'Raza',value:'Labrador'},
+              {label:'Esterilizada',value:'Sí'},
+              {label:'Grupo sangre',value:'DEA 1.1+'},
+              {label:'Veterinario',value:'Dr. Marcos Gil'},
+              {label:'Seguro',value:'Mapfre Mascotas'},
+            ].map(d=>(
+              <div key={d.label} className="pet-detail-item" style={{background:'#F4F0EB',borderRadius:8,padding:'8px 10px'}}>
+                <div style={{fontSize:10,color:'#6B6E82',textTransform:'uppercase',letterSpacing:'0.05em'}}>{d.label}</div>
+                <div style={{fontSize:12,fontWeight:600,color:'#1A1A2E',marginTop:2}}>{d.value}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="section-label">Accesos rápidos</div>
+      <div className="quick-grid">
+        {[
+          {icon:'💉',label:'Cartilla vacunal'},
+          {icon:'💊',label:'Medicación'},
+          {icon:'🔬',label:'Últimas analíticas'},
+          {icon:'📋',label:'Historial clínico'},
+        ].map(a=>(
+          <div key={a.label} className="quick-btn">
+            <span className="quick-icon">{a.icon}</span>
+            <span className="quick-label">{a.label}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="card" style={{marginBottom:24}}>
+        <div className="card-title">Recordatorios activos</div>
+        {[
+          {text:'Pipeta antiparasitaria',date:'15 julio',color:'#FEF3E2'},
+          {text:'Revisión dental',date:'Agosto 2025',color:'#EEF1F8'},
+        ].map(r=>(
+          <div key={r.text} style={{background:r.color,borderRadius:8,padding:'10px 12px',marginBottom:8,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            <span style={{fontSize:13,fontWeight:500,color:'#1A1A2E'}}>{r.text}</span>
+            <span style={{fontSize:11,color:'#6B6E82'}}>{r.date}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PlanScreen() {
+  const [open, setOpen] = useState(null);
+  const items = [
+    {icon:'💊',bg:'#FEF3E2',name:'Simparica Trio (mensual)',freq:'1 comprimido · Día 1 de cada mes',detail:'Administrar con comida. Antiparasitario frente a pulgas, garrapatas y parásitos intestinales. No cortar ni partir el comprimido.'},
+    {icon:'🛁',bg:'#EEF1F8',name:'Baño con champú dermatológico',freq:'Cada 3 semanas',detail:'Usar champú hipoalergénico. Enjuagar bien hasta que no quede espuma. Secar completamente antes de salir al exterior.'},
+    {icon:'🦷',bg:'#EAF6EF',name:'Higiene dental',freq:'3 veces por semana',detail:'Cepillar con pasta dental específica para perros. No usar pasta dental humana. Reforzar con snacks dentales diarios.'},
+    {icon:'🏃',bg:'#FEECE8',name:'Ejercicio diario',freq:'2 paseos de 30 min + juego libre',detail:'Evitar ejercicio intenso en horas de calor (12h-17h). Luna tiene leve displasia de cadera derecha — no saltar obstáculos altos.'},
+    {icon:'🥣',bg:'#F4F0EB',name:'Dieta prescrita',freq:'2 tomas diarias · 200g c/u',detail:'Royal Canin Labrador Adult. Agua fresca disponible siempre. No dar huesos cocidos. Suplemento omega-3 (1 cápsula en cena).'},
+  ];
+  return (
+    <div>
+      <div style={{background:'#fff',borderBottom:'1px solid #E4DDD3',padding:'20px 20px 16px'}}>
+        <div style={{fontFamily:"'Fraunces',serif",fontSize:22,fontWeight:600,color:'#1E3356'}}>Plan de cuidados</div>
+        <div style={{fontSize:13,color:'#6B6E82',marginTop:4}}>Luna · Actualizado por Dr. Marcos Gil</div>
+      </div>
+      <div style={{height:12}}/>
+      {items.map((it,i)=>(
+        <div key={i} style={{background:'#fff',borderRadius:14,margin:'0 16px 10px',overflow:'hidden',boxShadow:'0 2px 8px rgba(0,0,0,0.05)'}}>
+          <div className="care-header" onClick={()=>setOpen(open===i?null:i)}>
+            <div className="care-icon-box" style={{background:it.bg}}>{it.icon}</div>
+            <div className="care-meta">
+              <div className="care-name">{it.name}</div>
+              <div className="care-freq">{it.freq}</div>
+            </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#6B6E82" strokeWidth="2" width="18" height="18" className={`care-chevron${open===i?' open':''}`}><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          {open===i && <div className="care-detail">{it.detail}</div>}
+        </div>
+      ))}
+      <div className="vet-note" style={{marginBottom:24}}>
+        <div className="vet-note-label">Nota del veterinario</div>
+        <div className="vet-note-text">Luna mantiene un peso ideal. La displasia de cadera leve es estable. Continuar con el suplemento articular y evitar superficies resbaladizas en casa.</div>
+        <div style={{fontSize:11,color:'#6B6E82',marginTop:8}}>— Dr. Marcos Gil, 18 junio 2025</div>
+      </div>
+    </div>
+  );
+}
+
+function ProgressScreen() {
+  const weights = [27.9,27.7,27.5,27.4,27.2,27.3,27.3,27.3];
+  const minW=26.5,maxW=28.5,range=maxW-minW;
+  const pts = weights.map((w,i)=>`${32+i*40},${90-(((w-minW)/range)*70)}`).join(' ');
+  return (
+    <div>
+      <div style={{background:'#fff',borderBottom:'1px solid #E4DDD3',padding:'20px 20px 16px'}}>
+        <div style={{fontFamily:"'Fraunces',serif",fontSize:22,fontWeight:600,color:'#1E3356'}}>Seguimiento de salud</div>
+        <div style={{fontSize:13,color:'#6B6E82',marginTop:4}}>Luna · últimas 8 semanas</div>
+      </div>
+
+      <div className="section-label">Vacunas</div>
+      <div style={{background:'#fff',borderRadius:14,margin:'0 16px 12px',padding:'4px 18px',boxShadow:'0 2px 8px rgba(0,0,0,0.05)'}}>
+        {[
+          {name:'Rabia',date:'Ene 2025',next:'Ene 2026',status:'ok'},
+          {name:'Polivalente (DHPP)',date:'Mar 2025',next:'Mar 2026',status:'ok'},
+          {name:'Leishmaniosis',date:'Feb 2025',next:'Feb 2026',status:'ok'},
+          {name:'Bordetella',date:'Oct 2024',next:'Oct 2025',status:'soon'},
+          {name:'Leptospirosis',date:'Mar 2025',next:'Mar 2026',status:'ok'},
+        ].map(v=>(
+          <div key={v.name} className="vaccine-row">
+            <div className={`vaccine-dot ${v.status}`}/>
+            <div className="vaccine-name">{v.name}</div>
+            <div>
+              <div className="vaccine-date">{v.next}</div>
+            </div>
+            <div className={`vaccine-status ${v.status}`}>{v.status==='ok'?'Al día':v.status==='soon'?'Pronto':'Vencida'}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="section-label">Evolución de peso</div>
+      <div style={{background:'#fff',borderRadius:14,margin:'0 16px 12px',padding:18,boxShadow:'0 2px 8px rgba(0,0,0,0.05)'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:12}}>
+          <div style={{fontFamily:"'Fraunces',serif",fontSize:24,fontWeight:600,color:'#1E3356'}}>27.3 <span style={{fontSize:14,color:'#6B6E82',fontFamily:'Outfit'}}>kg</span></div>
+          <div style={{fontSize:12,color:'#4A9B6F',fontWeight:600}}>Peso ideal ✓</div>
+        </div>
+        <svg viewBox="0 0 332 100" className="chart-svg">
+          <defs>
+            <linearGradient id="wgrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#1E3356" stopOpacity="0.15"/>
+              <stop offset="100%" stopColor="#1E3356" stopOpacity="0"/>
+            </linearGradient>
+          </defs>
+          {[27,27.5,28].map((v,i)=>(
+            <g key={v}>
+              <line x1="32" y1={90-(((v-minW)/range)*70)} x2="312" y2={90-(((v-minW)/range)*70)} stroke="#EDE8E0" strokeWidth="1"/>
+              <text x="8" y={93-(((v-minW)/range)*70)} className="chart-label">{v}</text>
+            </g>
+          ))}
+          <polygon points={`${pts} 312,90 32,90`} fill="url(#wgrad)"/>
+          <polyline points={pts} fill="none" stroke="#1E3356" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          {weights.map((w,i)=>(
+            <circle key={i} cx={32+i*40} cy={90-(((w-minW)/range)*70)} r="3.5" fill={i===7?"#D4831A":"#1E3356"}/>
+          ))}
+          {['May','Jun','Jul','Ago'].map((m,i)=>(
+            <text key={m} x={32+i*80} y="100" className="chart-label" textAnchor="middle">{m}</text>
+          ))}
+        </svg>
+      </div>
+
+      <div className="section-label">Métricas recientes</div>
+      {[
+        {label:'Condición corporal',val:'5/9',bar:55,note:'Óptimo'},
+        {label:'Actividad semanal',val:'9.2h',bar:78,note:'Alta'},
+      ].map(m=>(
+        <div key={m.label} className="metric-card" style={{boxShadow:'0 2px 8px rgba(0,0,0,0.05)'}}>
+          <div className="metric-row">
+            <span className="metric-label">{m.label}</span>
+            <span style={{fontSize:13,color:'#4A9B6F',fontWeight:600}}>{m.note}</span>
+          </div>
+          <div style={{display:'flex',alignItems:'baseline',gap:4,marginBottom:10}}>
+            <span className="metric-value">{m.val}</span>
+          </div>
+          <div className="progress-bar-wrap"><div className="progress-bar-fill" style={{width:`${m.bar}%`}}/></div>
+        </div>
+      ))}
+      <div style={{height:24}}/>
+    </div>
+  );
+}
+
+function BookingsScreen() {
+  const [step,setStep]=useState(0);
+  const [loc,setLoc]=useState(null);
+  const [vet,setVet]=useState(null);
+  const [svc,setSvc]=useState(null);
+  const [time,setTime]=useState(null);
+  const [done,setDone]=useState(false);
+
+  const locs=[{id:0,name:'Clínica Goya',addr:'Goya 44, Madrid',icon:'🏥'},{id:1,name:'Clínica Salamanca',addr:'Velázquez 90, Madrid',icon:'🏥'}];
+  const vets=[{id:0,name:'Dr. Marcos Gil',role:'Medicina general'},{id:1,name:'Dra. Pilar Vega',role:'Cirugía y ortopedia'},{id:2,name:'Dra. Sofía Ruano',role:'Dermatología'}];
+  const svcs=[{id:0,name:'Revisión general',price:'45€'},{id:1,name:'Vacunación',price:'35€'},{id:2,name:'Desparasitación',price:'28€'},{id:3,name:'Analítica completa',price:'65€'}];
+  const times=['9:00','9:30','10:00','10:30','11:00','12:00','12:30','17:00','17:30','18:00'];
+  const unavail=['9:30','11:00','17:00'];
+
+  if(done) return (
+    <div>
+      <div style={{background:'#fff',borderBottom:'1px solid #E4DDD3',padding:'20px 20px 16px'}}>
+        <div style={{fontFamily:"'Fraunces',serif",fontSize:22,fontWeight:600,color:'#1E3356'}}>Reservas</div>
+      </div>
+      <div className="confirm-success">
+        <div className="success-icon">🐾</div>
+        <div className="success-title">¡Cita confirmada!</div>
+        <div className="success-detail">{locs[loc]?.name} · {vets[vet]?.name}</div>
+        <div className="success-detail" style={{marginTop:4}}>{svcs[svc]?.name} · {time}</div>
+      </div>
+      <div className="confirm-btn" onClick={()=>{setDone(false);setStep(0);setLoc(null);setVet(null);setSvc(null);setTime(null)}}>Nueva reserva</div>
+    </div>
+  );
+
+  return (
+    <div>
+      <div style={{background:'#fff',borderBottom:'1px solid #E4DDD3',padding:'20px 20px 16px'}}>
+        <div style={{fontFamily:"'Fraunces',serif",fontSize:22,fontWeight:600,color:'#1E3356'}}>Reservas</div>
+        <div style={{display:'flex',gap:6,marginTop:12}}>
+          {['Clínica','Vet.','Servicio','Hora'].map((s,i)=>(
+            <div key={s} style={{flex:1,height:3,borderRadius:2,background:i<=step?'#1E3356':'#E4DDD3'}}/>
+          ))}
+        </div>
+      </div>
+
+      {step===0 && <>
+        <div className="booking-step-label">Selecciona clínica</div>
+        {locs.map(l=>(
+          <div key={l.id} className={`option-card${loc===l.id?' selected':''}`} onClick={()=>{setLoc(l.id);setStep(1)}}>
+            <div className="option-icon-box">{l.icon}</div>
+            <div><div className="option-label">{l.name}</div><div className="option-sub">{l.addr}</div></div>
+          </div>
+        ))}
+      </>}
+      {step===1 && <>
+        <div className="booking-step-label">Selecciona veterinario</div>
+        {vets.map(v=>(
+          <div key={v.id} className={`option-card${vet===v.id?' selected':''}`} onClick={()=>{setVet(v.id);setStep(2)}}>
+            <div className="option-icon-box" style={{fontSize:18}}>👨‍⚕️</div>
+            <div><div className="option-label">{v.name}</div><div className="option-sub">{v.role}</div></div>
+          </div>
+        ))}
+      </>}
+      {step===2 && <>
+        <div className="booking-step-label">Selecciona servicio</div>
+        {svcs.map(s=>(
+          <div key={s.id} className={`option-card${svc===s.id?' selected':''}`} onClick={()=>{setSvc(s.id);setStep(3)}}>
+            <div className="option-icon-box" style={{fontSize:18}}>🩺</div>
+            <div style={{flex:1}}><div className="option-label">{s.name}</div></div>
+            <div style={{fontWeight:600,color:'#1E3356'}}>{s.price}</div>
+          </div>
+        ))}
+      </>}
+      {step===3 && <>
+        <div className="booking-step-label">Selecciona hora · Lunes 7 julio</div>
+        <div className="time-grid">
+          {times.map(t=>(
+            <div key={t} className={`time-chip${unavail.includes(t)?' unavailable':time===t?' selected':''}`} onClick={()=>!unavail.includes(t)&&setTime(t)}>{t}</div>
+          ))}
+        </div>
+        {time && <div className="confirm-btn" onClick={()=>setDone(true)}>Confirmar cita</div>}
+      </>}
+    </div>
+  );
+}
+
+function MessagesScreen() {
+  const msgs=[
+    {from:'vet',name:'Dr. Marcos Gil',text:'Hola Carmen, adjunto los resultados de la analítica de Luna. Todo dentro de parámetros normales.',time:'Hace 3 días'},
+    {from:'user',text:'Muchas gracias, doctor. ¿Le doy el suplemento articular todos los días?',time:'Hace 3 días'},
+    {from:'vet',name:'Dr. Marcos Gil',text:'Sí, una cápsula con la cena es suficiente. Si notas que cojea más después del ejercicio, avísame.',time:'Hace 3 días'},
+    {from:'vet',name:'Dr. Marcos Gil',text:'Recordatorio: en octubre toca la vacuna de Bordetella. Podemos combinarlo con la revisión de otoño.',time:'Ayer'},
+    {from:'user',text:'Perfecto, ya lo apunto. Esta semana está muy activa, sin problemas.',time:'Hoy'},
+  ];
+  return (
+    <div style={{display:'flex',flexDirection:'column',height:'100%'}}>
+      <div style={{background:'#fff',borderBottom:'1px solid #E4DDD3',padding:'20px 20px 16px',flexShrink:0}}>
+        <div style={{fontFamily:"'Fraunces',serif",fontSize:22,fontWeight:600,color:'#1E3356'}}>Mensajes</div>
+        <div style={{fontSize:13,color:'#6B6E82',marginTop:2}}>Dr. Marcos Gil · Veterinaria Goya</div>
+      </div>
+      <div style={{flex:1,overflowY:'auto',padding:'12px 0'}}>
+        {msgs.map((m,i)=>(
+          <div key={i}>
+            {m.from==='vet' && <div className="msg-sender">🐾 {m.name}</div>}
+            <div className={`msg-bubble ${m.from}`}>{m.text}</div>
+            <div className={`msg-time${m.from==='user'?' right':''}`}>{m.time}</div>
+          </div>
+        ))}
+      </div>
+      <div className="msg-input-row">
+        <input className="msg-input" placeholder="Escribe un mensaje…" readOnly/>
+        <div className="msg-send-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [tab,setTab]=useState(0);
+  const screens=[HomeScreen,PlanScreen,ProgressScreen,BookingsScreen,MessagesScreen];
+  const Screen=screens[tab];
+  const tabs=[
+    {label:'Inicio',icon:SVGIcons.home},
+    {label:'Cuidados',icon:SVGIcons.plan},
+    {label:'Salud',icon:SVGIcons.progress},
+    {label:'Citas',icon:SVGIcons.book},
+    {label:'Mensajes',icon:SVGIcons.msg},
+  ];
+  return (
+    <div className="phone">
+      <div className="status-bar">
+        <span>9:41</span>
+        <div style={{display:'flex',gap:6,alignItems:'center'}}>
+          <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="3" width="3" height="9" rx="1" fill="white" opacity="0.4"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white" opacity="0.6"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="white" opacity="0.8"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="white"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="22" height="10" rx="2" stroke="white" strokeWidth="1" fill="none" opacity="0.5"/><rect x="23" y="3.5" width="2" height="5" rx="1" fill="white" opacity="0.5"/><rect x="1.5" y="2.5" width="16" height="7" rx="1" fill="white"/></svg>
+        </div>
+      </div>
+      <div className="screen" key={tab}><Screen/></div>
+      <div className="tab-bar">
+        {tabs.map((t,i)=>(
+          <div key={i} className={`tab${tab===i?' active':''}`} onClick={()=>setTab(i)}>
+            {t.icon(tab===i)}
+            <span>{t.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

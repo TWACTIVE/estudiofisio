@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>Serrano Dental</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F9FC;
+  --surface:#FFFFFF;
+  --navy:#1B3A6B;
+  --navy-mid:#2D5299;
+  --navy-pale:#E8EEF7;
+  --navy-faint:#F0F4FA;
+  --steel:#8FA3B8;
+  --charcoal:#1A2433;
+  --mid:#556070;
+  --soft:#8895A3;
+  --border:#D8E2ED;
+  --accent:#3D6B9E;
+  --gold:#B8A070;
+  --gold-pale:#F5F0E6;
+  --radius:14px;
+  --radius-sm:9px;
+  --shadow:0 2px 14px rgba(27,58,107,0.09);
+  --font-body:'DM Sans',system-ui,sans-serif;
+  --font-display:'DM Serif Display',Georgia,serif;
+}
+html,body{height:100%;background:#D4DCE8;font-family:var(--font-body);-webkit-font-smoothing:antialiased}
+#root{display:flex;justify-content:center;min-height:100vh;padding:0}
+@media(min-width:480px){#root{padding:24px 0;background:#C8D4E2}}
+.shell{width:100%;max-width:430px;min-height:100vh;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+@media(min-width:480px){.shell{min-height:auto;max-height:900px;border-radius:38px;box-shadow:0 28px 80px rgba(27,58,107,0.25)}}
+.sbar{background:var(--bg);padding:12px 24px 6px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.sbar-time{font-size:15px;font-weight:600;color:var(--charcoal);letter-spacing:-0.3px}
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.content::-webkit-scrollbar{display:none}
+.tabs{background:var(--surface);border-top:1px solid var(--border);display:flex;padding:8px 0 20px;flex-shrink:0}
+@media(min-width:480px){.tabs{padding-bottom:8px}}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;cursor:pointer;border:none;background:none;-webkit-tap-highlight-color:transparent}
+.tab-label{font-size:10px;font-weight:500;letter-spacing:0.1px}
+.tab.on .tab-label{color:var(--navy)}
+.tab:not(.on) .tab-label{color:var(--soft)}
+.hdr{padding:14px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.wordmark{font-family:var(--font-display);font-size:18px;color:var(--navy);letter-spacing:0.3px}
+.wordmark em{font-style:italic;color:var(--accent)}
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow)}
+.p{padding:18px 20px}
+.lbl{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--soft);margin-bottom:11px}
+.btn{background:var(--navy);color:#fff;border:none;border-radius:50px;padding:12px 22px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;transition:background .18s}
+.btn:active{background:var(--navy-mid)}
+.btn-outline{background:transparent;color:var(--navy);border:1.5px solid var(--navy);border-radius:50px;padding:10px 18px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer}
+.btn-sm{background:var(--gold-pale);color:#8A6A30;border:none;border-radius:50px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer}
+.chip{display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:500}
+.chip-navy{background:var(--navy-pale);color:var(--navy)}
+.chip-gold{background:var(--gold-pale);color:#8A6A30}
+.avt{border-radius:50%;background:var(--navy-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font-display);font-weight:400;color:var(--navy);font-size:14px}
+.trk{height:5px;background:var(--navy-faint);border-radius:99px;overflow:hidden}
+.trk-fill{height:100%;background:var(--navy);border-radius:99px}
+.fade{animation:fu .3s ease forwards}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:99px;outline:none;cursor:pointer;background:linear-gradient(to right,var(--navy) 0%,var(--navy) var(--pct,50%),var(--border) var(--pct,50%),var(--border) 100%)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid var(--navy);box-shadow:0 1px 6px rgba(27,58,107,0.18)}
+.slot{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:8px;font-size:12px;font-weight:500;color:var(--charcoal);cursor:pointer;text-align:center;transition:all .12s}
+.slot.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.slot.off{opacity:.35;cursor:default}
+.msg-card{background:var(--surface);border-radius:var(--radius-sm);border:1px solid var(--border);padding:15px}
+.ndot{width:7px;height:7px;background:var(--gold);border-radius:50%;position:absolute;top:0;right:-1px}
+</style>
+</head>
+<body><div id="root"></div>
+<script type="text/babel">
+const{useState,useRef,useEffect}=React;
+const PAT={name:"Alejandro",last:"Vidal"};
+const APT={date:"Martes, 1 de julio",time:"11:00 h",loc:"Serrano 84",doc:"Dra. Carmen Ruiz",spec:"Odontología estética"};
+const BONO={used:3,total:8,label:"Bono blanqueamiento + revisión"};
+const PROCS=[
+  {id:1,name:"Blanqueamiento LED",phase:"Fase 2 de 3",icon:"✦",inst:"Evitar alimentos con pigmentos durante 48 h post-sesión.",desc:"Aplicación de gel blanqueador H₂O₂ al 35 % activado con lámpara LED de espectro azul 450 nm. Duración por aplicación: 15 min × 3 ciclos. Protección gingival con dique de goma."},
+  {id:2,name:"Férula de descarga",phase:"Uso nocturno",icon:"◇",inst:"Colocar antes de dormir. Limpiar con cepillo suave en agua fría.",desc:"Férula de acetato termoformado de 2 mm para protección del bruxismo. Revisar ajuste en cada visita. Guardar en estuche ventilado."},
+  {id:3,name:"Ejercicios de relajación mandibular",phase:"3 × día",icon:"◎",inst:"Lengua en paladar, labios cerrados, dientes separados 2 mm.",desc:"Técnica de Schultz adaptada para la musculatura masticatoria. Reduce la tensión del masetero y temporal, mejorando la sintomatología del ATM. Combinar con calor local 5 min antes."},
+  {id:4,name:"Colutorio fluorado",phase:"1 × noche tras cepillado",icon:"◈",inst:"No enjuagar con agua tras el colutorio. Dejar actuar toda la noche.",desc:"Enjuague de fluoruro sódico 0,2 % para remineralización del esmalte. Especialmente indicado durante el proceso de blanqueamiento para reducir la hipersensibilidad."},
+];
+const PAIN_W=[
+  {w:"S1",sen:6.5,sat:4},{w:"S2",sen:5.8,sat:5},{w:"S3",sen:5.0,sat:5.5},
+  {w:"S4",sen:4.2,sat:6.5},{w:"S5",sen:3.5,sat:7},{w:"S6",sen:2.9,sat:7.8},
+  {w:"S7",sen:2.2,sat:8.2},{w:"S8",sen:1.6,sat:8.8},
+];
+const DOCS=[
+  {loc:"Serrano 84",docs:[{n:"Dra. Carmen Ruiz",s:"Odontología estética",i:"CR"},{n:"Dr. Miguel Ortega",s:"Implantología",i:"MO"},{n:"Dra. Paula Serrano",s:"Ortodoncia invisible",i:"PS"}]},
+  {loc:"Velázquez 62",docs:[{n:"Dr. Andrés Molina",s:"Periodoncia",i:"AM"},{n:"Dra. Sofía Blanco",s:"Odontopediatría",i:"SB"}]},
+];
+const MSGS=[
+  {d:"23 jun",doc:"Dra. Carmen Ruiz",i:"CR",txt:"Segunda sesión de blanqueamiento completada con excelente tolerancia. Tono inicial A3, tono actual B1. Siguiente sesión en 2 semanas."},
+  {d:"9 jun",doc:"Dra. Carmen Ruiz",i:"CR",txt:"Primera sesión realizada sin incidencias. Se entregó la férula de blanqueamiento domiciliario. Importante mantener la dieta blanqueante los primeros 3 días."},
+  {d:"26 may",doc:"Dr. Miguel Ortega",i:"MO",txt:"Revisión del implante 4.6 a los 3 meses de la carga. Integración ósea completa. Alta de mantenimiento semestral."},
+];
+const TIMES=[["09:00","09:45","10:30","11:15"],["12:00","—","16:00","16:45"],["17:30","18:15","—","19:00"]];
+const DATES=[{d:"Lun",n:30,m:"Jun"},{d:"Mar",n:1,m:"Jul"},{d:"Mié",n:2,m:"Jul"},{d:"Jue",n:3,m:"Jul"},{d:"Vie",n:4,m:"Jul"}];
+
+const MChart=({data,k,color})=>{
+  const W=320,H=80,pl=8,pr=8,pt=8,pb=20;
+  const iw=W-pl-pr,ih=H-pt-pb;
+  const xs=i=>pl+i*(iw/(data.length-1));
+  const ys=v=>pt+ih-((v-0)/10)*ih;
+  const pts=data.map((d,i)=>`${xs(i)},${ys(d[k])}`).join(" ");
+  const fps=[`${xs(0)},${pt+ih}`,...data.map((d,i)=>`${xs(i)},${ys(d[k])}`),`${xs(data.length-1)},${pt+ih}`].join(" ");
+  return(<svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%",height:"auto"}}>
+    <defs><linearGradient id={`g${k}`} x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor={color} stopOpacity=".15"/><stop offset="100%" stopColor={color} stopOpacity="0"/></linearGradient></defs>
+    {[2.5,5,7.5].map(v=><line key={v} x1={pl} x2={W-pr} y1={ys(v)} y2={ys(v)} stroke="#D8E2ED" strokeWidth="1"/>)}
+    <polygon points={fps} fill={`url(#g${k})`}/>
+    <polyline points={pts} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"/>
+    {data.map((d,i)=><circle key={i} cx={xs(i)} cy={ys(d[k])} r="3" fill="white" stroke={color} strokeWidth="1.8"/>)}
+    {data.map((d,i)=><text key={i} x={xs(i)} y={H-4} textAnchor="middle" fontSize="8.5" fill="#8895A3" fontFamily="DM Sans,sans-serif" fontWeight="500">{d.w}</text>)}
+  </svg>);
+};
+
+const Icon=({n,sz=22,c="currentColor"})=>{
+  const I={
+    home:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9.5L12 3l9 6.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 22V12h6v10"/></svg>,
+    clip:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg>,
+    chart:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+    cal:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+    msg:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>,
+    dn:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>,
+    up:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg>,
+    chk:<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+    loc:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>,
+    send:<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>,
+    bell:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>,
+    tooth:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2C8.5 2 6 4.5 6 7c0 1.5.5 3 1 4l1 8c.3 1.5 1 3 4 3s3.7-1.5 4-3l1-8c.5-1 1-2.5 1-4 0-2.5-2.5-5-6-5z"/></svg>,
+  };
+  return I[n]||null;
+};
+
+const TABS=[{id:"home",l:"Inicio",ic:"home"},{id:"plan",l:"Mi Plan",ic:"clip"},{id:"prog",l:"Progreso",ic:"chart"},{id:"citas",l:"Citas",ic:"cal"},{id:"msgs",l:"Mensajes",ic:"msg"}];
+
+const TabBar=({active,set})=>(
+  <nav className="tabs">
+    {TABS.map(t=>(
+      <button key={t.id} className={`tab${active===t.id?" on":""}`} onClick={()=>set(t.id)}>
+        <div style={{position:"relative"}}>
+          <Icon n={t.ic} sz={22} c={active===t.id?"var(--navy)":"var(--soft)"}/>
+          {t.id==="msgs"&&<span className="ndot"/>}
+        </div>
+        <span className="tab-label">{t.l}</span>
+      </button>
+    ))}
+  </nav>
+);
+
+const Home=({setTab})=>(
+  <div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:20}}>
+      <p style={{fontSize:12,color:"var(--soft)",marginBottom:3}}>Bienvenido de nuevo</p>
+      <h1 style={{fontFamily:"var(--font-display)",fontSize:25,fontWeight:400,color:"var(--charcoal)",lineHeight:1.2}}>{PAT.name} {PAT.last}</h1>
+    </div>
+    <p className="lbl">Próxima cita</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p">
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:14}}>
+          <div>
+            <p style={{fontSize:12,color:"var(--soft)",marginBottom:2}}>{APT.date}</p>
+            <p style={{fontFamily:"var(--font-display)",fontSize:24,color:"var(--charcoal)"}}>{APT.time}</p>
+          </div>
+          <span className="chip chip-navy"><Icon n="loc" sz={10} c="var(--navy)"/>&nbsp;{APT.loc}</span>
+        </div>
+        <div style={{background:"var(--navy-faint)",borderRadius:9,padding:"11px 13px",display:"flex",gap:11,alignItems:"center",marginBottom:15}}>
+          <div className="avt" style={{width:36,height:36}}>CR</div>
+          <div><p style={{fontSize:14,fontWeight:600,color:"var(--charcoal)"}}>{APT.doc}</p><p style={{fontSize:11,color:"var(--soft)",marginTop:1}}>{APT.spec}</p></div>
+        </div>
+        <div style={{display:"flex",gap:9}}><button className="btn" style={{flex:1}}>Ver detalles</button><button className="btn-sm">Reagendar</button></div>
+      </div>
+    </div>
+    <p className="lbl">Tu bono</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p">
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+          <div><p style={{fontSize:14,fontWeight:600,color:"var(--charcoal)"}}>{BONO.total-BONO.used} sesiones restantes</p><p style={{fontSize:11,color:"var(--soft)",marginTop:2}}>{BONO.label}</p></div>
+          <span style={{fontFamily:"var(--font-display)",fontSize:30,color:"var(--navy)"}}>{BONO.total-BONO.used}<span style={{fontSize:13,color:"var(--soft)"}}>/{BONO.total}</span></span>
+        </div>
+        <div className="trk"><div className="trk-fill" style={{width:`${((BONO.total-BONO.used)/BONO.total)*100}%`}}/></div>
+        <p style={{fontSize:11,color:"var(--soft)",marginTop:7}}>{BONO.used} de {BONO.total} sesiones utilizadas</p>
+      </div>
+    </div>
+    <p className="lbl">Acceso rápido</p>
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
+      {[["Reservar","cal","citas","var(--navy)","var(--navy-pale)"],["Mi tratamiento","clip","plan","var(--accent)","var(--navy-faint)"],["Evolución","chart","prog","var(--steel)","#EEF2F8"]].map(([l,ic,tab,c,bg])=>(
+        <button key={tab} onClick={()=>setTab(tab)} style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:12,padding:"14px 8px",display:"flex",flexDirection:"column",alignItems:"center",gap:9,cursor:"pointer"}}>
+          <div style={{width:38,height:38,borderRadius:9,background:bg,display:"flex",alignItems:"center",justifyContent:"center"}}><Icon n={ic} sz={18} c={c}/></div>
+          <p style={{fontSize:11,fontWeight:500,color:"var(--charcoal)",textAlign:"center",lineHeight:1.3}}>{l}</p>
+        </button>
+      ))}
+    </div>
+    <div style={{marginTop:20,background:"var(--navy-faint)",borderRadius:11,padding:"13px 15px",borderLeft:"3px solid var(--navy)"}}>
+      <p style={{fontSize:12,color:"var(--navy)",lineHeight:1.55}}>Recuerda: tras el blanqueamiento, evita café, té y vino tinto durante <strong>48 horas</strong>.</p>
+    </div>
+  </div>
+);
+
+const Plan=()=>{
+  const[exp,setExp]=useState(null);
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:18}}>
+      <p style={{fontSize:12,color:"var(--soft)",marginBottom:3}}>Plan de tratamiento</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:22,fontWeight:400,color:"var(--charcoal)",lineHeight:1.25}}>Blanqueamiento y mantenimiento</h2>
+      <div style={{display:"flex",gap:8,alignItems:"center",marginTop:5}}>
+        <div className="avt" style={{width:20,height:20,fontSize:9}}>CR</div>
+        <p style={{fontSize:11,color:"var(--soft)"}}>Dra. Carmen Ruiz · actualizado 23 jun 2025</p>
+      </div>
+    </div>
+    <div style={{display:"flex",flexDirection:"column",gap:9}}>
+      {PROCS.map(p=>(
+        <div key={p.id} style={{background:"var(--surface)",borderRadius:12,border:"1px solid var(--border)",overflow:"hidden"}}>
+          <button onClick={()=>setExp(exp===p.id?null:p.id)} style={{width:"100%",background:"none",border:"none",cursor:"pointer",textAlign:"left",padding:"15px"}}>
+            <div style={{display:"flex",gap:13,alignItems:"flex-start"}}>
+              <div style={{width:40,height:40,borderRadius:9,background:"var(--navy-faint)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,color:"var(--navy)",flexShrink:0}}>{p.icon}</div>
+              <div style={{flex:1}}>
+                <p style={{fontSize:14,fontWeight:600,color:"var(--charcoal)",marginBottom:2}}>{p.name}</p>
+                <p style={{fontSize:12,color:"var(--accent)",fontWeight:500,marginBottom:3}}>{p.phase}</p>
+                <p style={{fontSize:12,color:"var(--soft)",lineHeight:1.4,paddingRight:18}}>{p.inst}</p>
+              </div>
+              <div style={{color:"var(--soft)",flexShrink:0,marginTop:2}}>{exp===p.id?<Icon n="up"/>:<Icon n="dn"/>}</div>
+            </div>
+          </button>
+          {exp===p.id&&(<div style={{borderTop:"1px solid var(--border)",padding:"14px 15px"}}>
+            <p style={{fontSize:13,color:"var(--mid)",lineHeight:1.6}}>{p.desc}</p>
+          </div>)}
+        </div>
+      ))}
+    </div>
+    <div style={{marginTop:18,padding:"12px 14px",background:"var(--navy-faint)",borderRadius:10}}>
+      <p style={{fontSize:12,color:"var(--mid)",fontStyle:"italic",lineHeight:1.5}}>Plan revisado tras tu última sesión con <strong style={{fontStyle:"normal",color:"var(--navy)"}}>Dra. Carmen Ruiz</strong> el 23 de junio.</p>
+    </div>
+  </div>);
+};
+
+const Prog=()=>{
+  const[sen,setSen]=useState(2);const[sat,setSat]=useState(9);const[sub,setSub]=useState(false);
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:18}}>
+      <p style={{fontSize:12,color:"var(--soft)",marginBottom:3}}>Seguimiento</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:22,fontWeight:400,color:"var(--charcoal)"}}>Tu progreso dental</h2>
+    </div>
+    <p className="lbl">Check-in semanal</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p">
+        {!sub?(<>
+          <p style={{fontSize:13,color:"var(--mid)",marginBottom:18,lineHeight:1.5}}>Ayúdanos a monitorizar tu tratamiento con una evaluación rápida.</p>
+          <div style={{marginBottom:20}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:9}}>
+              <p style={{fontSize:13,fontWeight:600,color:"var(--charcoal)"}}>Sensibilidad dental hoy</p>
+              <span style={{fontFamily:"var(--font-display)",fontSize:19,color:"var(--navy)"}}>{sen}<span style={{fontSize:12,color:"var(--soft)"}}>/ 10</span></span>
+            </div>
+            <input type="range" min="0" max="10" step=".5" value={sen} style={{"--pct":`${sen*10}%`}} onChange={e=>setSen(Number(e.target.value))}/>
+            <div style={{display:"flex",justifyContent:"space-between",marginTop:5}}><span style={{fontSize:10,color:"var(--soft)"}}>Sin sensibilidad</span><span style={{fontSize:10,color:"var(--soft)"}}>Muy sensible</span></div>
+          </div>
+          <div style={{marginBottom:20}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:9}}>
+              <p style={{fontSize:13,fontWeight:600,color:"var(--charcoal)"}}>Satisfacción con el tono</p>
+              <span style={{fontFamily:"var(--font-display)",fontSize:19,color:"var(--accent)"}}>{sat}<span style={{fontSize:12,color:"var(--soft)"}}>/ 10</span></span>
+            </div>
+            <input type="range" min="0" max="10" step=".5" value={sat} style={{"--pct":`${sat*10}%`,"background":`linear-gradient(to right,var(--accent) 0%,var(--accent) ${sat*10}%,var(--border) ${sat*10}%,var(--border) 100%)`}} onChange={e=>setSat(Number(e.target.value))}/>
+            <div style={{display:"flex",justifyContent:"space-between",marginTop:5}}><span style={{fontSize:10,color:"var(--soft)"}}>No satisfecho</span><span style={{fontSize:10,color:"var(--soft)"}}>Muy satisfecho</span></div>
+          </div>
+          <button className="btn" style={{width:"100%"}} onClick={()=>setSub(true)}>Guardar check-in</button>
+        </>):(
+          <div style={{textAlign:"center",padding:"18px 0 6px"}}>
+            <div style={{width:48,height:48,borderRadius:"50%",background:"var(--navy-pale)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 12px"}}><Icon n="chk" sz={22} c="var(--navy)"/></div>
+            <p style={{fontFamily:"var(--font-display)",fontSize:18,color:"var(--charcoal)",marginBottom:5}}>Registro guardado</p>
+            <p style={{fontSize:13,color:"var(--soft)"}}>La Dra. Ruiz revisará tus datos esta semana.</p>
+            <button className="btn-outline" style={{marginTop:14}} onClick={()=>setSub(false)}>Editar</button>
+          </div>
+        )}
+      </div>
+    </div>
+    <p className="lbl">Evolución — 8 semanas</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p" style={{paddingBottom:10}}>
+        <div style={{display:"flex",gap:14,marginBottom:12}}>
+          <div style={{display:"flex",gap:5,alignItems:"center"}}><div style={{width:9,height:3,borderRadius:2,background:"var(--navy)"}}/><span style={{fontSize:11,color:"var(--soft)"}}>Sensibilidad</span></div>
+          <div style={{display:"flex",gap:5,alignItems:"center"}}><div style={{width:9,height:3,borderRadius:2,background:"var(--accent)"}}/><span style={{fontSize:11,color:"var(--soft)"}}>Satisfacción tono</span></div>
+        </div>
+        <MChart data={PAIN_W} k="sen" color="var(--navy)"/>
+        <div style={{height:1,background:"var(--border)",margin:"4px 0 10px"}}/>
+        <MChart data={PAIN_W} k="sat" color="var(--accent)"/>
+        <div style={{background:"var(--navy-faint)",borderRadius:8,padding:"9px 11px",marginTop:8}}>
+          <p style={{fontSize:12,color:"var(--navy)",fontWeight:500}}>Sensibilidad reducida un <strong>75%</strong> · Tono mejorado <strong>2 escalas Vita</strong></p>
+        </div>
+      </div>
+    </div>
+    <p className="lbl">Notas del odontólogo</p>
+    {[{d:"23 jun",txt:"Blanqueamiento en curso con excelente respuesta. Tono actual B1, objetivo A1. Se estima conseguirlo en la próxima sesión."}].map((n,i)=>(
+      <div key={i} style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:11,padding:"13px 14px"}}>
+        <div style={{display:"flex",gap:9,alignItems:"center",marginBottom:8}}>
+          <div className="avt" style={{width:28,height:28,fontSize:10}}>CR</div>
+          <p style={{fontSize:11,color:"var(--soft)"}}>{n.d} · Dra. Carmen Ruiz</p>
+        </div>
+        <p style={{fontSize:13,color:"var(--charcoal)",lineHeight:1.55}}>{n.txt}</p>
+      </div>
+    ))}
+  </div>);
+};
+
+const Citas=()=>{
+  const[loc,setLoc]=useState(null);const[doc,setDoc]=useState(null);const[dt,setDt]=useState(null);const[sl,setSl]=useState(null);const[done,setDone]=useState(false);
+  if(done)return(<div className="fade" style={{padding:"0 20px 32px",display:"flex",flexDirection:"column",alignItems:"center",paddingTop:56}}>
+    <div style={{width:68,height:68,borderRadius:"50%",background:"var(--navy-pale)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:18}}><Icon n="chk" sz={30} c="var(--navy)"/></div>
+    <h2 style={{fontFamily:"var(--font-display)",fontSize:22,fontWeight:400,color:"var(--charcoal)",marginBottom:7}}>¡Cita confirmada!</h2>
+    <p style={{fontSize:13,color:"var(--soft)",textAlign:"center",lineHeight:1.6,marginBottom:28}}>Recibirás un recordatorio por email y SMS 24 h antes.</p>
+    <button className="btn-outline" onClick={()=>{setDone(false);setLoc(null);setDoc(null);setDt(null);setSl(null)}}>Reservar otra cita</button>
+  </div>);
+  const dcs=loc?DOCS.find(d=>d.loc===loc)?.docs:[];
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:18}}>
+      <p style={{fontSize:12,color:"var(--soft)",marginBottom:3}}>Nueva reserva</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:22,fontWeight:400,color:"var(--charcoal)"}}>Reservar cita</h2>
+    </div>
+    <div style={{background:"var(--gold-pale)",borderRadius:9,padding:"11px 13px",display:"flex",gap:9,alignItems:"center",marginBottom:20}}>
+      <span style={{fontSize:14}}>🎫</span>
+      <p style={{fontSize:12,color:"#8A6A30",lineHeight:1.4}}>Te quedan <strong>5 sesiones</strong> en tu bono. Se descontará automáticamente al confirmar.</p>
+    </div>
+    <p className="lbl">1. Clínica</p>
+    <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
+      {DOCS.map(d=>(
+        <button key={d.loc} onClick={()=>{setLoc(d.loc);setDoc(null)}} style={{background:"var(--surface)",border:`1.5px solid ${loc===d.loc?"var(--navy)":"var(--border)"}`,borderRadius:10,padding:"13px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer",textAlign:"left"}}>
+          <div><p style={{fontSize:13,fontWeight:600,color:"var(--charcoal)"}}>{d.loc}</p><p style={{fontSize:11,color:"var(--soft)",marginTop:2}}>Serrano Dental · Madrid</p></div>
+          {loc===d.loc&&<div style={{width:20,height:20,borderRadius:"50%",background:"var(--navy)",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon n="chk" sz={11} c="white"/></div>}
+        </button>
+      ))}
+    </div>
+    {loc&&(<>
+      <p className="lbl">2. Profesional</p>
+      <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
+        {dcs.map(d=>(
+          <button key={d.n} onClick={()=>setDoc(d.n)} style={{background:"var(--surface)",border:`1.5px solid ${doc===d.n?"var(--navy)":"var(--border)"}`,borderRadius:10,padding:"12px 13px",display:"flex",alignItems:"center",gap:11,cursor:"pointer",textAlign:"left"}}>
+            <div className="avt" style={{width:36,height:36,background:doc===d.n?"var(--navy)":"var(--navy-pale)",color:doc===d.n?"white":"var(--navy)"}}>{d.i}</div>
+            <div style={{flex:1}}><p style={{fontSize:13,fontWeight:600,color:"var(--charcoal)"}}>{d.n}</p><span className="chip chip-navy" style={{fontSize:10,padding:"2px 7px",marginTop:3,display:"inline-flex"}}>{d.s}</span></div>
+          </button>
+        ))}
+      </div>
+    </>)}
+    {doc&&(<>
+      <p className="lbl">3. Fecha</p>
+      <div style={{display:"flex",gap:8,marginBottom:20,overflowX:"auto",paddingBottom:4}}>
+        {DATES.map(d=>(
+          <button key={d.n} onClick={()=>{setDt(d.n);setSl(null)}} style={{flexShrink:0,width:56,padding:"9px 4px",borderRadius:10,border:`1.5px solid ${dt===d.n?"var(--navy)":"var(--border)"}`,background:dt===d.n?"var(--navy)":"var(--surface)",cursor:"pointer",textAlign:"center"}}>
+            <p style={{fontSize:9,fontWeight:500,color:dt===d.n?"rgba(255,255,255,.7)":"var(--soft)",textTransform:"uppercase",marginBottom:3}}>{d.d}</p>
+            <p style={{fontFamily:"var(--font-display)",fontSize:20,color:dt===d.n?"white":"var(--charcoal)",lineHeight:1}}>{d.n}</p>
+            <p style={{fontSize:9,color:dt===d.n?"rgba(255,255,255,.6)":"var(--soft)",marginTop:3}}>{d.m}</p>
+          </button>
+        ))}
+      </div>
+    </>)}
+    {dt&&(<>
+      <p className="lbl">4. Hora</p>
+      <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:22}}>
+        {TIMES.map((row,ri)=>(
+          <div key={ri} style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:7}}>
+            {row.map((s,si)=><div key={si} className={`slot${s==="—"?" off":""}${sl===s?" on":""}`} onClick={()=>s!=="—"&&setSl(s)}>{s}</div>)}
+          </div>
+        ))}
+      </div>
+      {sl&&<button className="btn" style={{width:"100%",padding:"13px",fontSize:14}} onClick={()=>setDone(true)}>Confirmar · {sl} h</button>}
+    </>)}
+  </div>);
+};
+
+const Msgs=()=>{
+  const[m,setM]=useState("");const[sent,setSent]=useState(false);
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:18}}>
+      <p style={{fontSize:12,color:"var(--soft)",marginBottom:3}}>Comunicación</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:22,fontWeight:400,color:"var(--charcoal)"}}>Notas de consulta</h2>
+    </div>
+    {sent&&<div style={{background:"var(--navy-faint)",borderRadius:9,padding:"11px 14px",marginBottom:14,display:"flex",gap:8,alignItems:"center"}}><Icon n="chk" sz={15} c="var(--navy)"/><p style={{fontSize:13,color:"var(--navy)",fontWeight:500}}>Mensaje enviado a la Dra. Ruiz.</p></div>}
+    <div style={{display:"flex",flexDirection:"column",gap:10}}>
+      {MSGS.map((msg,i)=>(
+        <div key={i} className="msg-card">
+          <p style={{fontSize:10,color:"var(--soft)",marginBottom:5,fontWeight:500,textTransform:"uppercase",letterSpacing:".6px"}}>{msg.d}</p>
+          <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:9}}>
+            <div className="avt" style={{width:26,height:26,fontSize:9}}>{msg.i}</div>
+            <p style={{fontSize:12,fontWeight:600,color:"var(--navy)"}}>{msg.doc}</p>
+          </div>
+          <p style={{fontSize:13,color:"var(--charcoal)",lineHeight:1.55}}>{msg.txt}</p>
+        </div>
+      ))}
+    </div>
+    <div style={{marginTop:22}}>
+      <p style={{fontSize:10,color:"var(--soft)",fontWeight:600,letterSpacing:".7px",textTransform:"uppercase",marginBottom:9}}>Mensaje a tu odontólogo</p>
+      <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:50,display:"flex",alignItems:"center",padding:"10px 15px",gap:9}}>
+        <input type="text" placeholder="Escribe tu pregunta..." value={m} onChange={e=>setM(e.target.value)} onKeyDown={e=>e.key==="Enter"&&m.trim()&&(setSent(true),setM(""),setTimeout(()=>setSent(false),3000))} style={{flex:1,border:"none",outline:"none",fontFamily:"var(--font-body)",fontSize:13,color:"var(--charcoal)",background:"transparent"}}/>
+        <button onClick={()=>m.trim()&&(setSent(true),setM(""),setTimeout(()=>setSent(false),3000))} style={{background:"none",border:"none",cursor:"pointer",color:m?"var(--navy)":"var(--soft)"}}><Icon n="send" sz={17} c={m?"var(--navy)":"var(--soft)"}/></button>
+      </div>
+    </div>
+  </div>);
+};
+
+const App=()=>{
+  const[tab,setTab]=useState("home");const ref=useRef(null);
+  useEffect(()=>{if(ref.current)ref.current.scrollTop=0},[tab]);
+  const S={home:<Home setTab={setTab}/>,plan:<Plan/>,prog:<Prog/>,citas:<Citas/>,msgs:<Msgs/>};
+  return(<div className="shell">
+    <div className="sbar"><span className="sbar-time">9:41</span><div style={{display:"flex",gap:5,alignItems:"center"}}><svg width="15" height="11" viewBox="0 0 15 11" fill="none"><path d="M7.5 2.5C10.5 2.5 13 4 14.5 6.5" stroke="#1A2433" strokeOpacity=".4" strokeWidth="1.4" strokeLinecap="round"/><path d="M7.5 5C9.5 5 11.3 6 12.5 7.5" stroke="#1A2433" strokeOpacity=".7" strokeWidth="1.4" strokeLinecap="round"/><circle cx="7.5" cy="9" r="1.3" fill="#1A2433"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none"><rect x=".5" y=".5" width="18" height="10" rx="2" stroke="#1A2433" strokeOpacity=".4"/><rect x="1.5" y="1.5" width="13" height="8" rx="1.5" fill="#1A2433" fillOpacity=".85"/><path d="M20 4v3a1.5 1.5 0 000-3z" fill="#1A2433" fillOpacity=".4"/></svg></div></div>
+    <div className="hdr"><span className="wordmark">serrano <em>dental</em></span><button style={{background:"none",border:"none",cursor:"pointer",position:"relative"}}><Icon n="bell" sz={19} c="var(--mid)"/><span className="ndot" style={{top:1,right:1}}/></button></div>
+    <div className="content" ref={ref}><div style={{padding:"18px 0 0"}}>{S[tab]}</div></div>
+    <TabBar active={tab} set={setTab}/>
+  </div>);
+};
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script></body></html>

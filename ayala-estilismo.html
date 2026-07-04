@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>Ayala Estilismo</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,500;1,400&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#EDE5DB;
+  --surface:#FAF7F3;
+  --espresso:#2C1F1A;
+  --espresso-mid:#4A362E;
+  --espresso-pale:#F0E8E0;
+  --champ:#D4AF70;
+  --champ-pale:#FAF3E4;
+  --oyster:#C8B8A8;
+  --charcoal:#1A1210;
+  --mid:#6A5448;
+  --soft:#A89888;
+  --border:#D8CEBF;
+  --shadow:0 2px 14px rgba(44,31,26,0.09);
+  --radius:12px;
+  --font-body:'Work Sans',system-ui,sans-serif;
+  --font-display:'Bodoni Moda',Georgia,serif;
+}
+html,body{height:100%;background:#B8A898;font-family:var(--font-body);-webkit-font-smoothing:antialiased}
+#root{display:flex;justify-content:center;min-height:100vh}
+@media(min-width:480px){#root{padding:24px 0;background:#ACA090}}
+.shell{width:100%;max-width:430px;min-height:100vh;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+@media(min-width:480px){.shell{min-height:auto;max-height:900px;border-radius:38px;box-shadow:0 28px 80px rgba(44,31,26,0.22)}}
+.sbar{background:var(--bg);padding:12px 24px 6px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.sbar-t{font-size:15px;font-weight:300;color:var(--charcoal);letter-spacing:.3px}
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.content::-webkit-scrollbar{display:none}
+.tabs{background:var(--surface);border-top:1px solid var(--border);display:flex;padding:8px 0 20px;flex-shrink:0}
+@media(min-width:480px){.tabs{padding-bottom:8px}}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;cursor:pointer;border:none;background:none;-webkit-tap-highlight-color:transparent}
+.tab-l{font-size:9px;font-weight:500;letter-spacing:.8px;text-transform:uppercase}
+.tab.on .tab-l{color:var(--espresso)}
+.tab:not(.on) .tab-l{color:var(--soft)}
+.hdr{padding:16px 22px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;background:var(--espresso)}
+.wm{font-family:var(--font-display);font-size:19px;font-weight:400;color:#FAF7F3;letter-spacing:2px;text-transform:uppercase;font-style:italic}
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow)}
+.p{padding:18px 20px}
+.lbl{font-size:9px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--soft);margin-bottom:11px}
+.btn{background:var(--espresso);color:#FAF7F3;border:none;border-radius:2px;padding:13px 22px;font-family:var(--font-body);font-size:13px;font-weight:400;cursor:pointer;letter-spacing:.8px;text-transform:uppercase}
+.btn-out{background:transparent;color:var(--espresso);border:1px solid var(--espresso);border-radius:2px;padding:11px 18px;font-family:var(--font-body);font-size:12px;font-weight:400;cursor:pointer;letter-spacing:.8px;text-transform:uppercase}
+.btn-c{background:var(--champ-pale);color:#8A6A20;border:none;border-radius:2px;padding:7px 14px;font-size:11px;font-weight:500;cursor:pointer;letter-spacing:.5px;text-transform:uppercase}
+.chip{display:inline-flex;align-items:center;padding:3px 9px;border-radius:2px;font-size:10px;font-weight:500;letter-spacing:.4px}
+.chip-e{background:var(--espresso-pale);color:var(--espresso)}
+.chip-c{background:var(--champ-pale);color:#8A6A20}
+.avt{border-radius:50%;background:var(--espresso-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font-display);font-size:13px;color:var(--espresso);font-style:italic}
+.trk{height:3px;background:var(--border);border-radius:2px}
+.fill{height:100%;background:var(--espresso);border-radius:2px}
+.fade{animation:fu .3s ease forwards}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;border-radius:99px;outline:none;cursor:pointer;background:linear-gradient(to right,var(--espresso) 0%,var(--espresso) var(--pct,50%),var(--border) var(--pct,50%),var(--border) 100%)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--surface);border:1.5px solid var(--espresso);box-shadow:0 1px 4px rgba(44,31,26,.15)}
+.slot{background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:8px;font-size:11px;font-weight:500;color:var(--charcoal);cursor:pointer;text-align:center;letter-spacing:.3px}
+.slot.on{background:var(--espresso);border-color:var(--espresso);color:#FAF7F3}
+.slot.off{opacity:.3;cursor:default}
+.ndot{width:6px;height:6px;background:var(--champ);border-radius:50%;position:absolute;top:0;right:-1px}
+.pts-bar{height:28px;background:var(--espresso-pale);border-radius:2px;overflow:hidden;position:relative}
+.pts-fill{height:100%;background:linear-gradient(90deg,var(--espresso),var(--champ));border-radius:2px;position:absolute;top:0;left:0}
+</style>
+</head>
+<body><div id="root"></div>
+<script type="text/babel">
+const{useState,useRef,useEffect}=React;
+const PAT={name:"Valeria",last:"Montoya"};
+const APT={date:"Jueves, 3 de julio",time:"14:30 h",loc:"Ayala 62",estil:"Lucía Mena",srv:"Color y corte de autor"};
+const LOYALTY={pts:840,next:1000,tier:"Gold",visits:12};
+const CARE=[
+  {id:1,n:"Máscara hidratante profunda",freq:"1 × semana",ico:"◇",inst:"Aplicar en pelo húmedo, de medios a puntas. Dejar 10-15 min.",desc:"Mascarilla de keratina vegetal con aceite de argán y manteca de karité. Recomendada especialmente después del proceso de coloración, ya que la oxidación reseca la fibra capilar. Tu cabello es tipo 2B (ondulado fino)."},
+  {id:2,n:"Frizz-control pre-styling",freq:"Cada lavado",ico:"○",inst:"2 gotas en pelo húmedo, sin aclarar. Distribuir uniforme.",desc:"Sérum de silicona ligera (cyclopentasiloxane) para sellar la cutícula antes del secado. Especialmente importante en días húmedos y para tus ondas naturales. No sobredosar — con 2 gotas es suficiente."},
+  {id:3,n:"Calor máximo 180 °C",freq:"Solo los días que uses styling",ico:"△",inst:"Siempre con protector térmico previo. No planchar más de 2 veces por mechón.",desc:"Tu coloración rubio frío requiere cabello sano para durar. El exceso de calor oxida el pigmento y lo vira a amarillo. Recomiendo plancha Ghd Platinum + con tecnología predictiva de temperatura."},
+  {id:4,n:"Revisión de raíces",freq:"Cada 6-8 semanas",ico:"◉",inst:"Contáctanos cuando la raíz supere 1,5 cm para un resultado óptimo.",desc:"Tu fórmula actual: base 8.1 (rubio claro ceniza) con balayage de blanqueamiento con activador 40 vol. en zonas externas. Recuerda mencionar si has usado cualquier producto con aceites intensivos — pueden interferir con la química."},
+];
+const DATA=[
+  {w:"S1",hidra:4,brill:3.5},{w:"S2",hidra:4.8,brill:4.2},{w:"S3",hidra:5.5,brill:5},
+  {w:"S4",hidra:6.2,brill:5.8},{w:"S5",hidra:6.8,brill:6.5},{w:"S6",hidra:7.2,brill:7},
+  {w:"S7",hidra:7.8,brill:7.5},{w:"S8",hidra:8.2,brill:8},
+];
+const STYLS=[
+  {loc:"Ayala 62",ss:[{n:"Lucía Mena",s:"Color especialista",i:"LM"},{n:"Rafael Conde",s:"Corte de autor",i:"RC"},{n:"Alma Torres",s:"Novias y eventos",i:"AT"}]},
+  {loc:"Hermosilla 45",ss:[{n:"Diego Valls",s:"Barbería premium",i:"DV"},{n:"Nora Blanco",s:"Tratamientos capilares",i:"NB"}]},
+];
+const SVCS=["Corte · desde 65 €","Color raíces · desde 90 €","Balayage / Babylights · desde 180 €","Tratamiento de keratina · 160 €","Mechas californianas · desde 200 €","Novias y eventos · consultar"];
+const TIMES=[["10:00","11:00","12:00","13:00"],["14:00","14:30","—","17:00"],["18:00","19:00","—","20:00"]];
+const DATES=[{d:"Lun",n:30,m:"Jun"},{d:"Mar",n:1,m:"Jul"},{d:"Mié",n:2,m:"Jul"},{d:"Jue",n:3,m:"Jul"},{d:"Vie",n:4,m:"Jul"}];
+const MSGS=[
+  {d:"23 jun",i:"LM",who:"Lucía Mena",txt:"¡Tu nuevo balayage ha quedado precioso! Recuerda usar champú de color frío — el Fanola No Yellow te va perfecto. Nos vemos en 6-7 semanas para mantener las puntas."},
+  {d:"9 jun",i:"LM",who:"Lucía Mena",txt:"Hoy hemos hecho la primera revisión del tono. Las mechas han mantenido el rubio frío muy bien. He añadido un gloss transparente para dar brillo extra. Resultado 10/10."},
+  {d:"26 may",i:"RC",who:"Rafael Conde",txt:"Corte de estructura con degradado en nuca. Hemos respetado el largo para el balayage de Lucía. El cabello está en muy buena condición — se nota que cuidas la hidratación semanal."},
+];
+
+const Icon=({n,sz=22,c="currentColor"})=>{
+  const I={
+    home:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9.5L12 3l9 6.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 22V12h6v10"/></svg>,
+    clip:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg>,
+    chart:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+    cal:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+    msg:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>,
+    dn:<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>,
+    up:<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg>,
+    chk:<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+    loc:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>,
+    send:<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>,
+    bell:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>,
+    star:<svg width={sz} height={sz} viewBox="0 0 24 24" fill={c} stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+  };
+  return I[n]||null;
+};
+
+const TABS=[{id:"home",l:"Inicio",ic:"home"},{id:"plan",l:"Mi Rutina",ic:"clip"},{id:"prog",l:"Historial",ic:"chart"},{id:"citas",l:"Cita",ic:"cal"},{id:"msgs",l:"Mensajes",ic:"msg"}];
+const TabBar=({active,set})=>(
+  <nav className="tabs">
+    {TABS.map(t=>(
+      <button key={t.id} className={`tab${active===t.id?" on":""}`} onClick={()=>set(t.id)}>
+        <div style={{position:"relative"}}><Icon n={t.ic} sz={21} c={active===t.id?"var(--espresso)":"var(--soft)"}/>{t.id==="msgs"&&<span className="ndot"/>}</div>
+        <span className="tab-l">{t.l}</span>
+      </button>
+    ))}
+  </nav>
+);
+
+const Home=({setTab})=>(
+  <div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:12,paddingBottom:22}}>
+      <p style={{fontSize:11,color:"var(--soft)",fontWeight:500,letterSpacing:".8px",textTransform:"uppercase",marginBottom:4}}>Bienvenida,</p>
+      <h1 style={{fontFamily:"var(--font-display)",fontSize:28,fontWeight:400,color:"var(--charcoal)",lineHeight:1.2,fontStyle:"italic"}}>{PAT.name}</h1>
+    </div>
+    <p className="lbl">Próxima cita</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p">
+        <div style={{display:"flex",justifyContent:"space-between",marginBottom:16}}>
+          <div><p style={{fontSize:11,color:"var(--soft)",marginBottom:3,letterSpacing:".3px"}}>{APT.date}</p><p style={{fontFamily:"var(--font-display)",fontSize:26,color:"var(--charcoal)"}}>{APT.time}</p></div>
+          <span className="chip chip-e"><Icon n="loc" sz={9} c="var(--espresso)"/>&nbsp;{APT.loc}</span>
+        </div>
+        <div style={{background:"var(--bg)",borderRadius:7,padding:"11px 13px",display:"flex",gap:11,alignItems:"center",marginBottom:16}}>
+          <div className="avt" style={{width:36,height:36}}>LM</div>
+          <div>
+            <p style={{fontSize:13,fontWeight:500,color:"var(--charcoal)"}}>{APT.estil}</p>
+            <p style={{fontSize:11,color:"var(--soft)",marginTop:1,fontStyle:"italic"}}>{APT.srv}</p>
+          </div>
+        </div>
+        <div style={{display:"flex",gap:9}}><button className="btn" style={{flex:1}}>Ver detalles</button><button className="btn-c">Cambiar</button></div>
+      </div>
+    </div>
+    <p className="lbl">Programa fidelidad</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p">
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+          <div>
+            <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:3}}>
+              <p style={{fontFamily:"var(--font-display)",fontSize:16,fontWeight:400,color:"var(--charcoal)"}}>{LOYALTY.tier}</p>
+              <Icon n="star" sz={12} c="var(--champ)"/>
+            </div>
+            <p style={{fontSize:11,color:"var(--soft)"}}>{LOYALTY.visits} visitas · {LOYALTY.pts} puntos</p>
+          </div>
+          <p style={{fontSize:11,color:"var(--mid)",textAlign:"right",lineHeight:1.4}}>Faltan <strong style={{fontFamily:"var(--font-display)",fontSize:16,color:"var(--espresso)",display:"block"}}>{LOYALTY.next-LOYALTY.pts}</strong> para Platinum</p>
+        </div>
+        <div className="pts-bar">
+          <div className="pts-fill" style={{width:`${(LOYALTY.pts/LOYALTY.next)*100}%`}}/>
+        </div>
+        <p style={{fontSize:11,color:"var(--soft)",marginTop:7,textAlign:"right"}}>{LOYALTY.pts} / {LOYALTY.next} pts</p>
+      </div>
+    </div>
+    <p className="lbl">Acceso rápido</p>
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
+      {[["Reservar","cal","citas","var(--espresso)","var(--espresso-pale)"],["Mi rutina","clip","plan","var(--champ)","var(--champ-pale)"],["Historial","chart","prog","var(--mid)","var(--bg)"]].map(([l,ic,tab,c,bg])=>(
+        <button key={tab} onClick={()=>setTab(tab)} style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:10,padding:"14px 8px",display:"flex",flexDirection:"column",alignItems:"center",gap:9,cursor:"pointer"}}>
+          <div style={{width:38,height:38,borderRadius:5,background:bg,display:"flex",alignItems:"center",justifyContent:"center"}}><Icon n={ic} sz={17} c={c}/></div>
+          <p style={{fontSize:10,fontWeight:500,color:"var(--charcoal)",textAlign:"center",lineHeight:1.3,letterSpacing:".3px"}}>{l}</p>
+        </button>
+      ))}
+    </div>
+    <div style={{marginTop:20,background:"var(--champ-pale)",borderRadius:9,padding:"13px 15px",borderLeft:"2px solid var(--champ)"}}>
+      <p style={{fontSize:12,color:"#8A6A20",lineHeight:1.55,fontStyle:"italic"}}>"El cabello bien cuidado es la joya que siempre llevas puesta."</p>
+      <p style={{fontSize:10,color:"var(--soft)",marginTop:5,letterSpacing:".5px"}}>— Equipo Ayala</p>
+    </div>
+  </div>
+);
+
+const Plan=()=>{
+  const[exp,setExp]=useState(null);
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:12,paddingBottom:20}}>
+      <p style={{fontSize:11,color:"var(--soft)",fontWeight:500,letterSpacing:".8px",textTransform:"uppercase",marginBottom:3}}>Tu protocolo capilar</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:22,fontWeight:400,color:"var(--charcoal)",fontStyle:"italic",lineHeight:1.2}}>Rutina personalizada</h2>
+      <div style={{display:"flex",gap:8,alignItems:"center",marginTop:7}}>
+        <div className="avt" style={{width:20,height:20,fontSize:9}}>LM</div>
+        <p style={{fontSize:11,color:"var(--soft)"}}>Lucía Mena · revisado el 23 jun 2025</p>
+      </div>
+    </div>
+    <div style={{background:"var(--espresso-pale)",borderRadius:8,padding:"11px 13px",marginBottom:14,display:"flex",gap:9}}>
+      <span style={{fontSize:13}}>✦</span>
+      <p style={{fontSize:12,color:"var(--mid)",lineHeight:1.5,fontStyle:"italic"}}>Tu cabello: tipo 2B · fino · coloración rubio frío con balayage. Protocolo adaptado a tus necesidades específicas.</p>
+    </div>
+    <div style={{display:"flex",flexDirection:"column",gap:9}}>
+      {CARE.map(c=>(
+        <div key={c.id} style={{background:"var(--surface)",borderRadius:10,border:"1px solid var(--border)",overflow:"hidden"}}>
+          <button onClick={()=>setExp(exp===c.id?null:c.id)} style={{width:"100%",background:"none",border:"none",cursor:"pointer",textAlign:"left",padding:"15px 16px"}}>
+            <div style={{display:"flex",gap:12,alignItems:"flex-start"}}>
+              <div style={{width:38,height:38,borderRadius:4,background:"var(--espresso-pale)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:17,color:"var(--espresso)",flexShrink:0}}>{c.ico}</div>
+              <div style={{flex:1}}>
+                <p style={{fontFamily:"var(--font-display)",fontSize:15,color:"var(--charcoal)",marginBottom:2}}>{c.n}</p>
+                <p style={{fontSize:11,color:"var(--champ)",fontWeight:500,marginBottom:3,letterSpacing:".3px"}}>{c.freq}</p>
+                <p style={{fontSize:12,color:"var(--soft)",lineHeight:1.4,fontStyle:"italic",paddingRight:16}}>{c.inst}</p>
+              </div>
+              <div style={{color:"var(--soft)",flexShrink:0,marginTop:2}}>{exp===c.id?<Icon n="up"/>:<Icon n="dn"/>}</div>
+            </div>
+          </button>
+          {exp===c.id&&<div style={{borderTop:"1px solid var(--border)",padding:"12px 16px"}}><p style={{fontSize:13,color:"var(--mid)",lineHeight:1.65,fontStyle:"italic"}}>{c.desc}</p></div>}
+        </div>
+      ))}
+    </div>
+  </div>);
+};
+
+const Prog=()=>{
+  const[hid,setHid]=useState(8);const[bri,setBri]=useState(8);const[sub,setSub]=useState(false);
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:12,paddingBottom:20}}>
+      <p style={{fontSize:11,color:"var(--soft)",fontWeight:500,letterSpacing:".8px",textTransform:"uppercase",marginBottom:3}}>Seguimiento</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:22,fontWeight:400,color:"var(--charcoal)",fontStyle:"italic"}}>Salud capilar</h2>
+    </div>
+    <p className="lbl">Check-in semanal</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p">
+        {!sub?(<>
+          <div style={{marginBottom:20}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:9}}>
+              <p style={{fontSize:13,fontWeight:400,color:"var(--charcoal)"}}>Hidratación percibida</p>
+              <span style={{fontFamily:"var(--font-display)",fontSize:20,color:"var(--espresso)",fontStyle:"italic"}}>{hid}<span style={{fontSize:12,color:"var(--soft)"}}>/ 10</span></span>
+            </div>
+            <input type="range" min="0" max="10" step=".5" value={hid} style={{"--pct":`${hid*10}%`}} onChange={e=>setHid(Number(e.target.value))}/>
+          </div>
+          <div style={{marginBottom:20}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:9}}>
+              <p style={{fontSize:13,fontWeight:400,color:"var(--charcoal)"}}>Brillo y vitalidad</p>
+              <span style={{fontFamily:"var(--font-display)",fontSize:20,color:"var(--champ)",fontStyle:"italic"}}>{bri}<span style={{fontSize:12,color:"var(--soft)"}}>/ 10</span></span>
+            </div>
+            <input type="range" min="0" max="10" step=".5" value={bri} style={{"--pct":`${bri*10}%`,"background":`linear-gradient(to right,var(--champ) 0%,var(--champ) ${bri*10}%,var(--border) ${bri*10}%,var(--border) 100%)`}} onChange={e=>setBri(Number(e.target.value))}/>
+          </div>
+          <button className="btn" style={{width:"100%"}} onClick={()=>setSub(true)}>Guardar</button>
+        </>):(
+          <div style={{textAlign:"center",padding:"18px 0 6px"}}>
+            <p style={{fontFamily:"var(--font-display)",fontSize:20,color:"var(--charcoal)",fontStyle:"italic",marginBottom:5}}>Guardado ✦</p>
+            <p style={{fontSize:13,color:"var(--soft)"}}>Lucía verá tu registro en la próxima visita.</p>
+            <button className="btn-out" style={{marginTop:14}} onClick={()=>setSub(false)}>Editar</button>
+          </div>
+        )}
+      </div>
+    </div>
+    <p className="lbl">Evolución — 8 semanas</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p" style={{paddingBottom:10}}>
+        <div style={{display:"flex",gap:14,marginBottom:10}}>
+          <div style={{display:"flex",gap:5,alignItems:"center"}}><div style={{width:8,height:2,background:"var(--espresso)",borderRadius:1}}/><span style={{fontSize:10,color:"var(--soft)"}}>Hidratación</span></div>
+          <div style={{display:"flex",gap:5,alignItems:"center"}}><div style={{width:8,height:2,background:"var(--champ)",borderRadius:1}}/><span style={{fontSize:10,color:"var(--soft)"}}>Brillo</span></div>
+        </div>
+        <svg viewBox="0 0 310 75" style={{width:"100%",height:"auto"}}>
+          {DATA.map((d,i)=>{
+            if(i===0)return null;
+            const xs=j=>5+j*(300/7);const ys=v=>5+60-(v/10)*60;const prev=DATA[i-1];
+            return(<g key={i}><line x1={xs(i-1)} y1={ys(prev.hidra)} x2={xs(i)} y2={ys(d.hidra)} stroke="var(--espresso)" strokeWidth="1.8" strokeLinecap="round"/><line x1={xs(i-1)} y1={ys(prev.brill)} x2={xs(i)} y2={ys(d.brill)} stroke="var(--champ)" strokeWidth="1.8" strokeLinecap="round"/></g>);
+          })}
+          {DATA.map((d,i)=>{const xs=j=>5+j*(300/7);const ys=v=>5+60-(v/10)*60;return(<g key={i}><circle cx={xs(i)} cy={ys(d.hidra)} r="2.5" fill="var(--surface)" stroke="var(--espresso)" strokeWidth="1.5"/><circle cx={xs(i)} cy={ys(d.brill)} r="2.5" fill="var(--surface)" stroke="var(--champ)" strokeWidth="1.5"/><text x={xs(i)} y={71} textAnchor="middle" fontSize="8" fill="var(--soft)" fontFamily="Work Sans,sans-serif">{d.w}</text></g>)})}
+        </svg>
+      </div>
+    </div>
+    <p className="lbl">Historial de servicios</p>
+    <div style={{display:"flex",flexDirection:"column",gap:8}}>
+      {[{f:"23 jun 2025",s:"Balayage + tratamiento hidratante",est:"Lucía Mena"},{f:"9 jun 2025",s:"Revisión color + gloss",est:"Lucía Mena"},{f:"26 may 2025",s:"Corte de estructura",est:"Rafael Conde"}].map((v,i)=>(
+        <div key={i} style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:8,padding:"12px 14px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <div><p style={{fontSize:13,fontWeight:400,color:"var(--charcoal)",marginBottom:2,fontStyle:"italic"}}>{v.s}</p><p style={{fontSize:11,color:"var(--soft)"}}>{v.f} · {v.est}</p></div>
+          <span style={{fontSize:11,color:"var(--champ)",fontWeight:500}}>+60 pts</span>
+        </div>
+      ))}
+    </div>
+  </div>);
+};
+
+const Citas=()=>{
+  const[loc,setLoc]=useState(null);const[est,setEst]=useState(null);const[srv,setSrv]=useState(null);const[dt,setDt]=useState(null);const[sl,setSl]=useState(null);const[done,setDone]=useState(false);
+  if(done)return(<div className="fade" style={{padding:"0 20px 32px",display:"flex",flexDirection:"column",alignItems:"center",paddingTop:56}}>
+    <div style={{width:66,height:66,borderRadius:8,background:"var(--espresso-pale)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:18,fontFamily:"var(--font-display)",fontSize:32,color:"var(--espresso)",fontStyle:"italic"}}>✦</div>
+    <h2 style={{fontFamily:"var(--font-display)",fontSize:24,fontWeight:400,color:"var(--charcoal)",marginBottom:7,fontStyle:"italic"}}>¡Cita confirmada!</h2>
+    <p style={{fontSize:13,color:"var(--soft)",textAlign:"center",lineHeight:1.6,marginBottom:28}}>Recibirás un recordatorio por WhatsApp 48 h antes. Recuerda venir con el cabello limpio y sin styling.</p>
+    <button className="btn-out" onClick={()=>{setDone(false);setLoc(null);setEst(null);setSrv(null);setDt(null);setSl(null)}}>Reservar otra cita</button>
+  </div>);
+  const ss=loc?STYLS.find(l=>l.loc===loc)?.ss:[];
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:12,paddingBottom:20}}>
+      <p style={{fontSize:11,color:"var(--soft)",fontWeight:500,letterSpacing:".8px",textTransform:"uppercase",marginBottom:3}}>Nueva reserva</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:22,fontWeight:400,color:"var(--charcoal)",fontStyle:"italic"}}>Reservar cita</h2>
+    </div>
+    <p className="lbl">1. Salón</p>
+    <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
+      {STYLS.map(l=>(
+        <button key={l.loc} onClick={()=>{setLoc(l.loc);setEst(null)}} style={{background:"var(--surface)",border:`1px solid ${loc===l.loc?"var(--espresso)":"var(--border)"}`,borderRadius:8,padding:"13px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer",textAlign:"left"}}>
+          <div><p style={{fontFamily:"var(--font-display)",fontSize:14,color:"var(--charcoal)",fontStyle:"italic"}}>{l.loc}</p><p style={{fontSize:11,color:"var(--soft)",marginTop:2}}>Ayala Estilismo · Madrid</p></div>
+          {loc===l.loc&&<div style={{width:18,height:18,borderRadius:3,background:"var(--espresso)",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon n="chk" sz={10} c="#FAF7F3"/></div>}
+        </button>
+      ))}
+    </div>
+    {loc&&(<>
+      <p className="lbl">2. Servicio</p>
+      <div style={{display:"flex",flexDirection:"column",gap:6,marginBottom:20}}>
+        {SVCS.map(s=>(
+          <button key={s} onClick={()=>setSrv(s)} style={{background:"var(--surface)",border:`1px solid ${srv===s?"var(--espresso)":"var(--border)"}`,borderRadius:7,padding:"11px 13px",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer",textAlign:"left"}}>
+            <p style={{fontSize:13,fontWeight:400,color:"var(--charcoal)",fontStyle:"italic"}}>{s.split(" ·")[0]}</p>
+            <div style={{display:"flex",gap:8,alignItems:"center"}}>
+              <p style={{fontSize:11,color:"var(--soft)"}}>{s.split("· ")[1]}</p>
+              {srv===s&&<div style={{width:16,height:16,borderRadius:3,background:"var(--espresso)",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon n="chk" sz={9} c="#FAF7F3"/></div>}
+            </div>
+          </button>
+        ))}
+      </div>
+      <p className="lbl">3. Estilista</p>
+      <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
+        {ss.map(s=>(
+          <button key={s.n} onClick={()=>setEst(s.n)} style={{background:"var(--surface)",border:`1px solid ${est===s.n?"var(--espresso)":"var(--border)"}`,borderRadius:8,padding:"12px 13px",display:"flex",alignItems:"center",gap:11,cursor:"pointer",textAlign:"left"}}>
+            <div className="avt" style={{width:36,height:36,background:est===s.n?"var(--espresso)":"var(--espresso-pale)",color:est===s.n?"#FAF7F3":"var(--espresso)"}}>{s.i}</div>
+            <div style={{flex:1}}><p style={{fontSize:13,fontWeight:400,color:"var(--charcoal)",fontStyle:"italic"}}>{s.n}</p><span className="chip chip-e" style={{fontSize:10,marginTop:3,display:"inline-flex"}}>{s.s}</span></div>
+          </button>
+        ))}
+      </div>
+    </>)}
+    {est&&(<>
+      <p className="lbl">4. Fecha</p>
+      <div style={{display:"flex",gap:8,marginBottom:20,overflowX:"auto",paddingBottom:4}}>
+        {DATES.map(d=>(
+          <button key={d.n} onClick={()=>{setDt(d.n);setSl(null)}} style={{flexShrink:0,width:54,padding:"9px 4px",borderRadius:6,border:`1px solid ${dt===d.n?"var(--espresso)":"var(--border)"}`,background:dt===d.n?"var(--espresso)":"var(--surface)",cursor:"pointer",textAlign:"center"}}>
+            <p style={{fontSize:9,fontWeight:500,color:dt===d.n?"rgba(250,247,243,.6)":"var(--soft)",textTransform:"uppercase",letterSpacing:".5px",marginBottom:3}}>{d.d}</p>
+            <p style={{fontFamily:"var(--font-display)",fontSize:20,color:dt===d.n?"#FAF7F3":"var(--charcoal)",lineHeight:1,fontStyle:"italic"}}>{d.n}</p>
+            <p style={{fontSize:9,color:dt===d.n?"rgba(250,247,243,.5)":"var(--soft)",marginTop:3}}>{d.m}</p>
+          </button>
+        ))}
+      </div>
+    </>)}
+    {dt&&(<>
+      <p className="lbl">5. Hora</p>
+      <div style={{display:"flex",flexDirection:"column",gap:7,marginBottom:22}}>
+        {TIMES.map((row,ri)=>(
+          <div key={ri} style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:7}}>
+            {row.map((s,si)=><div key={si} className={`slot${s==="—"?" off":""}${sl===s?" on":""}`} onClick={()=>s!=="—"&&setSl(s)}>{s}</div>)}
+          </div>
+        ))}
+      </div>
+      {sl&&<button className="btn" style={{width:"100%",padding:"13px"}} onClick={()=>setDone(true)}>Confirmar · {sl} h</button>}
+    </>)}
+  </div>);
+};
+
+const Msgs=()=>{
+  const[m,setM]=useState("");const[sent,setSent]=useState(false);
+  const send=()=>m.trim()&&(setSent(true),setM(""),setTimeout(()=>setSent(false),3000));
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:12,paddingBottom:20}}>
+      <p style={{fontSize:11,color:"var(--soft)",fontWeight:500,letterSpacing:".8px",textTransform:"uppercase",marginBottom:3}}>Comunicación</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:22,fontWeight:400,color:"var(--charcoal)",fontStyle:"italic"}}>Notas de estilismo</h2>
+    </div>
+    {sent&&<div style={{background:"var(--espresso-pale)",borderRadius:7,padding:"11px 13px",marginBottom:14,display:"flex",gap:8,alignItems:"center"}}><Icon n="chk" sz={13} c="var(--espresso)"/><p style={{fontSize:13,color:"var(--espresso)"}}>Mensaje enviado.</p></div>}
+    <div style={{display:"flex",flexDirection:"column",gap:10}}>
+      {MSGS.map((msg,i)=>(
+        <div key={i} style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:9,padding:"14px 15px"}}>
+          <p style={{fontSize:10,color:"var(--soft)",marginBottom:4,letterSpacing:".8px",textTransform:"uppercase"}}>{msg.d}</p>
+          <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:8}}><div className="avt" style={{width:26,height:26,fontSize:9}}>{msg.i}</div><p style={{fontSize:12,fontWeight:500,color:"var(--espresso)"}}>{msg.who}</p></div>
+          <p style={{fontSize:13,color:"var(--charcoal)",lineHeight:1.65,fontStyle:"italic"}}>{msg.txt}</p>
+        </div>
+      ))}
+    </div>
+    <div style={{marginTop:22}}>
+      <p style={{fontSize:10,color:"var(--soft)",fontWeight:500,letterSpacing:".8px",textTransform:"uppercase",marginBottom:9}}>Mensaje a tu estilista</p>
+      <div style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:7,display:"flex",alignItems:"center",padding:"10px 14px",gap:9}}>
+        <input type="text" placeholder="¿Tienes alguna pregunta para Lucía?" value={m} onChange={e=>setM(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} style={{flex:1,border:"none",outline:"none",fontFamily:"var(--font-body)",fontSize:13,color:"var(--charcoal)",background:"transparent"}}/>
+        <button onClick={send} style={{background:"none",border:"none",cursor:"pointer"}}><Icon n="send" sz={15} c={m?"var(--espresso)":"var(--soft)"}/></button>
+      </div>
+    </div>
+  </div>);
+};
+
+const App=()=>{
+  const[tab,setTab]=useState("home");const ref=useRef(null);
+  useEffect(()=>{if(ref.current)ref.current.scrollTop=0},[tab]);
+  const S={home:<Home setTab={setTab}/>,plan:<Plan/>,prog:<Prog/>,citas:<Citas/>,msgs:<Msgs/>};
+  return(<div className="shell">
+    <div className="sbar" style={{background:"var(--espresso)"}}><span style={{fontSize:15,fontWeight:300,color:"rgba(250,247,243,.8)",letterSpacing:".3px"}}>9:41</span><div style={{display:"flex",gap:5,alignItems:"center"}}><svg width="15" height="11" viewBox="0 0 15 11" fill="none"><circle cx="7.5" cy="9" r="1.2" fill="rgba(250,247,243,.9)"/><path d="M7.5 5C9.5 5 11.3 6 12.5 7.5" stroke="rgba(250,247,243,.8)" strokeWidth="1.3" strokeLinecap="round"/><path d="M7.5 2.5C10.5 2.5 13 4 14.5 6.5" stroke="rgba(250,247,243,.4)" strokeWidth="1.3" strokeLinecap="round"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none"><rect x=".5" y=".5" width="18" height="10" rx="2" stroke="rgba(250,247,243,.4)"/><rect x="1.5" y="1.5" width="13" height="8" rx="1.5" fill="rgba(250,247,243,.85)"/><path d="M20 4v3a1.5 1.5 0 000-3z" fill="rgba(250,247,243,.4)"/></svg></div></div>
+    <div className="hdr">
+      <span className="wm">Ayala</span>
+      <button style={{background:"none",border:"none",cursor:"pointer",position:"relative"}}><Icon n="bell" sz={19} c="rgba(250,247,243,.8)"/><span className="ndot" style={{top:1,right:1}}/></button>
+    </div>
+    <div className="content" ref={ref}><div style={{padding:"18px 0 0"}}>{S[tab]}</div></div>
+    <TabBar active={tab} set={setTab}/>
+  </div>);
+};
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script></body></html>

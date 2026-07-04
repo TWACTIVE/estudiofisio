@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>Recoletos Estética Médica</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FAFAF7;
+  --surface:#FFFFFF;
+  --wine:#5C1E2B;
+  --wine-mid:#7A2D3C;
+  --wine-pale:#F7EEED;
+  --wine-faint:#FDF5F4;
+  --gold:#C4A46B;
+  --gold-pale:#F8F2E6;
+  --charcoal:#2A1F20;
+  --mid:#6B5356;
+  --soft:#A09094;
+  --border:#E8E0E1;
+  --shadow:0 2px 16px rgba(92,30,43,0.07);
+  --radius:14px;
+  --font-body:'Lato',system-ui,sans-serif;
+  --font-display:'EB Garamond',Georgia,serif;
+}
+html,body{height:100%;background:#C8B8B8;font-family:var(--font-body);-webkit-font-smoothing:antialiased}
+#root{display:flex;justify-content:center;min-height:100vh}
+@media(min-width:480px){#root{padding:24px 0;background:#BCA8A8}}
+.shell{width:100%;max-width:430px;min-height:100vh;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+@media(min-width:480px){.shell{min-height:auto;max-height:900px;border-radius:38px;box-shadow:0 28px 80px rgba(92,30,43,0.2)}}
+.sbar{background:var(--bg);padding:12px 24px 6px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.sbar-t{font-size:15px;font-weight:300;color:var(--charcoal);letter-spacing:.3px}
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.content::-webkit-scrollbar{display:none}
+.tabs{background:var(--surface);border-top:1px solid var(--border);display:flex;padding:8px 0 20px;flex-shrink:0}
+@media(min-width:480px){.tabs{padding-bottom:8px}}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;cursor:pointer;border:none;background:none;-webkit-tap-highlight-color:transparent}
+.tab-lbl{font-size:10px;font-weight:400;letter-spacing:.5px;text-transform:uppercase}
+.tab.on .tab-lbl{color:var(--wine)}
+.tab:not(.on) .tab-lbl{color:var(--soft)}
+.hdr{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;background:var(--bg)}
+.wm{font-family:var(--font-display);font-size:16px;font-weight:400;color:var(--wine);letter-spacing:2px;text-transform:uppercase}
+.wm-sub{font-size:9px;font-weight:400;color:var(--soft);letter-spacing:2.5px;text-transform:uppercase;margin-top:1px}
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow)}
+.p{padding:20px 22px}
+.lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--soft);margin-bottom:12px}
+.btn{background:var(--wine);color:#fff;border:none;border-radius:2px;padding:13px 22px;font-family:var(--font-body);font-size:13px;font-weight:400;cursor:pointer;letter-spacing:.5px;text-transform:uppercase}
+.btn-out{background:transparent;color:var(--wine);border:1px solid var(--wine);border-radius:2px;padding:11px 18px;font-family:var(--font-body);font-size:12px;font-weight:400;cursor:pointer;letter-spacing:.5px;text-transform:uppercase}
+.btn-g{background:var(--gold-pale);color:#8A6A2A;border:none;border-radius:2px;padding:8px 14px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase}
+.chip{display:inline-flex;align-items:center;padding:3px 9px;border-radius:2px;font-size:10px;font-weight:400;letter-spacing:.5px}
+.chip-w{background:var(--wine-pale);color:var(--wine)}
+.chip-g{background:var(--gold-pale);color:#8A6A2A}
+.avt{border-radius:50%;background:var(--wine-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font-display);font-size:13px;color:var(--wine)}
+.trk{height:4px;background:var(--border);border-radius:2px}
+.fill{height:100%;background:var(--wine);border-radius:2px}
+.fade{animation:fu .3s ease forwards}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;border-radius:99px;outline:none;cursor:pointer;background:linear-gradient(to right,var(--wine) 0%,var(--wine) var(--pct,50%),var(--border) var(--pct,50%),var(--border) 100%)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--surface);border:1.5px solid var(--wine);box-shadow:0 1px 4px rgba(92,30,43,.15)}
+.slot{background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:8px;font-size:11px;font-weight:400;color:var(--charcoal);cursor:pointer;text-align:center;letter-spacing:.3px}
+.slot.on{background:var(--wine);border-color:var(--wine);color:#fff}
+.slot.off{opacity:.35;cursor:default}
+.ndot{width:6px;height:6px;background:var(--gold);border-radius:50%;position:absolute;top:0;right:-1px}
+</style>
+</head>
+<body><div id="root"></div>
+<script type="text/babel">
+const{useState,useRef,useEffect}=React;
+const PAT={name:"Isabel",last:"Fernández"};
+const APT={date:"Jueves, 3 de julio",time:"16:30 h",loc:"Recoletos 18",doc:"Dra. Alejandra Montes",spec:"Medicina estética · especialista en láser"};
+const BONO={used:2,total:5,label:"Bono rejuvenecimiento facial"};
+const TREATS=[
+  {id:1,n:"Limpieza facial profunda",fase:"Cada 4 semanas",ico:"◇",inst:"Evitar maquillaje 12 h antes del tratamiento.",desc:"Limpieza ultrasónica combinada con extracción manual por la especialista. Incluye peeling enzimático con AHA al 10% y mascarilla calmante de centella asiática. Finaliza con FPS 50+ de aplicación en cabina."},
+  {id:2,n:"Mesoterapia facial",fase:"Ciclo de 4 sesiones · fase 1/4",ico:"◈",inst:"No acudir con piel irritada o con activos exfoliantes recientes.",desc:"Microinyecciones intradérmicas de cóctel hialurón + vitamina C + péptidos regeneradores. Mejora la hidratación, luminosidad y firmeza de la piel. Tiempo de actuación aproximado: 48-72 h."},
+  {id:3,n:"Protocolo homecare",fase:"Rutina diaria",ico:"○",inst:"AM: sérum vitamina C · FPS50+. PM: retinol · crema barrera.",desc:"Rutina activa adaptada a tu tipo de piel (mixta-grasa, fototipoIII). Retinol al 0,5% a introducir progresivamente — empieza 2 noches por semana durante el primer mes. Siempre SPF al día siguiente."},
+  {id:4,n:"Hidratación profunda con ácido hialurónico",fase:"Cada 6 meses",ico:"◉",inst:"Evitar sol directo 72 h. Hidratar la zona tratada con crema sin perfumes.",desc:"Relleno subdérmico con ácido hialurónico reticulado en surco nasogeniano y volumen labial sutil. Técnica con cánula para minimizar hematomas. Resultado natural y reversible."},
+];
+const DATA=[
+  {w:"S1",lum:4,firm:3.5},{w:"S2",lum:4.5,firm:4},{w:"S3",lum:5.2,firm:4.5},
+  {w:"S4",lum:5.8,firm:5},{w:"S5",lum:6.5,firm:5.8},{w:"S6",lum:7,firm:6.2},
+  {w:"S7",lum:7.8,firm:7},{w:"S8",lum:8.4,firm:7.6},
+];
+const DOCS=[
+  {loc:"Recoletos 18",ds:[{n:"Dra. Alejandra Montes",s:"Medicina estética",i:"AM"},{n:"Dra. Carmen Vega",s:"Láser y tecnología",i:"CV"}]},
+  {loc:"Serrano 91",ds:[{n:"Dra. Patricia Ruiz",s:"Tratamientos corporales",i:"PR"},{n:"Dr. Javier Soto",s:"Medicina regenerativa",i:"JS"}]},
+];
+const TIMES=[["10:00","11:00","12:00","13:00"],["—","16:30","17:30","18:30"],["19:00","—","—","20:00"]];
+const DATES=[{d:"Lun",n:30,m:"Jun"},{d:"Mar",n:1,m:"Jul"},{d:"Mié",n:2,m:"Jul"},{d:"Jue",n:3,m:"Jul"},{d:"Vie",n:4,m:"Jul"}];
+const MSGS=[
+  {d:"23 jun",i:"AM",who:"Dra. Alejandra Montes",txt:"Excelente respuesta a la mesoterapia. La luminosidad ha mejorado notablemente. Recomiendo mantener el retinol dos noches por semana antes de subir a 0,7%."},
+  {d:"9 jun",i:"AM",who:"Dra. Alejandra Montes",txt:"Primera sesión de mesoterapia completada sin incidencias. Se observa leve eritema post-tratamiento, normal y transitorio. Desaparecerá en 24-48 h."},
+  {d:"26 may",i:"CV",who:"Dra. Carmen Vega",txt:"Protocolo de fotorrejuvenecimiento IPL finalizado. Resultado muy satisfactorio en la reducción de manchas solares. Mantenimiento anual recomendado."},
+];
+
+const Icon=({n,sz=22,c="currentColor"})=>{
+  const I={
+    home:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9.5L12 3l9 6.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 22V12h6v10"/></svg>,
+    clip:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg>,
+    chart:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+    cal:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+    msg:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>,
+    dn:<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>,
+    up:<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg>,
+    chk:<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+    loc:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>,
+    send:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>,
+    bell:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>,
+  };
+  return I[n]||null;
+};
+
+const TABS=[{id:"home",l:"Inicio",ic:"home"},{id:"plan",l:"Protocolo",ic:"clip"},{id:"prog",l:"Evolución",ic:"chart"},{id:"citas",l:"Citas",ic:"cal"},{id:"msgs",l:"Mensajes",ic:"msg"}];
+const TabBar=({active,set})=>(
+  <nav className="tabs">
+    {TABS.map(t=>(
+      <button key={t.id} className={`tab${active===t.id?" on":""}`} onClick={()=>set(t.id)}>
+        <div style={{position:"relative"}}><Icon n={t.ic} sz={20} c={active===t.id?"var(--wine)":"var(--soft)"}/>{t.id==="msgs"&&<span className="ndot"/>}</div>
+        <span className="tab-lbl">{t.l}</span>
+      </button>
+    ))}
+  </nav>
+);
+
+const Home=({setTab})=>(
+  <div className="fade" style={{padding:"0 22px 32px"}}>
+    <div style={{paddingTop:12,paddingBottom:22}}>
+      <p style={{fontSize:11,color:"var(--soft)",fontWeight:400,letterSpacing:".8px",textTransform:"uppercase",marginBottom:6}}>Bienvenida,</p>
+      <h1 style={{fontFamily:"var(--font-display)",fontSize:30,fontWeight:400,color:"var(--charcoal)",lineHeight:1.15,fontStyle:"italic"}}>{PAT.name}</h1>
+    </div>
+    <p className="lbl">Próxima cita</p>
+    <div className="card" style={{marginBottom:22}}>
+      <div className="p">
+        <div style={{display:"flex",justifyContent:"space-between",marginBottom:16}}>
+          <div><p style={{fontSize:11,color:"var(--soft)",letterSpacing:".3px",marginBottom:3}}>{APT.date}</p><p style={{fontFamily:"var(--font-display)",fontSize:28,color:"var(--charcoal)",fontWeight:400}}>{APT.time}</p></div>
+          <span className="chip chip-w"><Icon n="loc" sz={9} c="var(--wine)"/>&nbsp;{APT.loc}</span>
+        </div>
+        <div style={{background:"var(--wine-faint)",borderRadius:6,padding:"12px 14px",display:"flex",gap:11,alignItems:"center",marginBottom:16}}>
+          <div className="avt" style={{width:36,height:36}}>AM</div>
+          <div><p style={{fontSize:13,fontWeight:400,color:"var(--charcoal)"}}>{APT.doc}</p><p style={{fontSize:11,color:"var(--soft)",marginTop:2,fontStyle:"italic"}}>{APT.spec}</p></div>
+        </div>
+        <div style={{display:"flex",gap:9}}><button className="btn" style={{flex:1}}>Ver detalles</button><button className="btn-g">Reagendar</button></div>
+      </div>
+    </div>
+    <p className="lbl">Tu bono</p>
+    <div className="card" style={{marginBottom:22}}>
+      <div className="p">
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:13}}>
+          <div><p style={{fontSize:13,fontWeight:400,color:"var(--charcoal)"}}>{BONO.total-BONO.used} tratamientos restantes</p><p style={{fontSize:11,color:"var(--soft)",marginTop:2,fontStyle:"italic"}}>{BONO.label}</p></div>
+          <span style={{fontFamily:"var(--font-display)",fontSize:32,color:"var(--wine)",fontWeight:400}}>{BONO.total-BONO.used}<span style={{fontSize:13,color:"var(--soft)"}}>/{BONO.total}</span></span>
+        </div>
+        <div className="trk"><div className="fill" style={{width:`${((BONO.total-BONO.used)/BONO.total)*100}%`}}/></div>
+      </div>
+    </div>
+    <p className="lbl">Acceso rápido</p>
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
+      {[["Reservar","cal","citas","var(--wine)","var(--wine-pale)"],["Mi protocolo","clip","plan","var(--gold)","var(--gold-pale)"],["Evolución","chart","prog","var(--mid)","#F3EDEE"]].map(([l,ic,tab,c,bg])=>(
+        <button key={tab} onClick={()=>setTab(tab)} style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:10,padding:"14px 8px",display:"flex",flexDirection:"column",alignItems:"center",gap:9,cursor:"pointer"}}>
+          <div style={{width:38,height:38,borderRadius:6,background:bg,display:"flex",alignItems:"center",justifyContent:"center"}}><Icon n={ic} sz={17} c={c}/></div>
+          <p style={{fontSize:10,fontWeight:400,color:"var(--charcoal)",textAlign:"center",lineHeight:1.3,letterSpacing:".3px"}}>{l}</p>
+        </button>
+      ))}
+    </div>
+    <div style={{marginTop:20,padding:"15px 18px",borderTop:"1px solid var(--border)",borderBottom:"1px solid var(--border)"}}>
+      <p style={{fontFamily:"var(--font-display)",fontSize:15,color:"var(--mid)",fontStyle:"italic",lineHeight:1.65}}>"La medicina estética es cuidar la piel con el rigor de la clínica y la sensibilidad del arte."</p>
+      <p style={{fontSize:10,color:"var(--soft)",marginTop:6,letterSpacing:".5px"}}>— Dra. Alejandra Montes</p>
+    </div>
+  </div>
+);
+
+const Plan=()=>{
+  const[exp,setExp]=useState(null);
+  return(<div className="fade" style={{padding:"0 22px 32px"}}>
+    <div style={{paddingTop:12,paddingBottom:20}}>
+      <p style={{fontSize:10,color:"var(--soft)",letterSpacing:"1.2px",textTransform:"uppercase",marginBottom:4}}>Tu protocolo activo</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:24,fontWeight:400,color:"var(--charcoal)",fontStyle:"italic",lineHeight:1.2}}>Rejuvenecimiento facial</h2>
+      <div style={{display:"flex",gap:8,alignItems:"center",marginTop:7}}>
+        <div className="avt" style={{width:20,height:20,fontSize:9}}>AM</div>
+        <p style={{fontSize:11,color:"var(--soft)",letterSpacing:".2px"}}>Dra. Alejandra Montes · revisado 23 jun 2025</p>
+      </div>
+    </div>
+    <div style={{display:"flex",flexDirection:"column",gap:9}}>
+      {TREATS.map(t=>(
+        <div key={t.id} style={{background:"var(--surface)",borderRadius:10,border:"1px solid var(--border)",overflow:"hidden"}}>
+          <button onClick={()=>setExp(exp===t.id?null:t.id)} style={{width:"100%",background:"none",border:"none",cursor:"pointer",textAlign:"left",padding:"16px 18px"}}>
+            <div style={{display:"flex",gap:13,alignItems:"flex-start"}}>
+              <div style={{width:38,height:38,borderRadius:4,background:"var(--wine-pale)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:17,color:"var(--wine)",flexShrink:0}}>{t.ico}</div>
+              <div style={{flex:1}}>
+                <p style={{fontFamily:"var(--font-display)",fontSize:16,color:"var(--charcoal)",marginBottom:2}}>{t.n}</p>
+                <p style={{fontSize:11,color:"var(--wine)",letterSpacing:".3px",marginBottom:4}}>{t.fase}</p>
+                <p style={{fontSize:12,color:"var(--soft)",lineHeight:1.45,fontStyle:"italic",paddingRight:16}}>{t.inst}</p>
+              </div>
+              <div style={{color:"var(--soft)",flexShrink:0,marginTop:2}}>{exp===t.id?<Icon n="up"/>:<Icon n="dn"/>}</div>
+            </div>
+          </button>
+          {exp===t.id&&<div style={{borderTop:"1px solid var(--border)",padding:"14px 18px"}}><p style={{fontSize:13,color:"var(--mid)",lineHeight:1.65,fontStyle:"italic"}}>{t.desc}</p></div>}
+        </div>
+      ))}
+    </div>
+  </div>);
+};
+
+const Prog=()=>{
+  const[lum,setLum]=useState(8);const[firm,setFirm]=useState(8);const[sub,setSub]=useState(false);
+  return(<div className="fade" style={{padding:"0 22px 32px"}}>
+    <div style={{paddingTop:12,paddingBottom:20}}>
+      <p style={{fontSize:10,color:"var(--soft)",letterSpacing:"1.2px",textTransform:"uppercase",marginBottom:4}}>Seguimiento</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:24,fontWeight:400,color:"var(--charcoal)",fontStyle:"italic"}}>Tu evolución</h2>
+    </div>
+    <p className="lbl">Check-in semanal</p>
+    <div className="card" style={{marginBottom:22}}>
+      <div className="p">
+        {!sub?(<>
+          <div style={{marginBottom:22}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:10}}>
+              <p style={{fontSize:13,color:"var(--charcoal)",fontWeight:400}}>Luminosidad percibida</p>
+              <span style={{fontFamily:"var(--font-display)",fontSize:22,color:"var(--wine)",fontStyle:"italic"}}>{lum}<span style={{fontSize:12,color:"var(--soft)"}}>/ 10</span></span>
+            </div>
+            <input type="range" min="0" max="10" step=".5" value={lum} style={{"--pct":`${lum*10}%`}} onChange={e=>setLum(Number(e.target.value))}/>
+          </div>
+          <div style={{marginBottom:22}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:10}}>
+              <p style={{fontSize:13,color:"var(--charcoal)",fontWeight:400}}>Firmeza percibida</p>
+              <span style={{fontFamily:"var(--font-display)",fontSize:22,color:"var(--gold)",fontStyle:"italic"}}>{firm}<span style={{fontSize:12,color:"var(--soft)"}}>/ 10</span></span>
+            </div>
+            <input type="range" min="0" max="10" step=".5" value={firm} style={{"--pct":`${firm*10}%`,"background":`linear-gradient(to right,var(--gold) 0%,var(--gold) ${firm*10}%,var(--border) ${firm*10}%,var(--border) 100%)`}} onChange={e=>setFirm(Number(e.target.value))}/>
+          </div>
+          <button className="btn" style={{width:"100%"}} onClick={()=>setSub(true)}>Guardar</button>
+        </>):(
+          <div style={{textAlign:"center",padding:"18px 0 8px"}}>
+            <p style={{fontFamily:"var(--font-display)",fontSize:20,color:"var(--charcoal)",fontStyle:"italic",marginBottom:5}}>Registrado</p>
+            <p style={{fontSize:13,color:"var(--soft)"}}>La Dra. Montes revisará tus datos en la próxima consulta.</p>
+            <button className="btn-out" style={{marginTop:14}} onClick={()=>setSub(false)}>Editar</button>
+          </div>
+        )}
+      </div>
+    </div>
+    <p className="lbl">Curva de mejora — 8 semanas</p>
+    <div className="card" style={{marginBottom:22}}>
+      <div className="p" style={{paddingBottom:12}}>
+        <div style={{display:"flex",gap:14,marginBottom:12}}>
+          <div style={{display:"flex",gap:5,alignItems:"center"}}><div style={{width:8,height:2,borderRadius:1,background:"var(--wine)"}}/><span style={{fontSize:10,color:"var(--soft)",letterSpacing:".3px"}}>Luminosidad</span></div>
+          <div style={{display:"flex",gap:5,alignItems:"center"}}><div style={{width:8,height:2,borderRadius:1,background:"var(--gold)"}}/><span style={{fontSize:10,color:"var(--soft)",letterSpacing:".3px"}}>Firmeza</span></div>
+        </div>
+        <svg viewBox="0 0 310 75" style={{width:"100%",height:"auto"}}>
+          {DATA.map((d,i)=>{
+            if(i===0)return null;
+            const xs=j=>5+j*(300/7);const ys=v=>5+58-(v/10)*58;const prev=DATA[i-1];
+            return(<g key={i}><line x1={xs(i-1)} y1={ys(prev.lum)} x2={xs(i)} y2={ys(d.lum)} stroke="var(--wine)" strokeWidth="1.8" strokeLinecap="round"/><line x1={xs(i-1)} y1={ys(prev.firm)} x2={xs(i)} y2={ys(d.firm)} stroke="var(--gold)" strokeWidth="1.8" strokeLinecap="round"/></g>);
+          })}
+          {DATA.map((d,i)=>{const xs=j=>5+j*(300/7);const ys=v=>5+58-(v/10)*58;return(<g key={i}><circle cx={xs(i)} cy={ys(d.lum)} r="2.5" fill="var(--surface)" stroke="var(--wine)" strokeWidth="1.5"/><circle cx={xs(i)} cy={ys(d.firm)} r="2.5" fill="var(--surface)" stroke="var(--gold)" strokeWidth="1.5"/><text x={xs(i)} y={70} textAnchor="middle" fontSize="7.5" fill="var(--soft)" fontFamily="Lato,sans-serif">{d.w}</text></g>)})}
+        </svg>
+        <div style={{background:"var(--wine-faint)",borderRadius:4,padding:"9px 11px",marginTop:8}}>
+          <p style={{fontSize:12,color:"var(--wine)",fontStyle:"italic"}}>Luminosidad +<strong style={{fontStyle:"normal"}}>110%</strong> · Firmeza +<strong style={{fontStyle:"normal"}}>117%</strong> en 8 semanas</p>
+        </div>
+      </div>
+    </div>
+    <p className="lbl">Notas de la especialista</p>
+    {[{d:"23 jun",txt:"La piel ha respondido excepcionalmente bien a la mesoterapia. La barrera cutánea está reforzada. Podemos iniciar la fase de mantenimiento mensual a partir de la próxima visita."}].map((n,i)=>(
+      <div key={i} style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:10,padding:"15px 17px"}}>
+        <div style={{display:"flex",gap:9,alignItems:"center",marginBottom:9}}><div className="avt" style={{width:28,height:28,fontSize:10}}>AM</div><p style={{fontSize:11,color:"var(--soft)",letterSpacing:".2px"}}>{n.d} · Dra. Alejandra Montes</p></div>
+        <p style={{fontSize:13,color:"var(--charcoal)",lineHeight:1.65,fontStyle:"italic"}}>{n.txt}</p>
+      </div>
+    ))}
+  </div>);
+};
+
+const Citas=()=>{
+  const[loc,setLoc]=useState(null);const[doc,setDoc]=useState(null);const[dt,setDt]=useState(null);const[sl,setSl]=useState(null);const[done,setDone]=useState(false);
+  if(done)return(<div className="fade" style={{padding:"0 22px 32px",display:"flex",flexDirection:"column",alignItems:"center",paddingTop:56}}>
+    <div style={{width:66,height:66,borderRadius:"50%",background:"var(--wine-pale)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:18}}><Icon n="chk" sz={26} c="var(--wine)"/></div>
+    <h2 style={{fontFamily:"var(--font-display)",fontSize:26,color:"var(--charcoal)",marginBottom:7,fontStyle:"italic"}}>Cita confirmada</h2>
+    <p style={{fontSize:13,color:"var(--soft)",textAlign:"center",lineHeight:1.6,marginBottom:28}}>Te enviaremos un recordatorio por email 24 horas antes.</p>
+    <button className="btn-out" onClick={()=>{setDone(false);setLoc(null);setDoc(null);setDt(null);setSl(null)}}>Reservar otra cita</button>
+  </div>);
+  const ds=loc?DOCS.find(d=>d.loc===loc)?.ds:[];
+  return(<div className="fade" style={{padding:"0 22px 32px"}}>
+    <div style={{paddingTop:12,paddingBottom:20}}>
+      <p style={{fontSize:10,color:"var(--soft)",letterSpacing:"1.2px",textTransform:"uppercase",marginBottom:4}}>Nueva reserva</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:24,fontWeight:400,color:"var(--charcoal)",fontStyle:"italic"}}>Reservar cita</h2>
+    </div>
+    <div style={{background:"var(--gold-pale)",borderRadius:6,padding:"11px 13px",display:"flex",gap:9,marginBottom:20}}>
+      <span style={{fontSize:13}}>✦</span>
+      <p style={{fontSize:12,color:"#8A6A2A",lineHeight:1.45,fontStyle:"italic"}}>Te quedan <strong style={{fontStyle:"normal"}}>3 tratamientos</strong> en tu bono de rejuvenecimiento.</p>
+    </div>
+    <p className="lbl">1. Clínica</p>
+    <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
+      {DOCS.map(d=>(
+        <button key={d.loc} onClick={()=>{setLoc(d.loc);setDoc(null)}} style={{background:"var(--surface)",border:`1px solid ${loc===d.loc?"var(--wine)":"var(--border)"}`,borderRadius:8,padding:"13px 15px",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer",textAlign:"left"}}>
+          <div><p style={{fontSize:13,fontWeight:400,color:"var(--charcoal)"}}>{d.loc}</p><p style={{fontSize:11,color:"var(--soft)",marginTop:2,fontStyle:"italic"}}>Recoletos Estética Médica</p></div>
+          {loc===d.loc&&<div style={{width:18,height:18,borderRadius:"50%",background:"var(--wine)",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon n="chk" sz={10} c="white"/></div>}
+        </button>
+      ))}
+    </div>
+    {loc&&(<>
+      <p className="lbl">2. Especialista</p>
+      <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
+        {ds.map(d=>(
+          <button key={d.n} onClick={()=>setDoc(d.n)} style={{background:"var(--surface)",border:`1px solid ${doc===d.n?"var(--wine)":"var(--border)"}`,borderRadius:8,padding:"12px 14px",display:"flex",alignItems:"center",gap:11,cursor:"pointer",textAlign:"left"}}>
+            <div className="avt" style={{width:34,height:34,background:doc===d.n?"var(--wine)":"var(--wine-pale)",color:doc===d.n?"white":"var(--wine)"}}>{d.i}</div>
+            <div style={{flex:1}}><p style={{fontSize:13,fontWeight:400,color:"var(--charcoal)"}}>{d.n}</p><span className="chip chip-w" style={{fontSize:10,marginTop:3,display:"inline-flex"}}>{d.s}</span></div>
+          </button>
+        ))}
+      </div>
+    </>)}
+    {doc&&(<>
+      <p className="lbl">3. Fecha</p>
+      <div style={{display:"flex",gap:8,marginBottom:20,overflowX:"auto",paddingBottom:4}}>
+        {DATES.map(d=>(
+          <button key={d.n} onClick={()=>{setDt(d.n);setSl(null)}} style={{flexShrink:0,width:54,padding:"9px 4px",borderRadius:6,border:`1px solid ${dt===d.n?"var(--wine)":"var(--border)"}`,background:dt===d.n?"var(--wine)":"var(--surface)",cursor:"pointer",textAlign:"center"}}>
+            <p style={{fontSize:9,color:dt===d.n?"rgba(255,255,255,.65)":"var(--soft)",textTransform:"uppercase",letterSpacing:".5px",marginBottom:3}}>{d.d}</p>
+            <p style={{fontFamily:"var(--font-display)",fontSize:20,color:dt===d.n?"white":"var(--charcoal)",lineHeight:1,fontStyle:"italic"}}>{d.n}</p>
+            <p style={{fontSize:9,color:dt===d.n?"rgba(255,255,255,.6)":"var(--soft)",marginTop:3}}>{d.m}</p>
+          </button>
+        ))}
+      </div>
+    </>)}
+    {dt&&(<>
+      <p className="lbl">4. Hora</p>
+      <div style={{display:"flex",flexDirection:"column",gap:7,marginBottom:22}}>
+        {TIMES.map((row,ri)=>(
+          <div key={ri} style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:7}}>
+            {row.map((s,si)=><div key={si} className={`slot${s==="—"?" off":""}${sl===s?" on":""}`} onClick={()=>s!=="—"&&setSl(s)}>{s}</div>)}
+          </div>
+        ))}
+      </div>
+      {sl&&<button className="btn" style={{width:"100%",padding:"13px"}} onClick={()=>setDone(true)}>Confirmar · {sl} h</button>}
+    </>)}
+  </div>);
+};
+
+const Msgs=()=>{
+  const[m,setM]=useState("");const[sent,setSent]=useState(false);
+  const send=()=>m.trim()&&(setSent(true),setM(""),setTimeout(()=>setSent(false),3000));
+  return(<div className="fade" style={{padding:"0 22px 32px"}}>
+    <div style={{paddingTop:12,paddingBottom:20}}>
+      <p style={{fontSize:10,color:"var(--soft)",letterSpacing:"1.2px",textTransform:"uppercase",marginBottom:4}}>Comunicación</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:24,fontWeight:400,color:"var(--charcoal)",fontStyle:"italic"}}>Notas de consulta</h2>
+    </div>
+    {sent&&<div style={{background:"var(--wine-faint)",borderRadius:6,padding:"11px 13px",marginBottom:14,display:"flex",gap:8,alignItems:"center"}}><Icon n="chk" sz={13} c="var(--wine)"/><p style={{fontSize:13,color:"var(--wine)"}}>Mensaje enviado a la Dra. Montes.</p></div>}
+    <div style={{display:"flex",flexDirection:"column",gap:10}}>
+      {MSGS.map((msg,i)=>(
+        <div key={i} style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:10,padding:"15px 17px"}}>
+          <p style={{fontSize:10,color:"var(--soft)",marginBottom:5,letterSpacing:".8px",textTransform:"uppercase"}}>{msg.d}</p>
+          <div style={{display:"flex",gap:9,alignItems:"center",marginBottom:9}}><div className="avt" style={{width:26,height:26,fontSize:9}}>{msg.i}</div><p style={{fontSize:12,color:"var(--wine)"}}>{msg.who}</p></div>
+          <p style={{fontSize:13,color:"var(--charcoal)",lineHeight:1.65,fontStyle:"italic"}}>{msg.txt}</p>
+        </div>
+      ))}
+    </div>
+    <div style={{marginTop:22}}>
+      <p style={{fontSize:10,color:"var(--soft)",fontWeight:700,letterSpacing:".8px",textTransform:"uppercase",marginBottom:9}}>Consulta a tu especialista</p>
+      <div style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:8,display:"flex",alignItems:"center",padding:"10px 14px",gap:9}}>
+        <input type="text" placeholder="Escribe tu consulta..." value={m} onChange={e=>setM(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} style={{flex:1,border:"none",outline:"none",fontFamily:"var(--font-body)",fontSize:13,color:"var(--charcoal)",background:"transparent"}}/>
+        <button onClick={send} style={{background:"none",border:"none",cursor:"pointer"}}><Icon n="send" sz={16} c={m?"var(--wine)":"var(--soft)"}/></button>
+      </div>
+    </div>
+  </div>);
+};
+
+const App=()=>{
+  const[tab,setTab]=useState("home");const ref=useRef(null);
+  useEffect(()=>{if(ref.current)ref.current.scrollTop=0},[tab]);
+  const S={home:<Home setTab={setTab}/>,plan:<Plan/>,prog:<Prog/>,citas:<Citas/>,msgs:<Msgs/>};
+  return(<div className="shell">
+    <div className="sbar"><span className="sbar-t">9:41</span><div style={{display:"flex",gap:5,alignItems:"center"}}><svg width="15" height="11" viewBox="0 0 15 11" fill="none"><path d="M7.5 2.5C10.5 2.5 13 4 14.5 6.5" stroke="#2A1F20" strokeOpacity=".4" strokeWidth="1.3" strokeLinecap="round"/><path d="M7.5 5C9.5 5 11.3 6 12.5 7.5" stroke="#2A1F20" strokeOpacity=".7" strokeWidth="1.3" strokeLinecap="round"/><circle cx="7.5" cy="9" r="1.2" fill="#2A1F20"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none"><rect x=".5" y=".5" width="18" height="10" rx="2" stroke="#2A1F20" strokeOpacity=".4"/><rect x="1.5" y="1.5" width="13" height="8" rx="1.5" fill="#2A1F20" fillOpacity=".85"/><path d="M20 4v3a1.5 1.5 0 000-3z" fill="#2A1F20" fillOpacity=".4"/></svg></div></div>
+    <div className="hdr">
+      <div><p className="wm">Recoletos</p><p className="wm-sub">Estética Médica</p></div>
+      <button style={{background:"none",border:"none",cursor:"pointer",position:"relative"}}><Icon n="bell" sz={18} c="var(--mid)"/><span className="ndot" style={{top:1,right:1}}/></button>
+    </div>
+    <div className="content" ref={ref}><div style={{padding:"18px 0 0"}}>{S[tab]}</div></div>
+    <TabBar active={tab} set={setTab}/>
+  </div>);
+};
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script></body></html>

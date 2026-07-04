@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>NutriSalud Salamanca</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F0E8;
+  --surface:#FDFCF9;
+  --olive:#4A5C2A;
+  --olive-mid:#5E7336;
+  --olive-pale:#EEF3E4;
+  --olive-faint:#F5F8EF;
+  --saffron:#C49A2A;
+  --saffron-pale:#FBF5E0;
+  --charcoal:#1E2410;
+  --mid:#5A5840;
+  --soft:#918E72;
+  --border:#DDD8C8;
+  --shadow:0 2px 14px rgba(74,92,42,0.09);
+  --radius:14px;
+  --font-body:'Nunito Sans',system-ui,sans-serif;
+  --font-display:'Libre Baskerville',Georgia,serif;
+}
+html,body{height:100%;background:#C0BC9A;font-family:var(--font-body);-webkit-font-smoothing:antialiased}
+#root{display:flex;justify-content:center;min-height:100vh}
+@media(min-width:480px){#root{padding:24px 0;background:#B4B090}}
+.shell{width:100%;max-width:430px;min-height:100vh;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+@media(min-width:480px){.shell{min-height:auto;max-height:900px;border-radius:38px;box-shadow:0 28px 80px rgba(74,92,42,0.22)}}
+.sbar{background:var(--bg);padding:12px 24px 6px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.sbar-t{font-size:15px;font-weight:600;color:var(--charcoal)}
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.content::-webkit-scrollbar{display:none}
+.tabs{background:var(--surface);border-top:1px solid var(--border);display:flex;padding:8px 0 20px;flex-shrink:0}
+@media(min-width:480px){.tabs{padding-bottom:8px}}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;cursor:pointer;border:none;background:none;-webkit-tap-highlight-color:transparent}
+.tab-l{font-size:10px;font-weight:600;letter-spacing:.2px}
+.tab.on .tab-l{color:var(--olive)}
+.tab:not(.on) .tab-l{color:var(--soft)}
+.hdr{padding:14px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;background:var(--bg)}
+.wm{font-size:13px;font-weight:700;color:var(--olive);letter-spacing:2.5px;text-transform:uppercase}
+.wm-s{font-family:var(--font-display);font-size:11px;color:var(--soft);font-style:italic;margin-top:1px}
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow)}
+.p{padding:18px 20px}
+.lbl{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--soft);margin-bottom:11px}
+.btn{background:var(--olive);color:#fff;border:none;border-radius:99px;padding:13px 22px;font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer}
+.btn-out{background:transparent;color:var(--olive);border:2px solid var(--olive);border-radius:99px;padding:10px 18px;font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer}
+.btn-s{background:var(--saffron-pale);color:#8A6A10;border:none;border-radius:99px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer}
+.chip{display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:600}
+.chip-o{background:var(--olive-pale);color:var(--olive)}
+.chip-s{background:var(--saffron-pale);color:#8A6A10}
+.avt{border-radius:50%;background:var(--olive-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;color:var(--olive);font-size:13px}
+.trk{height:6px;background:var(--border);border-radius:99px;overflow:hidden}
+.fill{height:100%;background:var(--olive);border-radius:99px}
+.fade{animation:fu .3s ease forwards}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:99px;outline:none;cursor:pointer;background:linear-gradient(to right,var(--olive) 0%,var(--olive) var(--pct,50%),var(--border) var(--pct,50%),var(--border) 100%)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--surface);border:2px solid var(--olive);box-shadow:0 1px 5px rgba(74,92,42,.15)}
+.slot{background:var(--surface);border:1.5px solid var(--border);border-radius:99px;padding:8px;font-size:12px;font-weight:600;color:var(--charcoal);cursor:pointer;text-align:center}
+.slot.on{background:var(--olive);border-color:var(--olive);color:#fff}
+.slot.off{opacity:.35;cursor:default}
+.ndot{width:7px;height:7px;background:var(--saffron);border-radius:50%;position:absolute;top:0;right:-1px}
+.macro-bar{height:8px;border-radius:99px;overflow:hidden;background:var(--border)}
+</style>
+</head>
+<body><div id="root"></div>
+<script type="text/babel">
+const{useState,useRef,useEffect}=React;
+const PAT={name:"Carlos",last:"Herrero"};
+const APT={date:"Viernes, 4 de julio",time:"12:00 h",loc:"Goya 48",nut:"Ana Beltrán",spec:"Dietista-nutricionista · especialista en deporte"};
+const PLAN_ADH={days:5,total:7,kcal:2100,obj:"Optimización de composición corporal"};
+const MEALS=[
+  {id:1,n:"Desayuno",ico:"🌅",hora:"07:30",cal:480,macro:{p:25,c:55,g:20},meal:"Porridge de avena con frutos del bosque, 1 huevo revuelto y café sin azúcar.",nota:"Fuente de carbohidratos de liberación lenta para energía sostenida."},
+  {id:2,n:"Media mañana",ico:"🍎",hora:"10:30",cal:200,macro:{p:15,g:8,c:18},meal:"Yogur griego sin azúcar con nueces y una manzana pequeña.",nota:"Snack proteico para evitar el catabolismo muscular entre comidas."},
+  {id:3,n:"Comida",ico:"🥗",hora:"14:00",cal:680,macro:{p:45,c:60,g:25},meal:"Pechuga de pollo al horno (200 g) con quinoa (70 g en seco) y verduras asadas.",nota:"Comida principal con ratio proteína/carbohidrato óptimo para tu actividad."},
+  {id:4,n:"Merienda",ico:"🥜",hora:"17:30",cal:280,macro:{p:20,c:22,g:12},meal:"Batido de proteína (25 g) con leche semidesnatada y plátano.",nota:"Ventana anabólica post-entrenamiento si entrenas por la tarde."},
+  {id:5,n:"Cena",ico:"🐟",hora:"21:00",cal:460,macro:{p:40,c:30,g:18},meal:"Salmón al vapor (180 g) con brócoli y arroz integral (50 g en seco).",nota:"Proteína de alto valor biológico y omega-3 para la recuperación nocturna."},
+];
+const DATA=[
+  {w:"S1",peso:84.2,ener:5.5},{w:"S2",peso:83.8,ener:6},{w:"S3",peso:83.1,ener:6.5},
+  {w:"S4",peso:82.5,ener:7},{w:"S5",peso:81.9,ener:7},{w:"S6",peso:81.2,ener:7.5},
+  {w:"S7",peso:80.7,ener:8},{w:"S8",peso:80.1,ener:8.5},
+];
+const NUTS=[
+  {loc:"Goya 48",ns:[{n:"Ana Beltrán",s:"Nutrición deportiva",i:"AB"},{n:"Pablo Ortiz",s:"Nutrición clínica",i:"PO"},{n:"Marta Vidal",s:"Trastornos digestivos",i:"MV"}]},
+  {loc:"Alcalá 145",ns:[{n:"Lucía Ramos",s:"Nutrición femenina",i:"LR"},{n:"Tomás Herrera",s:"Nutrición vegana",i:"TH"}]},
+];
+const TIMES=[["09:00","10:00","11:00","12:00"],["—","16:00","17:00","—"],["18:00","19:00","—","20:00"]];
+const DATES=[{d:"Lun",n:30,m:"Jun"},{d:"Mar",n:1,m:"Jul"},{d:"Mié",n:2,m:"Jul"},{d:"Jue",n:3,m:"Jul"},{d:"Vie",n:4,m:"Jul"}];
+const MSGS=[
+  {d:"23 jun",i:"AB",who:"Ana Beltrán",txt:"Excelente adherencia esta semana. El peso sigue bajando de forma sostenida — perfecto, sin prisa. Ajustamos ligeramente las proteínas en el desayuno para mejorar la saciedad."},
+  {d:"16 jun",i:"AB",who:"Ana Beltrán",txt:"Revisamos los niveles de energía — el aumento en la cena está funcionando. Esta semana incorporamos el snack post-entreno. Recuerda tomarlo dentro de los 30 min después del ejercicio."},
+  {d:"9 jun",i:"PO",who:"Pablo Ortiz",txt:"Analítica de revisión recibida: ferritina baja (28 ng/mL). He añadido alimentos ricos en hierro al plan y una toma de vitamina C junto con las comidas para mejorar la absorción."},
+];
+
+const Icon=({n,sz=22,c="currentColor"})=>{
+  const I={
+    home:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9.5L12 3l9 6.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 22V12h6v10"/></svg>,
+    clip:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg>,
+    chart:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+    cal:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+    msg:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>,
+    dn:<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>,
+    up:<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg>,
+    chk:<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+    loc:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>,
+    send:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>,
+    bell:<svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>,
+  };
+  return I[n]||null;
+};
+
+const TABS=[{id:"home",l:"Inicio",ic:"home"},{id:"plan",l:"Mi Plan",ic:"clip"},{id:"prog",l:"Progreso",ic:"chart"},{id:"citas",l:"Citas",ic:"cal"},{id:"msgs",l:"Mensajes",ic:"msg"}];
+const TabBar=({active,set})=>(
+  <nav className="tabs">
+    {TABS.map(t=>(
+      <button key={t.id} className={`tab${active===t.id?" on":""}`} onClick={()=>set(t.id)}>
+        <div style={{position:"relative"}}><Icon n={t.ic} sz={21} c={active===t.id?"var(--olive)":"var(--soft)"}/>{t.id==="msgs"&&<span className="ndot"/>}</div>
+        <span className="tab-l">{t.l}</span>
+      </button>
+    ))}
+  </nav>
+);
+
+const MacroBar=({p,c,g})=>{
+  const t=p+c+g;
+  return(<div style={{display:"flex",height:6,borderRadius:99,overflow:"hidden",gap:2}}>
+    <div style={{width:`${(p/t)*100}%`,background:"var(--olive)",borderRadius:99}}/>
+    <div style={{width:`${(c/t)*100}%`,background:"var(--saffron)",borderRadius:99}}/>
+    <div style={{width:`${(g/t)*100}%`,background:"var(--soft)",borderRadius:99}}/>
+  </div>);
+};
+
+const Home=({setTab})=>(
+  <div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:20}}>
+      <p style={{fontSize:12,color:"var(--soft)",fontWeight:600,marginBottom:2}}>¡Hola de nuevo,</p>
+      <h1 style={{fontFamily:"var(--font-display)",fontSize:26,color:"var(--charcoal)",lineHeight:1.2}}>{PAT.name}! 🥦</h1>
+      <p style={{fontSize:13,color:"var(--mid)",marginTop:4}}>{PLAN_ADH.obj}</p>
+    </div>
+    <p className="lbl">Próxima consulta</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p">
+        <div style={{display:"flex",justifyContent:"space-between",marginBottom:14}}>
+          <div><p style={{fontSize:12,color:"var(--soft)",marginBottom:2}}>{APT.date}</p><p style={{fontFamily:"var(--font-display)",fontSize:24,color:"var(--charcoal)"}}>{APT.time}</p></div>
+          <span className="chip chip-o"><Icon n="loc" sz={10} c="var(--olive)"/>&nbsp;{APT.loc}</span>
+        </div>
+        <div style={{background:"var(--olive-faint)",borderRadius:10,padding:"11px 13px",display:"flex",gap:11,alignItems:"center",marginBottom:14}}>
+          <div className="avt" style={{width:36,height:36}}>AB</div>
+          <div><p style={{fontSize:14,fontWeight:600,color:"var(--charcoal)"}}>{APT.nut}</p><p style={{fontSize:11,color:"var(--soft)",marginTop:1}}>{APT.spec}</p></div>
+        </div>
+        <div style={{display:"flex",gap:9}}><button className="btn" style={{flex:1}}>Ver detalles</button><button className="btn-s">Reagendar</button></div>
+      </div>
+    </div>
+    <p className="lbl">Adherencia semanal</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p">
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:13}}>
+          <div>
+            <p style={{fontSize:14,fontWeight:700,color:"var(--charcoal)"}}>{PLAN_ADH.days}/{PLAN_ADH.total} días con el plan</p>
+            <p style={{fontSize:11,color:"var(--soft)",marginTop:2}}>{PLAN_ADH.kcal} kcal · objetivo diario</p>
+          </div>
+          <span style={{fontFamily:"var(--font-display)",fontSize:28,color:"var(--olive)"}}>{Math.round((PLAN_ADH.days/PLAN_ADH.total)*100)}<span style={{fontSize:12,color:"var(--soft)"}}>%</span></span>
+        </div>
+        <div className="trk"><div className="fill" style={{width:`${(PLAN_ADH.days/PLAN_ADH.total)*100}%`}}/></div>
+        <div style={{display:"flex",gap:8,marginTop:12}}>
+          {["L","M","X","J","V","S","D"].map((d,i)=>(
+            <div key={i} style={{flex:1,textAlign:"center"}}>
+              <div style={{width:"100%",aspectRatio:"1",borderRadius:99,background:i<5?"var(--olive)":"var(--border)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:3}}>
+                {i<5&&<Icon n="chk" sz={10} c="white"/>}
+              </div>
+              <p style={{fontSize:9,color:"var(--soft)",fontWeight:600}}>{d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+    <p className="lbl">Acceso rápido</p>
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
+      {[["Consulta","cal","citas","var(--olive)","var(--olive-pale)"],["Mi plan","clip","plan","var(--saffron)","var(--saffron-pale)"],["Progreso","chart","prog","var(--mid)","#EDE9DB"]].map(([l,ic,tab,c,bg])=>(
+        <button key={tab} onClick={()=>setTab(tab)} style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:12,padding:"14px 8px",display:"flex",flexDirection:"column",alignItems:"center",gap:9,cursor:"pointer"}}>
+          <div style={{width:38,height:38,borderRadius:10,background:bg,display:"flex",alignItems:"center",justifyContent:"center"}}><Icon n={ic} sz={18} c={c}/></div>
+          <p style={{fontSize:11,fontWeight:600,color:"var(--charcoal)",textAlign:"center",lineHeight:1.3}}>{l}</p>
+        </button>
+      ))}
+    </div>
+  </div>
+);
+
+const Plan=()=>{
+  const[exp,setExp]=useState(null);
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:18}}>
+      <p style={{fontSize:12,color:"var(--soft)",fontWeight:600,marginBottom:2}}>Tu plan nutricional</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:22,color:"var(--charcoal)",lineHeight:1.25}}>Plan de optimización</h2>
+      <div style={{display:"flex",gap:8,alignItems:"center",marginTop:6}}>
+        <div className="avt" style={{width:20,height:20,fontSize:9}}>AB</div>
+        <p style={{fontSize:11,color:"var(--soft)"}}>Ana Beltrán · actualizado 23 jun 2025</p>
+      </div>
+    </div>
+    <div style={{background:"var(--saffron-pale)",borderRadius:10,padding:"11px 14px",marginBottom:16,display:"flex",gap:8,justifyContent:"space-around",textAlign:"center"}}>
+      {[["2.100","kcal/día"],["165 g","proteína"],["210 g","carbos"],["70 g","grasas"]].map(([v,l])=>(
+        <div key={l}><p style={{fontFamily:"var(--font-display)",fontSize:16,color:"var(--olive)",fontWeight:700}}>{v}</p><p style={{fontSize:10,color:"var(--mid)",fontWeight:600}}>{l}</p></div>
+      ))}
+    </div>
+    <div style={{display:"flex",flexDirection:"column",gap:9}}>
+      {MEALS.map(m=>(
+        <div key={m.id} style={{background:"var(--surface)",borderRadius:12,border:"1px solid var(--border)",overflow:"hidden"}}>
+          <button onClick={()=>setExp(exp===m.id?null:m.id)} style={{width:"100%",background:"none",border:"none",cursor:"pointer",textAlign:"left",padding:"14px 16px"}}>
+            <div style={{display:"flex",gap:12,alignItems:"center"}}>
+              <div style={{width:42,height:42,borderRadius:10,background:"var(--olive-faint)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>{m.ico}</div>
+              <div style={{flex:1}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:3}}>
+                  <p style={{fontSize:14,fontWeight:700,color:"var(--charcoal)"}}>{m.n}</p>
+                  <p style={{fontSize:12,color:"var(--saffron)",fontWeight:700}}>{m.cal} kcal</p>
+                </div>
+                <p style={{fontSize:11,color:"var(--soft)",marginBottom:6}}>{m.hora}</p>
+                <MacroBar p={m.macro.p} c={m.macro.c} g={m.macro.g}/>
+              </div>
+              <div style={{color:"var(--soft)",flexShrink:0,marginLeft:6}}>{exp===m.id?<Icon n="up"/>:<Icon n="dn"/>}</div>
+            </div>
+          </button>
+          {exp===m.id&&<div style={{borderTop:"1px solid var(--border)",padding:"12px 16px"}}>
+            <p style={{fontSize:13,fontWeight:600,color:"var(--charcoal)",marginBottom:6}}>{m.meal}</p>
+            <p style={{fontSize:12,color:"var(--mid)",lineHeight:1.55}}>{m.nota}</p>
+            <div style={{display:"flex",gap:14,marginTop:10}}>
+              {[["P",m.macro.p,"var(--olive)"],["C",m.macro.c,"var(--saffron)"],["G",m.macro.g,"var(--soft)"]].map(([k,v,c])=>(
+                <div key={k} style={{display:"flex",gap:5,alignItems:"center"}}><div style={{width:8,height:8,borderRadius:2,background:c}}/><p style={{fontSize:11,color:"var(--mid)",fontWeight:600}}>{k}: {v}g</p></div>
+              ))}
+            </div>
+          </div>}
+        </div>
+      ))}
+    </div>
+  </div>);
+};
+
+const Prog=()=>{
+  const[ener,setEner]=useState(8);const[adh,setAdh]=useState(9);const[sub,setSub]=useState(false);
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:18}}>
+      <p style={{fontSize:12,color:"var(--soft)",fontWeight:600,marginBottom:2}}>Seguimiento</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:22,color:"var(--charcoal)"}}>Tu evolución</h2>
+    </div>
+    <p className="lbl">Check-in semanal</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p">
+        {!sub?(<>
+          <div style={{marginBottom:20}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:9}}>
+              <p style={{fontSize:13,fontWeight:600,color:"var(--charcoal)"}}>Nivel de energía</p>
+              <span style={{fontFamily:"var(--font-display)",fontSize:20,color:"var(--olive)"}}>{ener}<span style={{fontSize:12,color:"var(--soft)"}}>/ 10</span></span>
+            </div>
+            <input type="range" min="0" max="10" step=".5" value={ener} style={{"--pct":`${ener*10}%`}} onChange={e=>setEner(Number(e.target.value))}/>
+          </div>
+          <div style={{marginBottom:20}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:9}}>
+              <p style={{fontSize:13,fontWeight:600,color:"var(--charcoal)"}}>Adherencia percibida</p>
+              <span style={{fontFamily:"var(--font-display)",fontSize:20,color:"var(--saffron)"}}>{adh}<span style={{fontSize:12,color:"var(--soft)"}}>/ 10</span></span>
+            </div>
+            <input type="range" min="0" max="10" step=".5" value={adh} style={{"--pct":`${adh*10}%`,"background":`linear-gradient(to right,var(--saffron) 0%,var(--saffron) ${adh*10}%,var(--border) ${adh*10}%,var(--border) 100%)`}} onChange={e=>setAdh(Number(e.target.value))}/>
+          </div>
+          <button className="btn" style={{width:"100%"}} onClick={()=>setSub(true)}>Guardar check-in</button>
+        </>):(
+          <div style={{textAlign:"center",padding:"16px 0 6px"}}>
+            <p style={{fontFamily:"var(--font-display)",fontSize:20,color:"var(--charcoal)",marginBottom:5}}>¡Registrado! 🥗</p>
+            <p style={{fontSize:13,color:"var(--soft)"}}>Ana revisará tus datos antes de tu próxima consulta.</p>
+            <button className="btn-out" style={{marginTop:14}} onClick={()=>setSub(false)}>Editar</button>
+          </div>
+        )}
+      </div>
+    </div>
+    <p className="lbl">Evolución del peso — 8 semanas</p>
+    <div className="card" style={{marginBottom:20}}>
+      <div className="p" style={{paddingBottom:10}}>
+        <div style={{display:"flex",justifyContent:"space-between",marginBottom:12,alignItems:"center"}}>
+          <div style={{display:"flex",gap:5,alignItems:"center"}}><div style={{width:9,height:3,borderRadius:2,background:"var(--olive)"}}/><span style={{fontSize:11,color:"var(--soft)"}}>Peso (kg)</span></div>
+          <div style={{background:"var(--olive-pale)",borderRadius:99,padding:"3px 10px"}}><p style={{fontSize:11,color:"var(--olive)",fontWeight:700}}>−4.1 kg en 8 semanas</p></div>
+        </div>
+        <svg viewBox="0 0 310 75" style={{width:"100%",height:"auto"}}>
+          {DATA.map((d,i)=>{
+            if(i===0)return null;
+            const xs=j=>5+j*(300/7);const ys=v=>5+58-((v-78)/(86-78))*58;const prev=DATA[i-1];
+            return(<g key={i}><line x1={xs(i-1)} y1={ys(prev.peso)} x2={xs(i)} y2={ys(d.peso)} stroke="var(--olive)" strokeWidth="2.2" strokeLinecap="round"/></g>);
+          })}
+          {DATA.map((d,i)=>{const xs=j=>5+j*(300/7);const ys=v=>5+58-((v-78)/(86-78))*58;return(<g key={i}><circle cx={xs(i)} cy={ys(d.peso)} r="3" fill="var(--surface)" stroke="var(--olive)" strokeWidth="2"/><text x={xs(i)} y={71} textAnchor="middle" fontSize="8" fill="var(--soft)" fontFamily="Nunito Sans,sans-serif" fontWeight="600">{d.w}</text></g>)})}
+        </svg>
+      </div>
+    </div>
+    <p className="lbl">Notas de Ana</p>
+    {[{txt:"El descenso de peso sigue siendo gradual y sostenible. La analítica de la semana pasada muestra niveles correctos de micronutrientes. Ajustamos el snack de media mañana para mejorar la saciedad."}].map((n,i)=>(
+      <div key={i} style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:12,padding:"14px 15px"}}>
+        <div style={{display:"flex",gap:9,alignItems:"center",marginBottom:8}}><div className="avt" style={{width:28,height:28,fontSize:10}}>AB</div><p style={{fontSize:11,color:"var(--soft)"}}>23 jun · Ana Beltrán</p></div>
+        <p style={{fontSize:13,color:"var(--charcoal)",lineHeight:1.6}}>{n.txt}</p>
+      </div>
+    ))}
+  </div>);
+};
+
+const Citas=()=>{
+  const[loc,setLoc]=useState(null);const[nut,setNut]=useState(null);const[dt,setDt]=useState(null);const[sl,setSl]=useState(null);const[done,setDone]=useState(false);
+  if(done)return(<div className="fade" style={{padding:"0 20px 32px",display:"flex",flexDirection:"column",alignItems:"center",paddingTop:56}}>
+    <div style={{width:68,height:68,borderRadius:"50%",background:"var(--olive-pale)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:18,fontSize:28}}>🥗</div>
+    <h2 style={{fontFamily:"var(--font-display)",fontSize:24,color:"var(--charcoal)",marginBottom:7}}>¡Consulta reservada!</h2>
+    <p style={{fontSize:13,color:"var(--soft)",textAlign:"center",lineHeight:1.6,marginBottom:28}}>Recibirás un recordatorio 24 h antes. Recuerda llevar tu diario de comidas de la semana.</p>
+    <button className="btn-out" onClick={()=>{setDone(false);setLoc(null);setNut(null);setDt(null);setSl(null)}}>Reservar otra consulta</button>
+  </div>);
+  const ns=loc?NUTS.find(l=>l.loc===loc)?.ns:[];
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:18}}>
+      <p style={{fontSize:12,color:"var(--soft)",fontWeight:600,marginBottom:2}}>Nueva reserva</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:22,color:"var(--charcoal)"}}>Reservar consulta</h2>
+    </div>
+    <p className="lbl">1. Centro</p>
+    <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
+      {NUTS.map(l=>(
+        <button key={l.loc} onClick={()=>{setLoc(l.loc);setNut(null)}} style={{background:"var(--surface)",border:`1.5px solid ${loc===l.loc?"var(--olive)":"var(--border)"}`,borderRadius:10,padding:"13px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer",textAlign:"left"}}>
+          <div><p style={{fontSize:13,fontWeight:600,color:"var(--charcoal)"}}>{l.loc}</p><p style={{fontSize:11,color:"var(--soft)",marginTop:2}}>NutriSalud · Madrid</p></div>
+          {loc===l.loc&&<div style={{width:20,height:20,borderRadius:"50%",background:"var(--olive)",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon n="chk" sz={11} c="white"/></div>}
+        </button>
+      ))}
+    </div>
+    {loc&&(<>
+      <p className="lbl">2. Nutricionista</p>
+      <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
+        {ns.map(n=>(
+          <button key={n.n} onClick={()=>setNut(n.n)} style={{background:"var(--surface)",border:`1.5px solid ${nut===n.n?"var(--olive)":"var(--border)"}`,borderRadius:10,padding:"12px 13px",display:"flex",alignItems:"center",gap:11,cursor:"pointer",textAlign:"left"}}>
+            <div className="avt" style={{width:36,height:36,background:nut===n.n?"var(--olive)":"var(--olive-pale)",color:nut===n.n?"white":"var(--olive)"}}>{n.i}</div>
+            <div style={{flex:1}}><p style={{fontSize:13,fontWeight:600,color:"var(--charcoal)"}}>{n.n}</p><span className="chip chip-o" style={{fontSize:10,marginTop:3,display:"inline-flex"}}>{n.s}</span></div>
+          </button>
+        ))}
+      </div>
+    </>)}
+    {nut&&(<>
+      <p className="lbl">3. Fecha</p>
+      <div style={{display:"flex",gap:8,marginBottom:20,overflowX:"auto",paddingBottom:4}}>
+        {DATES.map(d=>(
+          <button key={d.n} onClick={()=>{setDt(d.n);setSl(null)}} style={{flexShrink:0,width:55,padding:"9px 4px",borderRadius:10,border:`1.5px solid ${dt===d.n?"var(--olive)":"var(--border)"}`,background:dt===d.n?"var(--olive)":"var(--surface)",cursor:"pointer",textAlign:"center"}}>
+            <p style={{fontSize:9,fontWeight:600,color:dt===d.n?"rgba(255,255,255,.7)":"var(--soft)",textTransform:"uppercase",marginBottom:3}}>{d.d}</p>
+            <p style={{fontFamily:"var(--font-display)",fontSize:20,color:dt===d.n?"white":"var(--charcoal)",lineHeight:1}}>{d.n}</p>
+            <p style={{fontSize:9,color:dt===d.n?"rgba(255,255,255,.6)":"var(--soft)",marginTop:3}}>{d.m}</p>
+          </button>
+        ))}
+      </div>
+    </>)}
+    {dt&&(<>
+      <p className="lbl">4. Hora</p>
+      <div style={{display:"flex",flexDirection:"column",gap:7,marginBottom:22}}>
+        {TIMES.map((row,ri)=>(
+          <div key={ri} style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:7}}>
+            {row.map((s,si)=><div key={si} className={`slot${s==="—"?" off":""}${sl===s?" on":""}`} onClick={()=>s!=="—"&&setSl(s)}>{s}</div>)}
+          </div>
+        ))}
+      </div>
+      {sl&&<button className="btn" style={{width:"100%",padding:"13px"}} onClick={()=>setDone(true)}>Confirmar · {sl} h</button>}
+    </>)}
+  </div>);
+};
+
+const Msgs=()=>{
+  const[m,setM]=useState("");const[sent,setSent]=useState(false);
+  const send=()=>m.trim()&&(setSent(true),setM(""),setTimeout(()=>setSent(false),3000));
+  return(<div className="fade" style={{padding:"0 20px 32px"}}>
+    <div style={{paddingTop:10,paddingBottom:18}}>
+      <p style={{fontSize:12,color:"var(--soft)",fontWeight:600,marginBottom:2}}>Comunicación</p>
+      <h2 style={{fontFamily:"var(--font-display)",fontSize:22,color:"var(--charcoal)"}}>Notas de consulta</h2>
+    </div>
+    {sent&&<div style={{background:"var(--olive-faint)",borderRadius:10,padding:"11px 13px",marginBottom:14,display:"flex",gap:8,alignItems:"center"}}><Icon n="chk" sz={14} c="var(--olive)"/><p style={{fontSize:13,color:"var(--olive)",fontWeight:600}}>Mensaje enviado a Ana.</p></div>}
+    <div style={{display:"flex",flexDirection:"column",gap:10}}>
+      {MSGS.map((msg,i)=>(
+        <div key={i} style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:12,padding:"14px 16px"}}>
+          <p style={{fontSize:10,color:"var(--soft)",marginBottom:4,fontWeight:600,textTransform:"uppercase",letterSpacing:".6px"}}>{msg.d}</p>
+          <div style={{display:"flex",gap:9,alignItems:"center",marginBottom:8}}><div className="avt" style={{width:26,height:26,fontSize:9}}>{msg.i}</div><p style={{fontSize:12,fontWeight:700,color:"var(--olive)"}}>{msg.who}</p></div>
+          <p style={{fontSize:13,color:"var(--charcoal)",lineHeight:1.6}}>{msg.txt}</p>
+        </div>
+      ))}
+    </div>
+    <div style={{marginTop:22}}>
+      <p style={{fontSize:10,color:"var(--soft)",fontWeight:700,letterSpacing:".7px",textTransform:"uppercase",marginBottom:9}}>Mensaje a tu nutricionista</p>
+      <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:99,display:"flex",alignItems:"center",padding:"10px 16px",gap:9}}>
+        <input type="text" placeholder="Escribe tu pregunta a Ana..." value={m} onChange={e=>setM(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} style={{flex:1,border:"none",outline:"none",fontFamily:"var(--font-body)",fontSize:13,color:"var(--charcoal)",background:"transparent"}}/>
+        <button onClick={send} style={{background:"none",border:"none",cursor:"pointer"}}><Icon n="send" sz={16} c={m?"var(--olive)":"var(--soft)"}/></button>
+      </div>
+    </div>
+  </div>);
+};
+
+const App=()=>{
+  const[tab,setTab]=useState("home");const ref=useRef(null);
+  useEffect(()=>{if(ref.current)ref.current.scrollTop=0},[tab]);
+  const S={home:<Home setTab={setTab}/>,plan:<Plan/>,prog:<Prog/>,citas:<Citas/>,msgs:<Msgs/>};
+  return(<div className="shell">
+    <div className="sbar"><span className="sbar-t">9:41</span><div style={{display:"flex",gap:5,alignItems:"center"}}><svg width="15" height="11" viewBox="0 0 15 11" fill="none"><circle cx="7.5" cy="9" r="1.3" fill="#1E2410"/><path d="M7.5 5C9.5 5 11.3 6 12.5 7.5" stroke="#1E2410" strokeOpacity=".7" strokeWidth="1.4" strokeLinecap="round"/><path d="M7.5 2.5C10.5 2.5 13 4 14.5 6.5" stroke="#1E2410" strokeOpacity=".4" strokeWidth="1.4" strokeLinecap="round"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none"><rect x=".5" y=".5" width="18" height="10" rx="2" stroke="#1E2410" strokeOpacity=".4"/><rect x="1.5" y="1.5" width="14" height="8" rx="1.5" fill="#1E2410" fillOpacity=".85"/><path d="M20 4v3a1.5 1.5 0 000-3z" fill="#1E2410" fillOpacity=".4"/></svg></div></div>
+    <div className="hdr">
+      <div><p className="wm">NutriSalud</p><p className="wm-s">Salamanca · Madrid</p></div>
+      <button style={{background:"none",border:"none",cursor:"pointer",position:"relative"}}><Icon n="bell" sz={19} c="var(--mid)"/><span className="ndot" style={{top:1,right:1}}/></button>
+    </div>
+    <div className="content" ref={ref}><div style={{padding:"18px 0 0"}}>{S[tab]}</div></div>
+    <TabBar active={tab} set={setTab}/>
+  </div>);
+};
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script></body></html>
