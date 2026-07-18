@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elysium Dental Clinic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F3F7F7;
+  --cyan:#0B6270;
+  --cyan-lt:#DFEFF1;
+  --sea:#3E93A0;
+  --text:#152A2E;
+  --muted:#5F7A7F;
+  --surface:#FFFFFF;
+  --border:#D9E5E7;
+}
+body{background:#BFD2D5;font-family:'Inter Tight',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.phone{width:390px;height:844px;background:var(--bg);border-radius:44px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,0.28),0 0 0 1px rgba(0,0,0,0.08)}
+.status-bar{background:var(--cyan);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:14px 24px 10px;font-size:12px;font-weight:500;flex-shrink:0}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden}
+.screen::-webkit-scrollbar{display:none}
+.tab-bar{background:var(--surface);border-top:1px solid var(--border);display:flex;flex-shrink:0;padding-bottom:16px}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0 4px;cursor:pointer}
+.tab span{font-size:10px;font-weight:600}
+.tab.active{color:var(--cyan)}
+.tab:not(.active){color:var(--muted)}
+.tab-icon{width:22px;height:22px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.screen > *{animation:fadeUp 0.25s ease forwards}
+.app-header{background:var(--cyan);padding:20px 24px 26px;color:#fff}
+.wordmark{font-family:'Cardo',serif;font-size:20px}
+.wordmark em{font-family:'Inter Tight',sans-serif;font-style:normal;opacity:0.65;font-size:11.5px;display:block;margin-top:3px}
+.greeting{font-size:13px;font-weight:300;opacity:0.7;margin-top:16px}
+.patient-name{font-family:'Cardo',serif;font-size:22px;margin-top:3px}
+.screen-title-bar{background:#fff;border-bottom:1px solid var(--border);padding:20px 20px 16px}
+.screen-title{font-family:'Cardo',serif;font-size:22px;color:var(--cyan)}
+.screen-sub{font-size:13px;color:var(--muted);margin-top:4px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);padding:20px 20px 8px}
+.card{background:var(--surface);border-radius:12px;padding:18px;margin:0 16px 12px;box-shadow:0 1px 6px rgba(11,98,112,0.09)}
+.appt-card{background:var(--cyan);color:#fff;border-radius:12px;padding:18px;margin:16px 16px 12px}
+.badge{background:rgba(255,255,255,0.22);border-radius:4px;padding:4px 10px;font-size:11px;font-weight:700;float:right}
+.item-ico{width:38px;height:38px;border-radius:8px;background:var(--cyan-lt);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.item-name{font-size:14px;font-weight:700;color:var(--text)}
+.item-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.chev{color:var(--muted);transition:transform 0.2s}
+.chev.open{transform:rotate(180deg)}
+.expand-body{background:#EDF4F5;padding:13px 16px;font-size:13px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border)}
+.chart-label{font-size:10px;fill:var(--muted);font-family:'Inter Tight',sans-serif}
+.note-card{background:var(--cyan-lt);border-left:3px solid var(--cyan);border-radius:12px;padding:16px;margin:0 16px 12px}
+.note-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--cyan);margin-bottom:6px}
+.note-text{font-size:13px;color:var(--text);line-height:1.55}
+.option-card{background:var(--surface);border-radius:8px;padding:14px 16px;margin:0 16px 8px;display:flex;align-items:center;gap:12px;cursor:pointer;border:1.5px solid var(--border)}
+.time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 16px}
+.time-chip{background:var(--surface);border-radius:6px;padding:10px 6px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);color:var(--text)}
+.time-chip.selected{background:var(--cyan);color:#fff;border-color:var(--cyan)}
+.time-chip.unavailable{background:#E8EFF0;color:#AEC2C6;cursor:default}
+.confirm-btn{background:var(--cyan);color:#fff;border-radius:8px;padding:16px;text-align:center;font-size:15px;font-weight:700;margin:8px 16px 20px;cursor:pointer}
+.success-card{background:linear-gradient(135deg,var(--cyan),var(--sea));color:#fff;border-radius:12px;padding:28px;margin:20px 16px;text-align:center}
+.msg-bubble{max-width:78%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.55;margin:4px 16px}
+.msg-bubble.pro{background:var(--surface);color:var(--text);border-bottom-left-radius:3px;box-shadow:0 1px 4px rgba(11,98,112,0.09)}
+.msg-bubble.user{background:var(--cyan);color:#fff;border-bottom-right-radius:3px;margin-left:auto}
+.msg-time{font-size:10px;color:var(--muted);margin:2px 16px 10px}
+.msg-time.right{text-align:right}
+.msg-sender{font-size:11px;font-weight:700;color:var(--cyan);margin:12px 16px 4px}
+.msg-input-row{background:var(--surface);border-top:1px solid var(--border);padding:12px 16px;display:flex;gap:10px;align-items:center;flex-shrink:0}
+.msg-input{flex:1;background:var(--bg);border-radius:8px;padding:10px 14px;font-size:13px;font-family:'Inter Tight',sans-serif;border:1px solid var(--border);outline:none;color:var(--text)}
+.msg-send{width:38px;height:38px;border-radius:8px;background:var(--cyan);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+.stage{display:flex;align-items:flex-start;gap:12px;padding-bottom:16px;position:relative}
+.stage::before{content:'';position:absolute;left:11px;top:26px;bottom:0;width:2px;background:var(--border)}
+.stage:last-child::before{display:none}
+.stage-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;z-index:1}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+const C="#0B6270",M="#5F7A7F";
+const Icons={
+  home:a=><svg viewBox="0 0 24 24" fill={a?C:"none"} stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M3 9.5L12 3l9 6.5V21H3V9.5z" strokeLinejoin="round"/></svg>,
+  plan:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4" strokeLinecap="round"/></svg>,
+  prog:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M3 17l5-5 4 4 9-9" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  book:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/></svg>,
+  msg:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" strokeLinejoin="round"/></svg>
+};
+const Chev=({open})=><svg viewBox="0 0 24 24" fill="none" stroke={M} strokeWidth="2" width="18" height="18" className={`chev${open?' open':''}`}><path d="M6 9l6 6 6-6"/></svg>;
+
+function Home(){
+  return <div>
+    <div className="app-header">
+      <div className="wordmark">Elysium Dental Clinic<em>Implantología avanzada · Juan Bravo</em></div>
+      <div className="greeting">Buenos días,</div>
+      <div className="patient-name">Ricardo Peña</div>
+    </div>
+    <div className="appt-card">
+      <div className="badge">Confirmada</div>
+      <div style={{fontSize:11,opacity:0.7,textTransform:'uppercase',letterSpacing:'0.07em'}}>Próxima cita</div>
+      <div style={{fontFamily:"'Cardo',serif",fontSize:20,marginTop:5}}>Lunes, 14 julio</div>
+      <div style={{fontSize:13,opacity:0.85,marginTop:3}}>Dr. Salcedo · 11:00h · Colocación de corona definitiva</div>
+    </div>
+    <div className="section-label">Tu implante · pieza 36</div>
+    <div className="card">
+      {[['Estudio 3D y planificación','12 marzo','done'],['Cirugía de implante Straumann','2 abril','done'],['Osteointegración (12 semanas)','abril – junio','done'],['Corona definitiva','14 julio','now'],['Revisión final','septiembre','next']].map(([t,d,s])=>
+        <div key={t} className="stage">
+          <div className="stage-dot" style={{background:s==='done'?'var(--cyan-lt)':s==='now'?C:'#EDF2F3',color:s==='done'?C:s==='now'?'#fff':M}}>{s==='done'?'✓':s==='now'?'●':'·'}</div>
+          <div>
+            <div style={{fontSize:13.5,fontWeight:s==='now'?700:600,color:s==='next'?M:'var(--text)'}}>{t}</div>
+            <div style={{fontSize:11.5,color:M,marginTop:2}}>{d}</div>
+          </div>
+        </div>)}
+    </div>
+    <div className="section-label">Accesos rápidos</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,margin:'0 16px 24px'}}>
+      {[['🦷','Mi implante'],['📄','Presupuesto y pagos'],['📷','Radiografías'],['🧾','Garantía Straumann']].map(([i,l])=>
+        <div key={l} style={{background:'#fff',borderRadius:8,padding:16,border:'1.5px solid var(--border)',cursor:'pointer'}}>
+          <div style={{fontSize:22}}>{i}</div>
+          <div style={{fontSize:12,fontWeight:700,marginTop:6,color:'var(--text)'}}>{l}</div>
+        </div>)}
+    </div>
+  </div>;
+}
+
+function Plan(){
+  const [open,setOpen]=useState(null);
+  const items=[
+    ['🪥','Cepillado con cepillo quirúrgico','Zona del implante · 2 semanas más','Cepillo ultra suave alrededor de la corona provisional. El resto de la boca, cepillado normal 3 veces/día.'],
+    ['💧','Irrigador bucal a baja presión','1 vez/día por la noche','Ayuda a mantener limpio el surco alrededor del implante sin dañar la encía en formación.'],
+    ['🚭','Nada de tabaco','Crítico durante todo el proceso','El tabaco multiplica por 3 el riesgo de fracaso del implante. Si necesitas ayuda para dejarlo, coméntanoslo.'],
+    ['🥜','Evitar masticar duro en el lado izquierdo','Hasta la corona definitiva','Nada de frutos secos, hielo o pan muy tostado sobre la pieza 36 hasta colocar la corona definitiva.'],
+    ['🦷','Férula de descarga nocturna','Cada noche','El bruxismo sobrecarga el implante. Limpiarla cada mañana con jabón neutro y agua fría.'],
+  ];
+  return <div>
+    <div className="screen-title-bar"><div className="screen-title">Cuidados del implante</div><div className="screen-sub">Dr. Salcedo · Implantología</div></div>
+    <div style={{height:12}}/>
+    {items.map(([ico,name,freq,det],i)=>
+      <div key={i} style={{background:'#fff',borderRadius:12,margin:'0 16px 10px',overflow:'hidden',boxShadow:'0 1px 6px rgba(11,98,112,0.09)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:12,padding:'14px 18px',cursor:'pointer'}} onClick={()=>setOpen(open===i?null:i)}>
+          <div className="item-ico">{ico}</div>
+          <div style={{flex:1}}><div className="item-name">{name}</div><div className="item-sub">{freq}</div></div>
+          <Chev open={open===i}/>
+        </div>
+        {open===i&&<div className="expand-body">{det}</div>}
+      </div>)}
+    <div className="note-card" style={{marginBottom:24}}>
+      <div className="note-label">Nota del doctor</div>
+      <div className="note-text">La radiografía de control muestra una osteointegración perfecta. El lunes colocamos la corona definitiva de zirconio — cita de unos 45 minutos, sin anestesia.</div>
+      <div style={{fontSize:11,color:M,marginTop:8}}>— Dr. Salcedo, 30 junio 2025</div>
+    </div>
+  </div>;
+}
+
+function Progress(){
+  const stab=[62,65,68,70,72,74,76,78];
+  const mn=55,mx=85,r=mx-mn;
+  const pts=stab.map((v,i)=>`${32+i*40},${90-((v-mn)/r)*72}`).join(' ');
+  return <div>
+    <div className="screen-title-bar"><div className="screen-title">Osteointegración</div><div className="screen-sub">Implante pieza 36 · 12 semanas</div></div>
+    <div className="section-label">Estabilidad del implante (ISQ)</div>
+    <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:12}}>
+        <div style={{fontFamily:"'Cardo',serif",fontSize:26,color:C}}>78 <span style={{fontSize:13,color:M,fontFamily:'Inter Tight'}}>ISQ</span></div>
+        <div style={{fontSize:12,color:C,fontWeight:700}}>Óptimo para carga ✓</div>
+      </div>
+      <svg viewBox="0 0 332 100" style={{width:'100%',height:100,display:'block'}}>
+        {[60,70,80].map(v=><g key={v}><line x1="32" y1={90-((v-mn)/r)*72} x2="312" y2={90-((v-mn)/r)*72} stroke="#E8EFF0"/><text x="8" y={93-((v-mn)/r)*72} className="chart-label">{v}</text></g>)}
+        <polyline points={pts} fill="none" stroke={C} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        {stab.map((v,i)=><circle key={i} cx={32+i*40} cy={90-((v-mn)/r)*72} r={i===7?4:2.5} fill={C}/>)}
+        {['Abr','May','Jun','Jul'].map((m,i)=><text key={m} x={32+i*80} y="100" className="chart-label" textAnchor="middle">{m}</text>)}
+      </svg>
+      <div style={{fontSize:11.5,color:M,marginTop:8}}>ISQ ≥ 70 indica estabilidad suficiente para la corona definitiva.</div>
+    </div>
+    <div className="section-label">Salud periodontal</div>
+    {[['Índice de sangrado','2%','92%'],['Profundidad de sondaje','2.1 mm','88%'],['Higiene general','Excelente','95%']].map(([l,v,b])=>
+      <div key={l} className="card">
+        <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}>
+          <span style={{fontSize:13,fontWeight:700}}>{l}</span>
+          <span style={{fontFamily:"'Cardo',serif",fontSize:17,color:C}}>{v}</span>
+        </div>
+        <div style={{height:8,background:'#E8EFF0',borderRadius:4,overflow:'hidden'}}><div style={{width:b,height:'100%',background:'linear-gradient(90deg,#0B6270,#3E93A0)',borderRadius:4}}/></div>
+      </div>)}
+    <div style={{height:24}}/>
+  </div>;
+}
+
+function Bookings(){
+  const [step,setStep]=useState(0),[sel,setSel]=useState({}),[done,setDone]=useState(false);
+  const docs=[['Dr. Salcedo','Implantología'],['Dra. Marina Coll','Ortodoncia'],['Dr. Pau Vives','Cirugía oral'],['Elena Sanz','Higienista']];
+  const svcs=[['Colocación de corona','Incluida en presupuesto'],['Higiene bucodental','70€'],['Revisión de implante','Gratuita'],['Consulta de valoración','Gratuita']];
+  const times=['9:00','9:30','10:30','11:00','12:00','13:00','16:00','17:00','18:00'];
+  const unav=['9:30','12:00','16:00'];
+  if(done)return <div>
+    <div className="screen-title-bar"><div className="screen-title">Citas</div></div>
+    <div className="success-card">
+      <div style={{fontSize:44,marginBottom:10}}>✓</div>
+      <div style={{fontFamily:"'Cardo',serif",fontSize:22,marginBottom:6}}>Cita confirmada</div>
+      <div style={{fontSize:13,opacity:0.85}}>{sel.doc} · {sel.svc}</div>
+      <div style={{fontSize:13,opacity:0.85,marginTop:3}}>Juan Bravo · {sel.time}</div>
+    </div>
+    <div className="confirm-btn" onClick={()=>{setDone(false);setStep(0);setSel({})}}>Nueva cita</div>
+  </div>;
+  return <div>
+    <div className="screen-title-bar">
+      <div className="screen-title">Citas</div>
+      <div style={{display:'flex',gap:6,marginTop:12}}>
+        {['Doctor','Servicio','Hora'].map((s,i)=><div key={s} style={{flex:1,height:3,borderRadius:2,background:i<=step?C:'#D9E5E7'}}/>)}
+      </div>
+    </div>
+    {step===0&&<><div className="section-label">Selecciona doctor</div>
+      {docs.map(([n,r])=><div key={n} className="option-card" onClick={()=>{setSel({...sel,doc:n});setStep(1)}}>
+        <div className="item-ico">🦷</div><div><div className="item-name">{n}</div><div className="item-sub">{r}</div></div></div>)}</>}
+    {step===1&&<><div className="section-label">Selecciona servicio</div>
+      {svcs.map(([n,p])=><div key={n} className="option-card" onClick={()=>{setSel({...sel,svc:n});setStep(2)}}>
+        <div style={{flex:1}}><div className="item-name">{n}</div></div><div style={{fontWeight:700,color:C,fontSize:12.5}}>{p}</div></div>)}</>}
+    {step===2&&<><div className="section-label">Hora · Lunes 14 julio</div>
+      <div className="time-grid">{times.map(t=><div key={t} className={`time-chip${unav.includes(t)?' unavailable':sel.time===t?' selected':''}`} onClick={()=>!unav.includes(t)&&setSel({...sel,time:t})}>{t}</div>)}</div>
+      {sel.time&&<div className="confirm-btn" onClick={()=>setDone(true)}>Confirmar cita</div>}</>}
+  </div>;
+}
+
+function Messages(){
+  const msgs=[
+    ['pro','Dr. Salcedo','Ricardo, la radiografía de control está perfecta. ISQ de 78: listo para la corona definitiva.','Hace 4 días'],
+    ['user',null,'Buenísima noticia. ¿La cita del lunes duele algo?','Hace 4 días'],
+    ['pro','Dr. Salcedo','Nada en absoluto, ni siquiera necesitas anestesia. Atornillamos la corona, ajustamos la mordida y listo.','Hace 4 días'],
+    ['pro','Administración','Le recordamos que el último plazo del presupuesto se cargará el 15 de julio. Tiene la factura disponible en la app.','Ayer'],
+    ['user',null,'Perfecto, gracias.','Hoy'],
+  ];
+  return <div style={{display:'flex',flexDirection:'column',height:'100%'}}>
+    <div className="screen-title-bar" style={{flexShrink:0}}><div className="screen-title">Mensajes</div><div className="screen-sub">Elysium Dental · Juan Bravo</div></div>
+    <div style={{flex:1,overflowY:'auto',padding:'12px 0'}}>
+      {msgs.map(([from,name,text,time],i)=><div key={i}>
+        {from==='pro'&&<div className="msg-sender">{name}</div>}
+        <div className={`msg-bubble ${from}`}>{text}</div>
+        <div className={`msg-time${from==='user'?' right':''}`}>{time}</div>
+      </div>)}
+    </div>
+    <div className="msg-input-row">
+      <input className="msg-input" placeholder="Escriba su mensaje…" readOnly/>
+      <div className="msg-send"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+    </div>
+  </div>;
+}
+
+function App(){
+  const [tab,setTab]=useState(0);
+  const screens=[Home,Plan,Progress,Bookings,Messages];
+  const S=screens[tab];
+  const tabs=[['Inicio',Icons.home],['Cuidados',Icons.plan],['Implante',Icons.prog],['Citas',Icons.book],['Mensajes',Icons.msg]];
+  return <div className="phone">
+    <div className="status-bar"><span>9:41</span>
+      <div style={{display:'flex',gap:6,alignItems:'center'}}>
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="3" width="3" height="9" rx="1" fill="white" opacity="0.4"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white" opacity="0.6"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="white" opacity="0.8"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="white"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="22" height="10" rx="2" stroke="white" strokeWidth="1" fill="none" opacity="0.5"/><rect x="23" y="3.5" width="2" height="5" rx="1" fill="white" opacity="0.5"/><rect x="1.5" y="2.5" width="16" height="7" rx="1" fill="white"/></svg>
+      </div>
+    </div>
+    <div className="screen" key={tab}><S/></div>
+    <div className="tab-bar">{tabs.map(([l,I],i)=><div key={i} className={`tab${tab===i?' active':''}`} onClick={()=>setTab(i)}>{I(tab===i)}<span>{l}</span></div>)}</div>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grupo Pedro Jaén</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FBF8F4;
+  --clay:#A34E2C;
+  --clay-lt:#F6E8E0;
+  --ink:#2E241F;
+  --muted:#84766C;
+  --surface:#FFFFFF;
+  --border:#EADFD5;
+}
+body{background:#E0D5CA;font-family:'Figtree',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.phone{width:390px;height:844px;background:var(--bg);border-radius:44px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,0.28),0 0 0 1px rgba(0,0,0,0.08)}
+.status-bar{background:var(--ink);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:14px 24px 10px;font-size:12px;font-weight:500;flex-shrink:0}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden}
+.screen::-webkit-scrollbar{display:none}
+.tab-bar{background:var(--surface);border-top:1px solid var(--border);display:flex;flex-shrink:0;padding-bottom:16px}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0 4px;cursor:pointer}
+.tab span{font-size:10px;font-weight:600}
+.tab.active{color:var(--clay)}
+.tab:not(.active){color:var(--muted)}
+.tab-icon{width:22px;height:22px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.screen > *{animation:fadeUp 0.25s ease forwards}
+.app-header{background:var(--ink);padding:20px 24px 26px;color:#fff}
+.wordmark{font-family:'Lora',serif;font-size:18px}
+.wordmark em{font-style:italic;opacity:0.65;font-size:12px;display:block;margin-top:2px}
+.greeting{font-size:13px;font-weight:300;opacity:0.7;margin-top:16px}
+.patient-name{font-family:'Lora',serif;font-size:22px;margin-top:3px}
+.screen-title-bar{background:#fff;border-bottom:1px solid var(--border);padding:20px 20px 16px}
+.screen-title{font-family:'Lora',serif;font-size:22px;color:var(--ink)}
+.screen-sub{font-size:13px;color:var(--muted);margin-top:4px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);padding:20px 20px 8px}
+.card{background:var(--surface);border-radius:14px;padding:18px;margin:0 16px 12px;box-shadow:0 1px 6px rgba(46,36,31,0.07)}
+.appt-card{background:var(--clay);color:#fff;border-radius:14px;padding:18px;margin:16px 16px 12px}
+.badge{background:rgba(255,255,255,0.22);border-radius:20px;padding:4px 11px;font-size:11px;font-weight:700;float:right}
+.item-ico{width:38px;height:38px;border-radius:10px;background:var(--clay-lt);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.item-name{font-size:14px;font-weight:700;color:var(--ink)}
+.item-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.chev{color:var(--muted);transition:transform 0.2s}
+.chev.open{transform:rotate(180deg)}
+.expand-body{background:#F8F1EB;padding:13px 16px;font-size:13px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border)}
+.chart-label{font-size:10px;fill:var(--muted);font-family:'Figtree',sans-serif}
+.note-card{background:var(--clay-lt);border-left:3px solid var(--clay);border-radius:14px;padding:16px;margin:0 16px 12px}
+.note-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--clay);margin-bottom:6px}
+.note-text{font-size:13px;color:var(--ink);line-height:1.55}
+.option-card{background:var(--surface);border-radius:10px;padding:14px 16px;margin:0 16px 8px;display:flex;align-items:center;gap:12px;cursor:pointer;border:1.5px solid var(--border)}
+.time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 16px}
+.time-chip{background:var(--surface);border-radius:8px;padding:10px 6px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);color:var(--ink)}
+.time-chip.selected{background:var(--clay);color:#fff;border-color:var(--clay)}
+.time-chip.unavailable{background:#F1EAE3;color:#C4B8AC;cursor:default}
+.confirm-btn{background:var(--clay);color:#fff;border-radius:50px;padding:16px;text-align:center;font-size:15px;font-weight:700;margin:8px 16px 20px;cursor:pointer}
+.success-card{background:linear-gradient(135deg,var(--clay),#C06A45);color:#fff;border-radius:14px;padding:28px;margin:20px 16px;text-align:center}
+.msg-bubble{max-width:78%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.55;margin:4px 16px}
+.msg-bubble.pro{background:var(--surface);color:var(--ink);border-bottom-left-radius:4px;box-shadow:0 1px 4px rgba(46,36,31,0.07)}
+.msg-bubble.user{background:var(--clay);color:#fff;border-bottom-right-radius:4px;margin-left:auto}
+.msg-time{font-size:10px;color:var(--muted);margin:2px 16px 10px}
+.msg-time.right{text-align:right}
+.msg-sender{font-size:11px;font-weight:700;color:var(--clay);margin:12px 16px 4px}
+.msg-input-row{background:var(--surface);border-top:1px solid var(--border);padding:12px 16px;display:flex;gap:10px;align-items:center;flex-shrink:0}
+.msg-input{flex:1;background:var(--bg);border-radius:22px;padding:10px 16px;font-size:13px;font-family:'Figtree',sans-serif;border:none;outline:none;color:var(--ink)}
+.msg-send{width:38px;height:38px;border-radius:50%;background:var(--clay);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+.uv-badge{display:flex;align-items:center;gap:10px;background:#FDF3E3;border-radius:10px;padding:12px 14px;margin-top:12px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+const C="#A34E2C",M="#84766C";
+const Icons={
+  home:a=><svg viewBox="0 0 24 24" fill={a?C:"none"} stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M3 9.5L12 3l9 6.5V21H3V9.5z" strokeLinejoin="round"/></svg>,
+  plan:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4" strokeLinecap="round"/></svg>,
+  prog:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M3 17l5-5 4 4 9-9" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  book:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/></svg>,
+  msg:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" strokeLinejoin="round"/></svg>
+};
+const Chev=({open})=><svg viewBox="0 0 24 24" fill="none" stroke={M} strokeWidth="2" width="18" height="18" className={`chev${open?' open':''}`}><path d="M6 9l6 6 6-6"/></svg>;
+
+function Home(){
+  return <div>
+    <div className="app-header">
+      <div className="wordmark">Grupo Pedro Jaén<em>Dermatología · Serrano 143</em></div>
+      <div className="greeting">Buenos días,</div>
+      <div className="patient-name">Álvaro Cifuentes</div>
+    </div>
+    <div className="appt-card">
+      <div className="badge">Confirmada</div>
+      <div style={{fontSize:11,opacity:0.7,textTransform:'uppercase',letterSpacing:'0.07em'}}>Próxima cita</div>
+      <div style={{fontFamily:"'Lora',serif",fontSize:20,marginTop:5}}>Viernes, 11 julio</div>
+      <div style={{fontSize:13,opacity:0.85,marginTop:3}}>Dra. Requena · 10:00h · Control de mapeo de lunares</div>
+    </div>
+    <div className="section-label">Hoy en Madrid</div>
+    <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline'}}>
+        <span style={{fontFamily:"'Lora',serif",fontSize:17,color:'var(--ink)'}}>Índice UV</span>
+        <span style={{fontFamily:"'Lora',serif",fontSize:26,color:C}}>9 <span style={{fontSize:12,color:M,fontFamily:'Figtree'}}>Muy alto</span></span>
+      </div>
+      <div style={{height:8,background:'#F1EAE3',borderRadius:4,overflow:'hidden',marginTop:12}}>
+        <div style={{width:'82%',height:'100%',background:'linear-gradient(90deg,#E8A33D,#A34E2C)',borderRadius:4}}/>
+      </div>
+      <div className="uv-badge">
+        <span style={{fontSize:20}}>☀️</span>
+        <span style={{fontSize:12.5,color:'var(--ink)',lineHeight:1.5}}>Reaplica tu SPF 50+ cada 2 horas y evita la exposición directa entre las 12h y las 17h.</span>
+      </div>
+    </div>
+    <div className="section-label">Accesos rápidos</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,margin:'0 16px 16px'}}>
+      {[['🔬','Mi mapeo corporal'],['🧴','Rutina prescrita'],['📷','Enviar foto de lesión'],['📄','Informes']].map(([i,l])=>
+        <div key={l} style={{background:'#fff',borderRadius:10,padding:16,border:'1.5px solid var(--border)',cursor:'pointer'}}>
+          <div style={{fontSize:22}}>{i}</div>
+          <div style={{fontSize:12,fontWeight:700,marginTop:6,color:'var(--ink)'}}>{l}</div>
+        </div>)}
+    </div>
+    <div className="card" style={{marginBottom:24}}>
+      <div style={{fontSize:11,fontWeight:700,letterSpacing:'0.09em',textTransform:'uppercase',color:M,marginBottom:10}}>Tratamiento activo</div>
+      <div style={{fontSize:14,fontWeight:700,color:'var(--ink)'}}>Isotretinoína 20mg · Mes 3 de 6</div>
+      <div style={{fontSize:12.5,color:M,marginTop:4,lineHeight:1.5}}>Analítica de control realizada el 20 de junio: parámetros hepáticos y lipídicos normales.</div>
+    </div>
+  </div>;
+}
+
+function Plan(){
+  const [open,setOpen]=useState(null);
+  const items=[
+    ['🌅','Rutina de mañana','Limpiador suave + hidratante + SPF 50+','Limpiador syndet sin sulfatos. Hidratante no comedogénica. Fotoprotector mineral, reaplicar cada 2-3 horas.'],
+    ['💊','Isotretinoína 20mg','1 cápsula con la cena','Tomar siempre con alimentos grasos para mejorar la absorción. Prohibido donar sangre durante el tratamiento y 1 mes después.'],
+    ['🌙','Rutina de noche','Limpiador + reparadora labial + contorno','La sequedad labial es el efecto más frecuente: aplicar bálsamo reparador varias veces al día.'],
+    ['🚫','Evitar exfoliantes y retinol','Durante todo el tratamiento','La piel está sensibilizada. Nada de ácidos, peelings ni depilación con cera hasta 6 meses tras finalizar.'],
+    ['🩸','Analítica mensual','Cada 4 semanas','Control de transaminasas, colesterol y triglicéridos. Acudir en ayunas de 8 horas.'],
+  ];
+  return <div>
+    <div className="screen-title-bar"><div className="screen-title">Tu pauta dermatológica</div><div className="screen-sub">Dra. Requena · Acné moderado-severo</div></div>
+    <div style={{height:12}}/>
+    {items.map(([ico,name,freq,det],i)=>
+      <div key={i} style={{background:'#fff',borderRadius:14,margin:'0 16px 10px',overflow:'hidden',boxShadow:'0 1px 6px rgba(46,36,31,0.07)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:12,padding:'14px 18px',cursor:'pointer'}} onClick={()=>setOpen(open===i?null:i)}>
+          <div className="item-ico">{ico}</div>
+          <div style={{flex:1}}><div className="item-name">{name}</div><div className="item-sub">{freq}</div></div>
+          <Chev open={open===i}/>
+        </div>
+        {open===i&&<div className="expand-body">{det}</div>}
+      </div>)}
+    <div className="note-card" style={{marginBottom:24}}>
+      <div className="note-label">Nota de la dermatóloga</div>
+      <div className="note-text">Respuesta excelente al tercer mes: reducción del 70% de lesiones inflamatorias. Mantenemos dosis actual, sin necesidad de subir a 30mg.</div>
+      <div style={{fontSize:11,color:M,marginTop:8}}>— Dra. Requena, 20 junio 2025</div>
+    </div>
+  </div>;
+}
+
+function Progress(){
+  const lesions=[34,30,26,21,17,14,11,10];
+  const mx=40;
+  const pts=lesions.map((v,i)=>`${32+i*40},${90-(v/mx)*72}`).join(' ');
+  return <div>
+    <div className="screen-title-bar"><div className="screen-title">Evolución clínica</div><div className="screen-sub">Tratamiento de acné · 8 semanas</div></div>
+    <div className="section-label">Lesiones activas</div>
+    <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:12}}>
+        <div style={{fontFamily:"'Lora',serif",fontSize:26,color:'var(--ink)'}}>10 <span style={{fontSize:13,color:M,fontFamily:'Figtree'}}>lesiones</span></div>
+        <div style={{fontSize:12,color:C,fontWeight:700}}>↓ 70% desde inicio</div>
+      </div>
+      <svg viewBox="0 0 332 100" style={{width:'100%',height:100,display:'block'}}>
+        {[10,20,30,40].map(v=><g key={v}><line x1="32" y1={90-(v/mx)*72} x2="312" y2={90-(v/mx)*72} stroke="#F1EAE3"/><text x="8" y={93-(v/mx)*72} className="chart-label">{v}</text></g>)}
+        <polyline points={pts} fill="none" stroke={C} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        {lesions.map((v,i)=><circle key={i} cx={32+i*40} cy={90-(v/mx)*72} r={i===7?4:2.5} fill={C}/>)}
+        {['May','Jun','Jul','Ago'].map((m,i)=><text key={m} x={32+i*80} y="100" className="chart-label" textAnchor="middle">{m}</text>)}
+      </svg>
+    </div>
+    <div className="section-label">Mapeo de lunares</div>
+    <div className="card">
+      {[['Mapeo corporal completo','Mar 2025','Sin cambios'],['Dermatoscopia digital · Espalda','Mar 2025','2 en seguimiento'],['Próximo control','Jul 2025','Programado']].map(([t,d,s])=>
+        <div key={t} style={{display:'flex',alignItems:'center',gap:12,padding:'11px 0',borderBottom:'1px solid var(--border)'}}>
+          <div style={{flex:1}}><div style={{fontSize:13,fontWeight:700}}>{t}</div><div style={{fontSize:11,color:M,marginTop:2}}>{d}</div></div>
+          <div style={{fontSize:11,fontWeight:700,background:'var(--clay-lt)',color:C,borderRadius:20,padding:'3px 10px'}}>{s}</div>
+        </div>)}
+    </div>
+    <div className="note-card" style={{marginBottom:24}}>
+      <div className="note-label">Valoración</div>
+      <div className="note-text">Los dos nevus en seguimiento no muestran cambios dermatoscópicos. La piel tolera bien la isotretinoína; hidratación cutánea correcta.</div>
+    </div>
+  </div>;
+}
+
+function Bookings(){
+  const [step,setStep]=useState(0),[sel,setSel]=useState({}),[done,setDone]=useState(false);
+  const docs=[['Dra. Requena','Dermatología clínica'],['Dr. Pedro Jaén','Dermatología y tricología'],['Dra. Sonia Beá','Láser dermatológico'],['Dr. Iván Ortega','Cirugía dermatológica']];
+  const svcs=[['Consulta de dermatología','130€'],['Mapeo corporal digital','190€'],['Sesión de láser vascular','220€'],['Control de tratamiento','90€']];
+  const times=['9:00','9:30','10:00','11:00','11:30','12:30','16:00','17:00','17:30','18:30'];
+  const unav=['9:30','11:30','17:00'];
+  if(done)return <div>
+    <div className="screen-title-bar"><div className="screen-title">Citas</div></div>
+    <div className="success-card">
+      <div style={{fontSize:44,marginBottom:10}}>✓</div>
+      <div style={{fontFamily:"'Lora',serif",fontSize:22,marginBottom:6}}>Cita confirmada</div>
+      <div style={{fontSize:13,opacity:0.85}}>{sel.doc} · {sel.svc}</div>
+      <div style={{fontSize:13,opacity:0.85,marginTop:3}}>Serrano 143 · {sel.time}</div>
+    </div>
+    <div className="confirm-btn" onClick={()=>{setDone(false);setStep(0);setSel({})}}>Nueva cita</div>
+  </div>;
+  return <div>
+    <div className="screen-title-bar">
+      <div className="screen-title">Citas</div>
+      <div style={{display:'flex',gap:6,marginTop:12}}>
+        {['Doctor','Servicio','Hora'].map((s,i)=><div key={s} style={{flex:1,height:3,borderRadius:2,background:i<=step?C:'#EADFD5'}}/>)}
+      </div>
+    </div>
+    {step===0&&<><div className="section-label">Selecciona doctor</div>
+      {docs.map(([n,r])=><div key={n} className="option-card" onClick={()=>{setSel({...sel,doc:n});setStep(1)}}>
+        <div className="item-ico">🔬</div><div><div className="item-name">{n}</div><div className="item-sub">{r}</div></div></div>)}</>}
+    {step===1&&<><div className="section-label">Selecciona servicio</div>
+      {svcs.map(([n,p])=><div key={n} className="option-card" onClick={()=>{setSel({...sel,svc:n});setStep(2)}}>
+        <div style={{flex:1}}><div className="item-name">{n}</div></div><div style={{fontWeight:700,color:C,fontSize:13}}>{p}</div></div>)}</>}
+    {step===2&&<><div className="section-label">Hora · Viernes 11 julio</div>
+      <div className="time-grid">{times.map(t=><div key={t} className={`time-chip${unav.includes(t)?' unavailable':sel.time===t?' selected':''}`} onClick={()=>!unav.includes(t)&&setSel({...sel,time:t})}>{t}</div>)}</div>
+      {sel.time&&<div className="confirm-btn" onClick={()=>setDone(true)}>Confirmar cita</div>}</>}
+  </div>;
+}
+
+function Messages(){
+  const msgs=[
+    ['pro','Dra. Requena','Álvaro, la analítica de junio está perfecta. Continuamos con 20mg un mes más.','Hace 4 días'],
+    ['user',null,'Genial. Tengo los labios muy secos, ¿es normal?','Hace 4 días'],
+    ['pro','Dra. Requena','Totalmente normal con isotretinoína. Bálsamo reparador varias veces al día y beber mucha agua. Si aparecen grietas, avísame.','Hace 4 días'],
+    ['pro','Recepción','Recordatorio: control de mapeo de lunares el viernes 11 a las 10:00h con la Dra. Requena.','Ayer'],
+    ['user',null,'Confirmado, gracias.','Hoy'],
+  ];
+  return <div style={{display:'flex',flexDirection:'column',height:'100%'}}>
+    <div className="screen-title-bar" style={{flexShrink:0}}><div className="screen-title">Mensajes</div><div className="screen-sub">Grupo Pedro Jaén · Serrano 143</div></div>
+    <div style={{flex:1,overflowY:'auto',padding:'12px 0'}}>
+      {msgs.map(([from,name,text,time],i)=><div key={i}>
+        {from==='pro'&&<div className="msg-sender">{name}</div>}
+        <div className={`msg-bubble ${from}`}>{text}</div>
+        <div className={`msg-time${from==='user'?' right':''}`}>{time}</div>
+      </div>)}
+    </div>
+    <div className="msg-input-row">
+      <input className="msg-input" placeholder="Escribe un mensaje…" readOnly/>
+      <div className="msg-send"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+    </div>
+  </div>;
+}
+
+function App(){
+  const [tab,setTab]=useState(0);
+  const screens=[Home,Plan,Progress,Bookings,Messages];
+  const S=screens[tab];
+  const tabs=[['Inicio',Icons.home],['Pauta',Icons.plan],['Evolución',Icons.prog],['Citas',Icons.book],['Mensajes',Icons.msg]];
+  return <div className="phone">
+    <div className="status-bar"><span>9:41</span>
+      <div style={{display:'flex',gap:6,alignItems:'center'}}>
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="3" width="3" height="9" rx="1" fill="white" opacity="0.4"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white" opacity="0.6"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="white" opacity="0.8"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="white"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="22" height="10" rx="2" stroke="white" strokeWidth="1" fill="none" opacity="0.5"/><rect x="23" y="3.5" width="2" height="5" rx="1" fill="white" opacity="0.5"/><rect x="1.5" y="2.5" width="16" height="7" rx="1" fill="white"/></svg>
+      </div>
+    </div>
+    <div className="screen" key={tab}><S/></div>
+    <div className="tab-bar">{tabs.map(([l,I],i)=><div key={i} className={`tab${tab===i?' active':''}`} onClick={()=>setTab(i)}>{I(tab===i)}<span>{l}</span></div>)}</div>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fisioterapia Velázquez 22</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F2F4F6;
+  --steel:#25384D;
+  --signal:#E8641B;
+  --signal-lt:#FCE8DC;
+  --text:#1B2733;
+  --muted:#68788A;
+  --surface:#FFFFFF;
+  --border:#DCE2E8;
+}
+body{background:#C6CFD8;font-family:'Barlow',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.phone{width:390px;height:844px;background:var(--bg);border-radius:44px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,0.28),0 0 0 1px rgba(0,0,0,0.08)}
+.status-bar{background:var(--steel);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:14px 24px 10px;font-size:12px;font-weight:500;flex-shrink:0}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden}
+.screen::-webkit-scrollbar{display:none}
+.tab-bar{background:var(--surface);border-top:1px solid var(--border);display:flex;flex-shrink:0;padding-bottom:16px}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0 4px;cursor:pointer}
+.tab span{font-size:10px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif}
+.tab.active{color:var(--signal)}
+.tab:not(.active){color:var(--muted)}
+.tab-icon{width:22px;height:22px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.screen > *{animation:fadeUp 0.25s ease forwards}
+.app-header{background:var(--steel);padding:20px 24px 26px;color:#fff}
+.wordmark{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase}
+.wordmark span{color:var(--signal)}
+.wordmark em{font-family:'Barlow',sans-serif;font-style:normal;opacity:0.6;font-size:12px;display:block;margin-top:2px;text-transform:none;letter-spacing:0;font-weight:400}
+.greeting{font-size:13px;opacity:0.7;margin-top:16px}
+.patient-name{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:600;margin-top:2px;letter-spacing:0.02em}
+.screen-title-bar{background:#fff;border-bottom:1px solid var(--border);padding:20px 20px 16px}
+.screen-title{font-family:'Barlow Condensed',sans-serif;font-size:25px;font-weight:700;color:var(--steel);letter-spacing:0.02em;text-transform:uppercase}
+.screen-sub{font-size:13px;color:var(--muted);margin-top:2px}
+.section-label{font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);padding:20px 20px 8px;font-family:'Barlow Condensed',sans-serif}
+.card{background:var(--surface);border-radius:10px;padding:18px;margin:0 16px 12px;box-shadow:0 1px 5px rgba(27,39,51,0.08)}
+.appt-card{background:var(--signal);color:#fff;border-radius:10px;padding:18px;margin:16px 16px 12px}
+.badge{background:rgba(255,255,255,0.25);border-radius:4px;padding:4px 10px;font-size:11px;font-weight:700;float:right}
+.item-ico{width:40px;height:40px;border-radius:8px;background:var(--signal-lt);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.item-name{font-size:14px;font-weight:600;color:var(--text)}
+.item-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.chev{color:var(--muted);transition:transform 0.2s}
+.chev.open{transform:rotate(180deg)}
+.expand-body{background:#F0F3F6;padding:13px 16px;font-size:13px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border)}
+.chart-label{font-size:10px;fill:var(--muted);font-family:'Barlow',sans-serif}
+.note-card{background:#E8EDF3;border-left:3px solid var(--steel);border-radius:10px;padding:16px;margin:0 16px 12px}
+.note-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--steel);margin-bottom:6px;font-family:'Barlow Condensed',sans-serif}
+.note-text{font-size:13px;color:var(--text);line-height:1.55}
+.option-card{background:var(--surface);border-radius:8px;padding:14px 16px;margin:0 16px 8px;display:flex;align-items:center;gap:12px;cursor:pointer;border:1.5px solid var(--border)}
+.time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 16px}
+.time-chip{background:var(--surface);border-radius:6px;padding:10px 6px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);color:var(--text)}
+.time-chip.selected{background:var(--signal);color:#fff;border-color:var(--signal)}
+.time-chip.unavailable{background:#E9EDF1;color:#AEB9C4;cursor:default}
+.confirm-btn{background:var(--signal);color:#fff;border-radius:8px;padding:16px;text-align:center;font-size:15px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;margin:8px 16px 20px;cursor:pointer;font-family:'Barlow Condensed',sans-serif}
+.success-card{background:linear-gradient(135deg,var(--steel),#37506B);color:#fff;border-radius:10px;padding:28px;margin:20px 16px;text-align:center}
+.msg-bubble{max-width:78%;padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.55;margin:4px 16px}
+.msg-bubble.pro{background:var(--surface);color:var(--text);border-bottom-left-radius:3px;box-shadow:0 1px 4px rgba(27,39,51,0.08)}
+.msg-bubble.user{background:var(--steel);color:#fff;border-bottom-right-radius:3px;margin-left:auto}
+.msg-time{font-size:10px;color:var(--muted);margin:2px 16px 10px}
+.msg-time.right{text-align:right}
+.msg-sender{font-size:11px;font-weight:700;color:var(--signal);margin:12px 16px 4px;text-transform:uppercase;letter-spacing:0.05em;font-family:'Barlow Condensed',sans-serif}
+.msg-input-row{background:var(--surface);border-top:1px solid var(--border);padding:12px 16px;display:flex;gap:10px;align-items:center;flex-shrink:0}
+.msg-input{flex:1;background:var(--bg);border-radius:8px;padding:10px 14px;font-size:13px;font-family:'Barlow',sans-serif;border:1px solid var(--border);outline:none;color:var(--text)}
+.msg-send{width:38px;height:38px;border-radius:8px;background:var(--signal);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+.set-pill{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;background:var(--signal-lt);color:var(--signal);border-radius:4px;padding:3px 9px;letter-spacing:0.03em}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+const C="#E8641B",S="#25384D",M="#68788A";
+const Icons={
+  home:a=><svg viewBox="0 0 24 24" fill={a?C:"none"} stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M3 9.5L12 3l9 6.5V21H3V9.5z" strokeLinejoin="round"/></svg>,
+  plan:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4" strokeLinecap="round"/></svg>,
+  prog:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M3 17l5-5 4 4 9-9" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  book:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/></svg>,
+  msg:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" strokeLinejoin="round"/></svg>
+};
+const Chev=({open})=><svg viewBox="0 0 24 24" fill="none" stroke={M} strokeWidth="2" width="18" height="18" className={`chev${open?' open':''}`}><path d="M6 9l6 6 6-6"/></svg>;
+
+function Home(){
+  return <div>
+    <div className="app-header">
+      <div className="wordmark">Fisioterapia <span>Velázquez 22</span><em>Fisioterapia deportiva · Barrio de Salamanca</em></div>
+      <div className="greeting">De vuelta al entrenamiento,</div>
+      <div className="patient-name">Javier Ortiz</div>
+    </div>
+    <div className="appt-card">
+      <div className="badge">Confirmada</div>
+      <div style={{fontSize:11,opacity:0.8,textTransform:'uppercase',letterSpacing:'0.08em'}}>Próxima sesión</div>
+      <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:24,fontWeight:700,marginTop:4}}>MARTES, 8 JULIO</div>
+      <div style={{fontSize:13,opacity:0.9,marginTop:2}}>Fisioterapia deportiva · 18:30h · con Diego</div>
+    </div>
+    <div className="section-label">Tu recuperación</div>
+    <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline'}}>
+        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:19,fontWeight:700,color:S,textTransform:'uppercase',letterSpacing:'0.02em'}}>Esguince de tobillo · G2</span>
+        <span className="set-pill">Semana 5 de 8</span>
+      </div>
+      <div style={{height:8,background:'#E9EDF1',borderRadius:4,overflow:'hidden',marginTop:12}}>
+        <div style={{width:'62%',height:'100%',background:'linear-gradient(90deg,#25384D,#E8641B)',borderRadius:4}}/>
+      </div>
+      <div style={{fontSize:12,color:M,marginTop:8}}>Fase de readaptación deportiva · Vuelta a carrera prevista: 28 julio</div>
+    </div>
+    <div className="section-label">Hoy toca</div>
+    <div className="card" style={{marginBottom:12}}>
+      {[['✅','Movilidad de tobillo en carga','3×15 · completado'],['⬜','Equilibrio monopodal en bosu','3×45 seg'],['⬜','Elevación de talones excéntrica','4×12']].map(([s,t,d])=>
+        <div key={t} style={{display:'flex',alignItems:'center',gap:12,padding:'11px 0',borderBottom:'1px solid var(--border)'}}>
+          <span style={{fontSize:17}}>{s}</span>
+          <div style={{flex:1}}><div style={{fontSize:13.5,fontWeight:600}}>{t}</div><div style={{fontSize:11.5,color:M,marginTop:1}}>{d}</div></div>
+        </div>)}
+    </div>
+    <div className="section-label">Bono de sesiones</div>
+    <div className="card" style={{marginBottom:24}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline'}}>
+        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:700,color:C}}>4 <span style={{fontSize:13,color:M,fontFamily:'Barlow',fontWeight:400}}>de 10 restantes</span></span>
+        <span style={{fontSize:12,color:M}}>Válido hasta sept</span>
+      </div>
+      <div style={{display:'flex',gap:5,marginTop:12}}>
+        {Array.from({length:10}).map((_,i)=><div key={i} style={{flex:1,height:8,borderRadius:2,background:i<6?'#E9EDF1':C}}/>)}
+      </div>
+    </div>
+  </div>;
+}
+
+function Plan(){
+  const [open,setOpen]=useState(null);
+  const items=[
+    ['🦶','Movilidad de tobillo en carga','3×15 · diario','De pie frente a la pared, llevar la rodilla hacia delante sin levantar el talón. Progresar distancia semana a semana.'],
+    ['⚖️','Equilibrio monopodal en bosu','3×45 seg · diario','Apoyo sobre la pierna lesionada, mirada al frente. Cuando sea fácil, añadir lanzamientos de balón contra la pared.'],
+    ['💪','Elevación de talones excéntrica','4×12 · días alternos','Subir con dos piernas, bajar lento (4 seg) solo con la lesionada, desde un escalón. Clave para el tendón.'],
+    ['🏃','Trote progresivo','2×10 min · desde esta semana','Superficie regular, ritmo conversacional. Parar ante cualquier molestia superior a 3/10.'],
+    ['🧊','Crioterapia post-carga','10 min tras entrenar','Solo si aparece inflamación tras las sesiones de carga. Hielo envuelto, nunca directo sobre la piel.'],
+  ];
+  return <div>
+    <div className="screen-title-bar"><div className="screen-title">Plan de ejercicios</div><div className="screen-sub">Diego Aranda · Readaptación deportiva</div></div>
+    <div style={{height:12}}/>
+    {items.map(([ico,name,freq,det],i)=>
+      <div key={i} style={{background:'#fff',borderRadius:10,margin:'0 16px 10px',overflow:'hidden',boxShadow:'0 1px 5px rgba(27,39,51,0.08)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:12,padding:'14px 18px',cursor:'pointer'}} onClick={()=>setOpen(open===i?null:i)}>
+          <div className="item-ico">{ico}</div>
+          <div style={{flex:1}}><div className="item-name">{name}</div><div className="item-sub">{freq}</div></div>
+          <Chev open={open===i}/>
+        </div>
+        {open===i&&<div className="expand-body">
+          {det}
+          <div style={{marginTop:10,background:'#25384D',borderRadius:6,height:110,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff'}}>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="rgba(255,255,255,0.9)"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+          <div style={{fontSize:11,color:M,marginTop:6,textAlign:'center'}}>Vídeo demostrativo</div>
+        </div>}
+      </div>)}
+    <div className="note-card" style={{marginBottom:24}}>
+      <div className="note-label">Nota del fisio</div>
+      <div className="note-text">El tobillo responde muy bien a la carga. Esta semana introducimos trote suave: si no hay reacción inflamatoria, la semana que viene pasamos a cambios de dirección.</div>
+      <div style={{fontSize:11,color:M,marginTop:8}}>— Diego Aranda, 1 julio 2025</div>
+    </div>
+  </div>;
+}
+
+function Progress(){
+  const pain=[8,7,6,5,4,3,2,2];
+  const func_=[2,3,4,5,6,7,8,8];
+  const p=a=>a.map((v,i)=>`${32+i*40},${90-(v/10)*72}`).join(' ');
+  return <div>
+    <div className="screen-title-bar"><div className="screen-title">Evolución</div><div className="screen-sub">Esguince G2 · 8 semanas</div></div>
+    <div className="section-label">Dolor vs función</div>
+    <div className="card">
+      <div style={{display:'flex',gap:14,marginBottom:12}}>
+        <div style={{display:'flex',alignItems:'center',gap:5,fontSize:11,color:M}}><div style={{width:12,height:2.5,background:C}}/> Dolor</div>
+        <div style={{display:'flex',alignItems:'center',gap:5,fontSize:11,color:M}}><div style={{width:12,height:2.5,background:S}}/> Función</div>
+      </div>
+      <svg viewBox="0 0 332 100" style={{width:'100%',height:100,display:'block'}}>
+        {[2,5,8].map(v=><g key={v}><line x1="32" y1={90-(v/10)*72} x2="312" y2={90-(v/10)*72} stroke="#E9EDF1"/><text x="10" y={93-(v/10)*72} className="chart-label">{v}</text></g>)}
+        <polyline points={p(pain)} fill="none" stroke={C} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <polyline points={p(func_)} fill="none" stroke={S} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        {['S1','S2','S3','S4','S5','S6','S7','S8'].map((m,i)=><text key={m} x={32+i*40} y="100" className="chart-label" textAnchor="middle">{m}</text>)}
+      </svg>
+    </div>
+    <div className="section-label">Tests funcionales</div>
+    {[['Salto monopodal (% pierna sana)','84%','84%'],['Rango de dorsiflexión','11 cm','78%'],['Fuerza de eversores','4+/5','88%']].map(([l,v,b])=>
+      <div key={l} className="card">
+        <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}>
+          <span style={{fontSize:13,fontWeight:600}}>{l}</span>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,fontWeight:700,color:C}}>{v}</span>
+        </div>
+        <div style={{height:8,background:'#E9EDF1',borderRadius:4,overflow:'hidden'}}><div style={{width:b,height:'100%',background:'linear-gradient(90deg,#25384D,#E8641B)',borderRadius:4}}/></div>
+      </div>)}
+    <div className="note-card" style={{marginBottom:24}}>
+      <div className="note-label">Criterio de alta deportiva</div>
+      <div className="note-text">Objetivo: salto monopodal ≥ 90% respecto a la pierna sana y ausencia de dolor en cambios de dirección. Estimación: 2-3 semanas.</div>
+    </div>
+  </div>;
+}
+
+function Bookings(){
+  const [step,setStep]=useState(0),[sel,setSel]=useState({}),[done,setDone]=useState(false);
+  const pros=[['Diego Aranda','Fisioterapia deportiva'],['Carla Mestre','Fisioterapia general'],['Hugo Lafuente','Readaptación y fuerza'],['Lucía Prado','Fisioterapia estética']];
+  const svcs=[['Sesión de fisioterapia','55€ / bono'],['Readaptación en sala','50€'],['Punción seca','60€'],['Valoración inicial','65€']];
+  const times=['8:00','9:00','10:00','11:30','12:30','16:00','17:00','18:30','19:30','20:30'];
+  const unav=['9:00','12:30','17:00'];
+  if(done)return <div>
+    <div className="screen-title-bar"><div className="screen-title">Citas</div></div>
+    <div className="success-card">
+      <div style={{fontSize:44,marginBottom:10}}>💪</div>
+      <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:24,fontWeight:700,marginBottom:6,textTransform:'uppercase'}}>Sesión reservada</div>
+      <div style={{fontSize:13,opacity:0.85}}>{sel.pro} · {sel.svc}</div>
+      <div style={{fontSize:13,opacity:0.85,marginTop:3}}>Villanueva 27, 1º dcha · {sel.time}</div>
+    </div>
+    <div className="confirm-btn" onClick={()=>{setDone(false);setStep(0);setSel({})}}>Nueva sesión</div>
+  </div>;
+  return <div>
+    <div className="screen-title-bar">
+      <div className="screen-title">Citas</div>
+      <div style={{display:'flex',gap:6,marginTop:12}}>
+        {['Fisio','Servicio','Hora'].map((s,i)=><div key={s} style={{flex:1,height:3,borderRadius:2,background:i<=step?C:'#DCE2E8'}}/>)}
+      </div>
+    </div>
+    {step===0&&<><div className="section-label">Elige fisioterapeuta</div>
+      {pros.map(([n,r])=><div key={n} className="option-card" onClick={()=>{setSel({...sel,pro:n});setStep(1)}}>
+        <div className="item-ico">🏃</div><div><div className="item-name">{n}</div><div className="item-sub">{r}</div></div></div>)}</>}
+    {step===1&&<><div className="section-label">Elige servicio</div>
+      {svcs.map(([n,p2])=><div key={n} className="option-card" onClick={()=>{setSel({...sel,svc:n});setStep(2)}}>
+        <div style={{flex:1}}><div className="item-name">{n}</div></div><div style={{fontWeight:700,color:C,fontSize:13}}>{p2}</div></div>)}</>}
+    {step===2&&<><div className="section-label">Hora · Martes 8 julio</div>
+      <div className="time-grid">{times.map(t=><div key={t} className={`time-chip${unav.includes(t)?' unavailable':sel.time===t?' selected':''}`} onClick={()=>!unav.includes(t)&&setSel({...sel,time:t})}>{t}</div>)}</div>
+      {sel.time&&<div className="confirm-btn" onClick={()=>setDone(true)}>Reservar sesión</div>}</>}
+  </div>;
+}
+
+function Messages(){
+  const msgs=[
+    ['pro','Diego Aranda','Javi, ¿cómo respondió el tobillo al primer trote? Cuéntame sensaciones.','Hace 2 días'],
+    ['user',null,'Muy bien. Molestia 2/10 los primeros minutos y luego desapareció. Sin inflamación después.','Hace 2 días'],
+    ['pro','Diego Aranda','Perfecto, eso es justo lo que buscamos. El martes metemos cambios de ritmo suaves en la sesión.','Hace 2 días'],
+    ['pro','Recepción','Tu bono tiene 4 sesiones restantes y caduca en septiembre. Puedes renovarlo desde la app con un 10% de descuento.','Ayer'],
+    ['user',null,'Lo renuevo la semana que viene, ¡gracias!','Hoy'],
+  ];
+  return <div style={{display:'flex',flexDirection:'column',height:'100%'}}>
+    <div className="screen-title-bar" style={{flexShrink:0}}><div className="screen-title">Mensajes</div><div className="screen-sub">Fisioterapia Velázquez 22</div></div>
+    <div style={{flex:1,overflowY:'auto',padding:'12px 0'}}>
+      {msgs.map(([from,name,text,time],i)=><div key={i}>
+        {from==='pro'&&<div className="msg-sender">{name}</div>}
+        <div className={`msg-bubble ${from}`}>{text}</div>
+        <div className={`msg-time${from==='user'?' right':''}`}>{time}</div>
+      </div>)}
+    </div>
+    <div className="msg-input-row">
+      <input className="msg-input" placeholder="Escribe un mensaje…" readOnly/>
+      <div className="msg-send"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+    </div>
+  </div>;
+}
+
+function App(){
+  const [tab,setTab]=useState(0);
+  const screens=[Home,Plan,Progress,Bookings,Messages];
+  const S2=screens[tab];
+  const tabs=[['Inicio',Icons.home],['Ejercicios',Icons.plan],['Evolución',Icons.prog],['Citas',Icons.book],['Mensajes',Icons.msg]];
+  return <div className="phone">
+    <div className="status-bar"><span>9:41</span>
+      <div style={{display:'flex',gap:6,alignItems:'center'}}>
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="3" width="3" height="9" rx="1" fill="white" opacity="0.4"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white" opacity="0.6"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="white" opacity="0.8"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="white"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="22" height="10" rx="2" stroke="white" strokeWidth="1" fill="none" opacity="0.5"/><rect x="23" y="3.5" width="2" height="5" rx="1" fill="white" opacity="0.5"/><rect x="1.5" y="2.5" width="16" height="7" rx="1" fill="white"/></svg>
+      </div>
+    </div>
+    <div className="screen" key={tab}><S2/></div>
+    <div className="tab-bar">{tabs.map(([l,I],i)=><div key={i} className={`tab${tab===i?' active':''}`} onClick={()=>setTab(i)}>{I(tab===i)}<span>{l}</span></div>)}</div>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

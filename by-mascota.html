@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>By Mascota Recoletos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FDF8F0;
+  --tangerine:#D96C2C;
+  --tang-lt:#FCEBDD;
+  --teal:#1F6E63;
+  --teal-lt:#E0F0ED;
+  --text:#33291F;
+  --muted:#8C7F70;
+  --surface:#FFFFFF;
+  --border:#EFE3D3;
+}
+body{background:#E8DCC9;font-family:'Nunito',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.phone{width:390px;height:844px;background:var(--bg);border-radius:44px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,0.28),0 0 0 1px rgba(0,0,0,0.08)}
+.status-bar{background:var(--teal);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:14px 24px 10px;font-size:12px;font-weight:600;flex-shrink:0}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden}
+.screen::-webkit-scrollbar{display:none}
+.tab-bar{background:var(--surface);border-top:1px solid var(--border);display:flex;flex-shrink:0;padding-bottom:16px}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0 4px;cursor:pointer}
+.tab span{font-size:10px;font-weight:700}
+.tab.active{color:var(--tangerine)}
+.tab:not(.active){color:var(--muted)}
+.tab-icon{width:22px;height:22px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.screen > *{animation:fadeUp 0.25s ease forwards}
+.app-header{background:var(--teal);padding:20px 24px 26px;color:#fff}
+.wordmark{font-family:'Baloo 2',cursive;font-size:21px;font-weight:700}
+.wordmark em{font-family:'Nunito',sans-serif;font-style:normal;opacity:0.7;font-size:11.5px;display:block;margin-top:1px;font-weight:600}
+.pet-row{display:flex;align-items:center;gap:14px;margin-top:16px}
+.pet-avatar{width:54px;height:54px;border-radius:50%;background:var(--tangerine);display:flex;align-items:center;justify-content:center;font-size:28px;border:3px solid rgba(255,255,255,0.35);flex-shrink:0}
+.screen-title-bar{background:#fff;border-bottom:1px solid var(--border);padding:20px 20px 16px}
+.screen-title{font-family:'Baloo 2',cursive;font-size:22px;font-weight:700;color:var(--teal)}
+.screen-sub{font-size:13px;color:var(--muted);margin-top:2px}
+.section-label{font-size:11px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);padding:20px 20px 8px}
+.card{background:var(--surface);border-radius:18px;padding:18px;margin:0 16px 12px;box-shadow:0 2px 8px rgba(51,41,31,0.07)}
+.appt-card{background:var(--tangerine);color:#fff;border-radius:18px;padding:18px;margin:16px 16px 12px}
+.badge{background:rgba(255,255,255,0.25);border-radius:20px;padding:4px 11px;font-size:11px;font-weight:800;float:right}
+.item-ico{width:40px;height:40px;border-radius:12px;background:var(--tang-lt);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.item-name{font-size:14px;font-weight:800;color:var(--text)}
+.item-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.chev{color:var(--muted);transition:transform 0.2s}
+.chev.open{transform:rotate(180deg)}
+.expand-body{background:#FBF3E9;padding:13px 16px;font-size:13px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border)}
+.chart-label{font-size:10px;fill:var(--muted);font-family:'Nunito',sans-serif}
+.note-card{background:var(--teal-lt);border-left:3px solid var(--teal);border-radius:18px;padding:16px;margin:0 16px 12px}
+.note-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--teal);margin-bottom:6px}
+.note-text{font-size:13px;color:var(--text);line-height:1.55}
+.option-card{background:var(--surface);border-radius:14px;padding:14px 16px;margin:0 16px 8px;display:flex;align-items:center;gap:12px;cursor:pointer;border:2px solid var(--border)}
+.time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 16px}
+.time-chip{background:var(--surface);border-radius:12px;padding:10px 6px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;border:2px solid var(--border);color:var(--text)}
+.time-chip.selected{background:var(--tangerine);color:#fff;border-color:var(--tangerine)}
+.time-chip.unavailable{background:#F3EADD;color:#C6B8A5;cursor:default}
+.confirm-btn{background:var(--tangerine);color:#fff;border-radius:50px;padding:16px;text-align:center;font-size:15px;font-weight:800;margin:8px 16px 20px;cursor:pointer}
+.success-card{background:linear-gradient(135deg,var(--teal),#2E8A7C);color:#fff;border-radius:18px;padding:28px;margin:20px 16px;text-align:center}
+.msg-bubble{max-width:78%;padding:10px 14px;border-radius:16px;font-size:13px;line-height:1.55;margin:4px 16px}
+.msg-bubble.pro{background:var(--surface);color:var(--text);border-bottom-left-radius:4px;box-shadow:0 1px 4px rgba(51,41,31,0.08)}
+.msg-bubble.user{background:var(--teal);color:#fff;border-bottom-right-radius:4px;margin-left:auto}
+.msg-time{font-size:10px;color:var(--muted);margin:2px 16px 10px}
+.msg-time.right{text-align:right}
+.msg-sender{font-size:11px;font-weight:800;color:var(--tangerine);margin:12px 16px 4px}
+.msg-input-row{background:var(--surface);border-top:1px solid var(--border);padding:12px 16px;display:flex;gap:10px;align-items:center;flex-shrink:0}
+.msg-input{flex:1;background:var(--bg);border-radius:22px;padding:10px 16px;font-size:13px;font-family:'Nunito',sans-serif;border:none;outline:none;color:var(--text)}
+.msg-send{width:38px;height:38px;border-radius:50%;background:var(--tangerine);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+.svc-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+const C="#D96C2C",T="#1F6E63",M="#8C7F70";
+const Icons={
+  home:a=><svg viewBox="0 0 24 24" fill={a?C:"none"} stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M3 9.5L12 3l9 6.5V21H3V9.5z" strokeLinejoin="round"/></svg>,
+  plan:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4" strokeLinecap="round"/></svg>,
+  prog:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M3 17l5-5 4 4 9-9" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  book:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/></svg>,
+  msg:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" strokeLinejoin="round"/></svg>
+};
+const Chev=({open})=><svg viewBox="0 0 24 24" fill="none" stroke={M} strokeWidth="2" width="18" height="18" className={`chev${open?' open':''}`}><path d="M6 9l6 6 6-6"/></svg>;
+
+function Home(){
+  return <div>
+    <div className="app-header">
+      <div className="wordmark">By Mascota<em>Recoletos · Castelló 10</em></div>
+      <div className="pet-row">
+        <div className="pet-avatar">🐈</div>
+        <div>
+          <div style={{fontFamily:"'Baloo 2',cursive",fontSize:21,fontWeight:700}}>Simba</div>
+          <div style={{fontSize:12,opacity:0.75}}>Maine Coon · 3 años · 6.8 kg</div>
+        </div>
+      </div>
+    </div>
+    <div className="appt-card">
+      <div className="badge">Confirmada</div>
+      <div style={{fontSize:11,opacity:0.8,textTransform:'uppercase',letterSpacing:'0.06em'}}>Próxima cita</div>
+      <div style={{fontFamily:"'Baloo 2',cursive",fontSize:21,fontWeight:700,marginTop:4}}>Sábado, 12 julio</div>
+      <div style={{fontSize:13,opacity:0.9,marginTop:2}}>Peluquería felina · 10:00h · deslanado + corte higiénico</div>
+    </div>
+    <div className="section-label">Servicios de Simba</div>
+    <div className="card">
+      {[['🛁','Peluquería felina','Cada 8 semanas','#D96C2C'],['💉','Vacunación al día','Próx: trivalente en oct','#1F6E63'],['🪱','Desparasitación','Pipeta cada mes','#D96C2C']].map(([i,t,s,c])=>
+        <div key={t} style={{display:'flex',alignItems:'center',gap:12,padding:'11px 0',borderBottom:'1px solid var(--border)'}}>
+          <span style={{fontSize:19}}>{i}</span>
+          <div style={{flex:1}}><div style={{fontSize:13.5,fontWeight:800}}>{t}</div><div style={{fontSize:11.5,color:M,marginTop:1}}>{s}</div></div>
+          <div className="svc-dot" style={{background:c}}/>
+        </div>)}
+    </div>
+    <div className="section-label">Pedido de comida</div>
+    <div className="card" style={{marginBottom:12}}>
+      <div style={{display:'flex',alignItems:'center',gap:12}}>
+        <div className="item-ico">📦</div>
+        <div style={{flex:1}}>
+          <div style={{fontSize:13.5,fontWeight:800}}>Royal Canin Maine Coon 4kg</div>
+          <div style={{fontSize:11.5,color:M,marginTop:2}}>Suscripción mensual · Próxima entrega: 15 julio</div>
+        </div>
+        <div style={{fontSize:11,fontWeight:800,background:'var(--teal-lt)',color:T,borderRadius:20,padding:'4px 10px'}}>En camino</div>
+      </div>
+    </div>
+    <div className="section-label">Club By Mascota</div>
+    <div className="card" style={{marginBottom:24}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline'}}>
+        <span style={{fontFamily:"'Baloo 2',cursive",fontSize:19,fontWeight:700,color:T}}>340 huellas 🐾</span>
+        <span style={{fontSize:11.5,color:M}}>a 160 del baño gratis</span>
+      </div>
+      <div style={{height:8,background:'#F3EADD',borderRadius:4,overflow:'hidden',marginTop:10}}>
+        <div style={{width:'68%',height:'100%',background:'linear-gradient(90deg,#1F6E63,#D96C2C)',borderRadius:4}}/>
+      </div>
+    </div>
+  </div>;
+}
+
+function Plan(){
+  const [open,setOpen]=useState(null);
+  const items=[
+    ['🪮','Cepillado del manto','Diario · 10 min','Con carda para Maine Coon, prestando atención a axilas y calzones donde se forman nudos. Premio siempre al terminar.'],
+    ['🍗','Alimentación','2 tomas · 45g c/u + húmeda','Pienso específico Maine Coon mañana y noche. Una lata de comida húmeda al mediodía para aumentar la ingesta de agua.'],
+    ['🪱','Pipeta antiparasitaria','Día 1 de cada mes','Aplicar en la base del cráneo, donde no llegue al lamerse. No bañar en las 48h siguientes.'],
+    ['🦷','Higiene dental','Snacks dentales diarios','Simba no tolera el cepillo: usar snacks enzimáticos y revisar encías en cada visita de peluquería.'],
+    ['🏠','Enriquecimiento','Juego diario + rascador','Mínimo 2 sesiones de caza simulada al día. Rotar juguetes cada semana para mantener el interés.'],
+  ];
+  return <div>
+    <div className="screen-title-bar"><div className="screen-title">Cuidados de Simba</div><div className="screen-sub">Pauta del equipo veterinario</div></div>
+    <div style={{height:12}}/>
+    {items.map(([ico,name,freq,det],i)=>
+      <div key={i} style={{background:'#fff',borderRadius:18,margin:'0 16px 10px',overflow:'hidden',boxShadow:'0 2px 8px rgba(51,41,31,0.07)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:12,padding:'14px 18px',cursor:'pointer'}} onClick={()=>setOpen(open===i?null:i)}>
+          <div className="item-ico">{ico}</div>
+          <div style={{flex:1}}><div className="item-name">{name}</div><div className="item-sub">{freq}</div></div>
+          <Chev open={open===i}/>
+        </div>
+        {open===i&&<div className="expand-body">{det}</div>}
+      </div>)}
+    <div className="note-card" style={{marginBottom:24}}>
+      <div className="note-label">Nota de la veterinaria</div>
+      <div className="note-text">Simba está en un peso perfecto para su raza. El manto ha mejorado mucho con el cepillado diario — en verano mantenemos el deslanado cada 8 semanas.</div>
+      <div style={{fontSize:11,color:M,marginTop:8}}>— Dra. Nerea Campos, 14 junio 2025</div>
+    </div>
+  </div>;
+}
+
+function Progress(){
+  const w=[6.4,6.5,6.5,6.6,6.7,6.7,6.8,6.8];
+  const mn=6.0,mx=7.5,r=mx-mn;
+  const pts=w.map((v,i)=>`${32+i*40},${90-((v-mn)/r)*72}`).join(' ');
+  return <div>
+    <div className="screen-title-bar"><div className="screen-title">Salud de Simba</div><div className="screen-sub">Seguimiento · 8 meses</div></div>
+    <div className="section-label">Vacunas y prevención</div>
+    <div className="card">
+      {[['Trivalente felina','Oct 2025','Pronto'],['Rabia','Feb 2026','Al día'],['Leucemia felina','Feb 2026','Al día'],['Desparasitación interna','1 agosto','Al día']].map(([n,d,s])=>
+        <div key={n} style={{display:'flex',alignItems:'center',gap:12,padding:'10px 0',borderBottom:'1px solid var(--border)'}}>
+          <div className="svc-dot" style={{background:s==='Al día'?'#1F6E63':'#D96C2C'}}/>
+          <div style={{flex:1,fontSize:13.5,fontWeight:700}}>{n}</div>
+          <div style={{fontSize:12,color:M}}>{d}</div>
+          <div style={{fontSize:10.5,fontWeight:800,borderRadius:20,padding:'3px 9px',background:s==='Al día'?'var(--teal-lt)':'var(--tang-lt)',color:s==='Al día'?T:C}}>{s}</div>
+        </div>)}
+    </div>
+    <div className="section-label">Peso</div>
+    <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:12}}>
+        <div style={{fontFamily:"'Baloo 2',cursive",fontSize:25,fontWeight:700,color:T}}>6.8 <span style={{fontSize:13,color:M,fontFamily:'Nunito'}}>kg</span></div>
+        <div style={{fontSize:12,color:T,fontWeight:800}}>Ideal para Maine Coon ✓</div>
+      </div>
+      <svg viewBox="0 0 332 100" style={{width:'100%',height:100,display:'block'}}>
+        {[6.2,6.6,7.0].map(v=><g key={v}><line x1="32" y1={90-((v-mn)/r)*72} x2="312" y2={90-((v-mn)/r)*72} stroke="#F3EADD"/><text x="6" y={93-((v-mn)/r)*72} className="chart-label">{v}</text></g>)}
+        <polyline points={pts} fill="none" stroke={T} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        {w.map((v,i)=><circle key={i} cx={32+i*40} cy={90-((v-mn)/r)*72} r={i===7?4:2.5} fill={i===7?C:T}/>)}
+        {['Dic','Feb','Abr','Jun'].map((m,i)=><text key={m} x={32+i*80} y="100" className="chart-label" textAnchor="middle">{m}</text>)}
+      </svg>
+    </div>
+    <div className="note-card" style={{marginBottom:24}}>
+      <div className="note-label">Última revisión</div>
+      <div className="note-text">Auscultación y palpación normales. Dentadura limpia gracias a los snacks enzimáticos. Manto denso y brillante — el deslanado está funcionando.</div>
+    </div>
+  </div>;
+}
+
+function Bookings(){
+  const [step,setStep]=useState(0),[sel,setSel]=useState({}),[done,setDone]=useState(false);
+  const pros=[['Peluquería felina','Especialistas en gatos'],['Consulta veterinaria','Dra. Nerea Campos'],['Peluquería canina','Todos los tamaños'],['Autoservicio de baño','Bañeras profesionales']];
+  const svcs=[['Deslanado + corte higiénico','48€'],['Baño completo felino','35€'],['Corte de uñas','12€'],['Revisión veterinaria','40€']];
+  const times=['10:00','10:30','11:00','12:00','12:30','13:00','16:30','17:00','18:00'];
+  const unav=['11:00','12:30','17:00'];
+  if(done)return <div>
+    <div className="screen-title-bar"><div className="screen-title">Citas</div></div>
+    <div className="success-card">
+      <div style={{fontSize:44,marginBottom:10}}>🐾</div>
+      <div style={{fontFamily:"'Baloo 2',cursive",fontSize:22,fontWeight:700,marginBottom:6}}>¡Cita para Simba!</div>
+      <div style={{fontSize:13,opacity:0.9}}>{sel.pro} · {sel.svc}</div>
+      <div style={{fontSize:13,opacity:0.9,marginTop:3}}>Castelló 10 · {sel.time}</div>
+    </div>
+    <div className="confirm-btn" onClick={()=>{setDone(false);setStep(0);setSel({})}}>Nueva cita</div>
+  </div>;
+  return <div>
+    <div className="screen-title-bar">
+      <div className="screen-title">Citas</div>
+      <div style={{display:'flex',gap:6,marginTop:12}}>
+        {['Servicio','Detalle','Hora'].map((s,i)=><div key={s} style={{flex:1,height:3,borderRadius:2,background:i<=step?C:'#EFE3D3'}}/>)}
+      </div>
+    </div>
+    {step===0&&<><div className="section-label">Qué necesita Simba</div>
+      {pros.map(([n,r])=><div key={n} className="option-card" onClick={()=>{setSel({...sel,pro:n});setStep(1)}}>
+        <div className="item-ico">🐱</div><div><div className="item-name">{n}</div><div className="item-sub">{r}</div></div></div>)}</>}
+    {step===1&&<><div className="section-label">Elige servicio</div>
+      {svcs.map(([n,p])=><div key={n} className="option-card" onClick={()=>{setSel({...sel,svc:n});setStep(2)}}>
+        <div style={{flex:1}}><div className="item-name">{n}</div></div><div style={{fontWeight:800,color:C,fontSize:13}}>{p}</div></div>)}</>}
+    {step===2&&<><div className="section-label">Hora · Sábado 12 julio</div>
+      <div className="time-grid">{times.map(t=><div key={t} className={`time-chip${unav.includes(t)?' unavailable':sel.time===t?' selected':''}`} onClick={()=>!unav.includes(t)&&setSel({...sel,time:t})}>{t}</div>)}</div>
+      {sel.time&&<div className="confirm-btn" onClick={()=>setDone(true)}>Confirmar cita</div>}</>}
+  </div>;
+}
+
+function Messages(){
+  const msgs=[
+    ['pro','Peluquería','¡Hola Jorge! Simba se portó fenomenal en su último deslanado. Le dejamos una foto en su ficha. 🐈','Hace 5 días'],
+    ['user',null,'¡La vimos! Quedó espectacular. ¿Para el sábado le hacéis también las uñas?','Hace 5 días'],
+    ['pro','Peluquería','Claro, lo añadimos al servicio sin problema. Tráelo en su transportín habitual, que ya lo conoce.','Hace 5 días'],
+    ['pro','Dra. Nerea Campos','Recordatorio: en octubre toca la trivalente de Simba. Podéis aprovechar cualquier visita de peluquería para ponerla.','Ayer'],
+    ['user',null,'Perfecto, lo apuntamos. ¡Gracias!','Hoy'],
+  ];
+  return <div style={{display:'flex',flexDirection:'column',height:'100%'}}>
+    <div className="screen-title-bar" style={{flexShrink:0}}><div className="screen-title">Mensajes</div><div className="screen-sub">By Mascota Recoletos · Castelló 10</div></div>
+    <div style={{flex:1,overflowY:'auto',padding:'12px 0'}}>
+      {msgs.map(([from,name,text,time],i)=><div key={i}>
+        {from==='pro'&&<div className="msg-sender">🐾 {name}</div>}
+        <div className={`msg-bubble ${from}`}>{text}</div>
+        <div className={`msg-time${from==='user'?' right':''}`}>{time}</div>
+      </div>)}
+    </div>
+    <div className="msg-input-row">
+      <input className="msg-input" placeholder="Escribe un mensaje…" readOnly/>
+      <div className="msg-send"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+    </div>
+  </div>;
+}
+
+function App(){
+  const [tab,setTab]=useState(0);
+  const screens=[Home,Plan,Progress,Bookings,Messages];
+  const S=screens[tab];
+  const tabs=[['Inicio',Icons.home],['Cuidados',Icons.plan],['Salud',Icons.prog],['Citas',Icons.book],['Mensajes',Icons.msg]];
+  return <div className="phone">
+    <div className="status-bar"><span>9:41</span>
+      <div style={{display:'flex',gap:6,alignItems:'center'}}>
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="3" width="3" height="9" rx="1" fill="white" opacity="0.4"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white" opacity="0.6"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="white" opacity="0.8"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="white"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="22" height="10" rx="2" stroke="white" strokeWidth="1" fill="none" opacity="0.5"/><rect x="23" y="3.5" width="2" height="5" rx="1" fill="white" opacity="0.5"/><rect x="1.5" y="2.5" width="16" height="7" rx="1" fill="white"/></svg>
+      </div>
+    </div>
+    <div className="screen" key={tab}><S/></div>
+    <div className="tab-bar">{tabs.map(([l,I],i)=><div key={i} className={`tab${tab===i?' active':''}`} onClick={()=>setTab(i)}>{I(tab===i)}<span>{l}</span></div>)}</div>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

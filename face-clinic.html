@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Face Clinic Madrid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,500;1,6..72,300&family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F6F8;
+  --graphite:#22272E;
+  --cobalt:#2B5FA8;
+  --cobalt-lt:#E3ECF7;
+  --text:#1C2128;
+  --muted:#66707C;
+  --surface:#FFFFFF;
+  --border:#DDE3EA;
+}
+body{background:#C9D1D9;font-family:'Manrope',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.phone{width:390px;height:844px;background:var(--bg);border-radius:44px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,0.28),0 0 0 1px rgba(0,0,0,0.08)}
+.status-bar{background:var(--graphite);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:14px 24px 10px;font-size:12px;font-weight:600;flex-shrink:0}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden}
+.screen::-webkit-scrollbar{display:none}
+.tab-bar{background:var(--surface);border-top:1px solid var(--border);display:flex;flex-shrink:0;padding-bottom:16px}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0 4px;cursor:pointer}
+.tab span{font-size:10px;font-weight:600}
+.tab.active{color:var(--cobalt)}
+.tab:not(.active){color:var(--muted)}
+.tab-icon{width:22px;height:22px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.screen > *{animation:fadeUp 0.25s ease forwards}
+.app-header{background:var(--graphite);padding:20px 24px 26px;color:#fff}
+.wordmark{font-family:'Newsreader',serif;font-size:19px;font-weight:500}
+.wordmark em{font-style:italic;font-weight:300;opacity:0.6;font-size:12px;display:block;margin-top:2px}
+.greeting{font-size:13px;font-weight:300;opacity:0.7;margin-top:16px}
+.patient-name{font-family:'Newsreader',serif;font-size:22px;font-weight:500;margin-top:3px}
+.screen-title-bar{background:#fff;border-bottom:1px solid var(--border);padding:20px 20px 16px}
+.screen-title{font-family:'Newsreader',serif;font-size:22px;font-weight:500;color:var(--graphite)}
+.screen-sub{font-size:13px;color:var(--muted);margin-top:4px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);padding:20px 20px 8px}
+.card{background:var(--surface);border-radius:12px;padding:18px;margin:0 16px 12px;box-shadow:0 1px 5px rgba(34,39,46,0.07)}
+.appt-card{background:var(--cobalt);color:#fff;border-radius:12px;padding:18px;margin:16px 16px 12px}
+.badge{background:rgba(255,255,255,0.2);border-radius:4px;padding:4px 10px;font-size:11px;font-weight:700;float:right}
+.item-ico{width:38px;height:38px;border-radius:8px;background:var(--cobalt-lt);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.item-name{font-size:14px;font-weight:700;color:var(--text)}
+.item-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.chev{color:var(--muted);transition:transform 0.2s}
+.chev.open{transform:rotate(180deg)}
+.expand-body{background:#F0F4F8;padding:13px 16px;font-size:13px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border)}
+.chart-label{font-size:10px;fill:var(--muted);font-family:'Manrope',sans-serif}
+.note-card{background:var(--cobalt-lt);border-left:3px solid var(--cobalt);border-radius:12px;padding:16px;margin:0 16px 12px}
+.note-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--cobalt);margin-bottom:6px}
+.note-text{font-size:13px;color:var(--text);line-height:1.55}
+.option-card{background:var(--surface);border-radius:8px;padding:14px 16px;margin:0 16px 8px;display:flex;align-items:center;gap:12px;cursor:pointer;border:1.5px solid var(--border)}
+.time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 16px}
+.time-chip{background:var(--surface);border-radius:6px;padding:10px 6px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);color:var(--text)}
+.time-chip.selected{background:var(--cobalt);color:#fff;border-color:var(--cobalt)}
+.time-chip.unavailable{background:#EBEEF2;color:#B3BCC6;cursor:default}
+.confirm-btn{background:var(--cobalt);color:#fff;border-radius:8px;padding:16px;text-align:center;font-size:15px;font-weight:700;margin:8px 16px 20px;cursor:pointer}
+.success-card{background:linear-gradient(135deg,var(--graphite),#39424D);color:#fff;border-radius:12px;padding:28px;margin:20px 16px;text-align:center}
+.msg-bubble{max-width:78%;padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.55;margin:4px 16px}
+.msg-bubble.pro{background:var(--surface);color:var(--text);border-bottom-left-radius:3px;box-shadow:0 1px 4px rgba(34,39,46,0.07)}
+.msg-bubble.user{background:var(--cobalt);color:#fff;border-bottom-right-radius:3px;margin-left:auto}
+.msg-time{font-size:10px;color:var(--muted);margin:2px 16px 10px}
+.msg-time.right{text-align:right}
+.msg-sender{font-size:11px;font-weight:700;color:var(--cobalt);margin:12px 16px 4px}
+.msg-input-row{background:var(--surface);border-top:1px solid var(--border);padding:12px 16px;display:flex;gap:10px;align-items:center;flex-shrink:0}
+.msg-input{flex:1;background:var(--bg);border-radius:8px;padding:10px 14px;font-size:13px;font-family:'Manrope',sans-serif;border:1px solid var(--border);outline:none;color:var(--text)}
+.msg-send{width:38px;height:38px;border-radius:8px;background:var(--cobalt);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+.timeline-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:3px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+const C="#2B5FA8",M="#66707C";
+const Icons={
+  home:a=><svg viewBox="0 0 24 24" fill={a?C:"none"} stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M3 9.5L12 3l9 6.5V21H3V9.5z" strokeLinejoin="round"/></svg>,
+  plan:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4" strokeLinecap="round"/></svg>,
+  prog:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M3 17l5-5 4 4 9-9" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  book:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/></svg>,
+  msg:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?C:M} strokeWidth="1.8" className="tab-icon"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" strokeLinejoin="round"/></svg>
+};
+const Chev=({open})=><svg viewBox="0 0 24 24" fill="none" stroke={M} strokeWidth="2" width="18" height="18" className={`chev${open?' open':''}`}><path d="M6 9l6 6 6-6"/></svg>;
+
+function Home(){
+  return <div>
+    <div className="app-header">
+      <div className="wordmark">Face Clinic<em>Cirugía y medicina avanzada · Diego de León 39</em></div>
+      <div className="greeting">Buenos días,</div>
+      <div className="patient-name">Beatriz Lozano</div>
+    </div>
+    <div className="appt-card">
+      <div className="badge">Confirmada</div>
+      <div style={{fontSize:11,opacity:0.7,textTransform:'uppercase',letterSpacing:'0.07em'}}>Próxima cita</div>
+      <div style={{fontFamily:"'Newsreader',serif",fontSize:20,fontWeight:500,marginTop:5}}>Jueves, 10 julio</div>
+      <div style={{fontSize:13,opacity:0.85,marginTop:3}}>Dr. Gómez-Pardo · 11:30h · Revisión postoperatoria (semana 6)</div>
+    </div>
+    <div className="section-label">Tu recuperación</div>
+    <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:12}}>
+        <span style={{fontFamily:"'Newsreader',serif",fontSize:17,color:'var(--graphite)'}}>Rinoplastia · Semana 6</span>
+        <span style={{fontSize:12,color:M}}>Fase de consolidación</span>
+      </div>
+      {[['Semana 1 · Retirada de férula','done'],['Semana 3 · Control de inflamación','done'],['Semana 6 · Revisión + fotos','now'],['Mes 6 · Resultado consolidado','next']].map(([t,s])=>
+        <div key={t} style={{display:'flex',gap:12,paddingBottom:14,position:'relative'}}>
+          <div className="timeline-dot" style={{background:s==='done'?'#2B5FA8':s==='now'?'#E8A33D':'#DDE3EA'}}/>
+          <div style={{fontSize:13,color:s==='next'?M:'var(--text)',fontWeight:s==='now'?700:400}}>{t}</div>
+        </div>)}
+    </div>
+    <div className="section-label">Accesos rápidos</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,margin:'0 16px 24px'}}>
+      {[['📸','Fotos de evolución'],['💊','Pauta de medicación'],['📄','Consentimientos'],['🧾','Facturación']].map(([i,l])=>
+        <div key={l} style={{background:'#fff',borderRadius:8,padding:16,border:'1.5px solid var(--border)',cursor:'pointer'}}>
+          <div style={{fontSize:22}}>{i}</div>
+          <div style={{fontSize:12,fontWeight:700,marginTop:6}}>{l}</div>
+        </div>)}
+    </div>
+  </div>;
+}
+
+function Plan(){
+  const [open,setOpen]=useState(null);
+  const items=[
+    ['🧴','Gel cicatrizante nasal','2 aplicaciones/día · 4 semanas más','Aplicar con suavidad sobre el dorso nasal, sin masajear. Suspender si aparece irritación y consultar.'],
+    ['🕶','Protección solar total','SPF 50+ · cada 3 horas al aire libre','La piel del dorso es especialmente sensible a la hiperpigmentación durante los primeros 6 meses.'],
+    ['🚫','Evitar gafas apoyadas','Hasta la semana 12','Usar lentillas o gafas suspendidas con soporte frontal. El apoyo directo puede deformar el resultado.'],
+    ['🏃','Ejercicio progresivo','Cardio suave desde semana 6','Permitido caminar rápido y bicicleta estática. Evitar deportes de contacto y natación hasta el mes 3.'],
+    ['😴','Dormir semiincorporada','2 semanas más','Mantener el cabezal a 30° para reducir la inflamación residual matutina.'],
+  ];
+  return <div>
+    <div className="screen-title-bar"><div className="screen-title">Pauta postoperatoria</div><div className="screen-sub">Dr. Gómez-Pardo · Rinoplastia</div></div>
+    <div style={{height:12}}/>
+    {items.map(([ico,name,freq,det],i)=>
+      <div key={i} style={{background:'#fff',borderRadius:12,margin:'0 16px 10px',overflow:'hidden',boxShadow:'0 1px 5px rgba(34,39,46,0.07)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:12,padding:'14px 18px',cursor:'pointer'}} onClick={()=>setOpen(open===i?null:i)}>
+          <div className="item-ico">{ico}</div>
+          <div style={{flex:1}}><div className="item-name">{name}</div><div className="item-sub">{freq}</div></div>
+          <Chev open={open===i}/>
+        </div>
+        {open===i&&<div className="expand-body">{det}</div>}
+      </div>)}
+    <div className="note-card" style={{marginBottom:24}}>
+      <div className="note-label">Nota del cirujano</div>
+      <div className="note-text">La inflamación evoluciona por debajo de la media, muy buen pronóstico. En la revisión de la semana 6 haremos la serie fotográfica comparativa.</div>
+      <div style={{fontSize:11,color:M,marginTop:8}}>— Dr. Gómez-Pardo, 24 junio 2025</div>
+    </div>
+  </div>;
+}
+
+function Progress(){
+  const infl=[9,8,7,6,5,4,3,2];
+  const pts=infl.map((v,i)=>`${32+i*40},${90-((10-v)/10)*72}`).join(' ');
+  return <div>
+    <div className="screen-title-bar"><div className="screen-title">Evolución</div><div className="screen-sub">Postoperatorio · 6 semanas</div></div>
+    <div className="section-label">Inflamación percibida</div>
+    <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:12}}>
+        <div style={{fontFamily:"'Newsreader',serif",fontSize:26,color:'var(--graphite)'}}>2<span style={{fontSize:13,color:M,fontFamily:'Manrope'}}> / 10</span></div>
+        <div style={{fontSize:12,color:C,fontWeight:700}}>↓ desde 9 · Excelente</div>
+      </div>
+      <svg viewBox="0 0 332 100" style={{width:'100%',height:100,display:'block'}}>
+        {[0,5,10].map(v=><g key={v}><line x1="32" y1={90-((10-v)/10)*72} x2="312" y2={90-((10-v)/10)*72} stroke="#EBEEF2"/><text x="10" y={93-((10-v)/10)*72} className="chart-label">{v}</text></g>)}
+        <polyline points={pts} fill="none" stroke={C} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        {infl.map((v,i)=><circle key={i} cx={32+i*40} cy={90-((10-v)/10)*72} r={i===7?4:2.5} fill={i===7?"#E8A33D":C}/>)}
+        {['S1','S2','S3','S4','S5','S6','S7','S8'].map((m,i)=><text key={m} x={32+i*40} y="100" className="chart-label" textAnchor="middle">{m}</text>)}
+      </svg>
+    </div>
+    <div className="section-label">Controles completados</div>
+    <div className="card" style={{marginBottom:12}}>
+      {[['Retirada de férula y taponamiento','Día 7','✓'],['Control de cicatrización','Semana 3','✓'],['Serie fotográfica comparativa','Semana 6','·'],['TAC de control','Mes 6','·']].map(([t,d,s])=>
+        <div key={t} style={{display:'flex',alignItems:'center',gap:12,padding:'11px 0',borderBottom:'1px solid var(--border)'}}>
+          <div style={{width:24,height:24,borderRadius:'50%',background:s==='✓'?'var(--cobalt-lt)':'#F0F2F5',color:s==='✓'?C:M,display:'flex',alignItems:'center',justifyContent:'center',fontSize:13,fontWeight:700,flexShrink:0}}>{s}</div>
+          <div style={{flex:1,fontSize:13,fontWeight:600}}>{t}</div>
+          <div style={{fontSize:12,color:M}}>{d}</div>
+        </div>)}
+    </div>
+    <div className="note-card" style={{marginBottom:24}}>
+      <div className="note-label">Valoración</div>
+      <div className="note-text">Cicatrización interna completa. El edema residual del tercio medio remitirá gradualmente hasta el mes 6. Resultado estético en línea con la planificación 3D.</div>
+    </div>
+  </div>;
+}
+
+function Bookings(){
+  const [step,setStep]=useState(0),[sel,setSel]=useState({}),[done,setDone]=useState(false);
+  const docs=[['Dr. Gómez-Pardo','Cirugía maxilofacial'],['Dra. Lucía Ferrer','Medicina estética'],['Dr. Andrés Mota','Cirugía plástica'],['Dra. Eva Riquelme','Medicina capilar']];
+  const svcs=[['Revisión postoperatoria','Incluida'],['Consulta de valoración','Gratuita'],['Sesión de mesoterapia','180€'],['Estudio capilar digital','90€']];
+  const times=['9:30','10:00','10:30','11:30','12:00','13:00','16:30','17:00','18:00'];
+  const unav=['10:00','13:00','17:00'];
+  if(done)return <div>
+    <div className="screen-title-bar"><div className="screen-title">Citas</div></div>
+    <div className="success-card">
+      <div style={{fontSize:44,marginBottom:10}}>✓</div>
+      <div style={{fontFamily:"'Newsreader',serif",fontSize:22,marginBottom:6}}>Cita confirmada</div>
+      <div style={{fontSize:13,opacity:0.8}}>{sel.doc} · {sel.svc}</div>
+      <div style={{fontSize:13,opacity:0.8,marginTop:3}}>Diego de León 39 · {sel.time}</div>
+    </div>
+    <div className="confirm-btn" onClick={()=>{setDone(false);setStep(0);setSel({})}}>Nueva cita</div>
+  </div>;
+  return <div>
+    <div className="screen-title-bar">
+      <div className="screen-title">Citas</div>
+      <div style={{display:'flex',gap:6,marginTop:12}}>
+        {['Especialista','Servicio','Hora'].map((s,i)=><div key={s} style={{flex:1,height:3,borderRadius:2,background:i<=step?C:'#DDE3EA'}}/>)}
+      </div>
+    </div>
+    {step===0&&<><div className="section-label">Selecciona especialista</div>
+      {docs.map(([n,r])=><div key={n} className="option-card" onClick={()=>{setSel({...sel,doc:n});setStep(1)}}>
+        <div className="item-ico">👨‍⚕️</div><div><div className="item-name">{n}</div><div className="item-sub">{r}</div></div></div>)}</>}
+    {step===1&&<><div className="section-label">Selecciona servicio</div>
+      {svcs.map(([n,p])=><div key={n} className="option-card" onClick={()=>{setSel({...sel,svc:n});setStep(2)}}>
+        <div style={{flex:1}}><div className="item-name">{n}</div></div><div style={{fontWeight:700,color:C,fontSize:13}}>{p}</div></div>)}</>}
+    {step===2&&<><div className="section-label">Hora · Jueves 10 julio</div>
+      <div className="time-grid">{times.map(t=><div key={t} className={`time-chip${unav.includes(t)?' unavailable':sel.time===t?' selected':''}`} onClick={()=>!unav.includes(t)&&setSel({...sel,time:t})}>{t}</div>)}</div>
+      {sel.time&&<div className="confirm-btn" onClick={()=>setDone(true)}>Confirmar cita</div>}</>}
+  </div>;
+}
+
+function Messages(){
+  const msgs=[
+    ['pro','Dr. Gómez-Pardo','Beatriz, he visto las fotos que nos enviaste. La evolución del edema es muy buena para la semana 6.','Hace 3 días'],
+    ['user',null,'¡Qué alivio! ¿Puedo empezar a hacer yoga ya?','Hace 3 días'],
+    ['pro','Dr. Gómez-Pardo','Sí, evitando posturas invertidas prolongadas hasta el mes 3. Todo lo demás sin problema.','Hace 3 días'],
+    ['pro','Coordinación','Le recordamos la revisión del jueves 10 a las 11:30h. Acuda sin maquillaje para la serie fotográfica.','Ayer'],
+    ['user',null,'Perfecto, allí estaré.','Hoy'],
+  ];
+  return <div style={{display:'flex',flexDirection:'column',height:'100%'}}>
+    <div className="screen-title-bar" style={{flexShrink:0}}><div className="screen-title">Mensajes</div><div className="screen-sub">Face Clinic · Diego de León 39</div></div>
+    <div style={{flex:1,overflowY:'auto',padding:'12px 0'}}>
+      {msgs.map(([from,name,text,time],i)=><div key={i}>
+        {from==='pro'&&<div className="msg-sender">{name}</div>}
+        <div className={`msg-bubble ${from}`}>{text}</div>
+        <div className={`msg-time${from==='user'?' right':''}`}>{time}</div>
+      </div>)}
+    </div>
+    <div className="msg-input-row">
+      <input className="msg-input" placeholder="Escribe un mensaje…" readOnly/>
+      <div className="msg-send"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+    </div>
+  </div>;
+}
+
+function App(){
+  const [tab,setTab]=useState(0);
+  const screens=[Home,Plan,Progress,Bookings,Messages];
+  const S=screens[tab];
+  const tabs=[['Inicio',Icons.home],['Pauta',Icons.plan],['Evolución',Icons.prog],['Citas',Icons.book],['Mensajes',Icons.msg]];
+  return <div className="phone">
+    <div className="status-bar"><span>9:41</span>
+      <div style={{display:'flex',gap:6,alignItems:'center'}}>
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="3" width="3" height="9" rx="1" fill="white" opacity="0.4"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white" opacity="0.6"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="white" opacity="0.8"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="white"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="22" height="10" rx="2" stroke="white" strokeWidth="1" fill="none" opacity="0.5"/><rect x="23" y="3.5" width="2" height="5" rx="1" fill="white" opacity="0.5"/><rect x="1.5" y="2.5" width="16" height="7" rx="1" fill="white"/></svg>
+      </div>
+    </div>
+    <div className="screen" key={tab}><S/></div>
+    <div className="tab-bar">{tabs.map(([l,I],i)=><div key={i} className={`tab${tab===i?' active':''}`} onClick={()=>setTab(i)}>{I(tab===i)}<span>{l}</span></div>)}</div>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

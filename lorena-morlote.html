@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lorena Morlote</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F6F4F5;
+  --noir:#141114;
+  --fuchsia:#C22A5E;
+  --fuchsia-lt:#F9E4EC;
+  --text:#1D191C;
+  --muted:#7E747A;
+  --surface:#FFFFFF;
+  --border:#E7E0E4;
+}
+body{background:#D3CCD0;font-family:'Montserrat',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.phone{width:390px;height:844px;background:var(--bg);border-radius:44px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,0.28),0 0 0 1px rgba(0,0,0,0.08)}
+.status-bar{background:var(--noir);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:14px 24px 10px;font-size:12px;font-weight:500;flex-shrink:0}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden}
+.screen::-webkit-scrollbar{display:none}
+.tab-bar{background:var(--noir);display:flex;flex-shrink:0;padding-bottom:16px}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0 4px;cursor:pointer}
+.tab span{font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase}
+.tab.active{color:#fff}
+.tab:not(.active){color:#6E656B}
+.tab-icon{width:22px;height:22px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.screen > *{animation:fadeUp 0.25s ease forwards}
+.app-header{background:var(--noir);padding:22px 24px 28px;color:#fff}
+.wordmark{font-family:'Italiana',serif;font-size:26px;letter-spacing:0.05em}
+.wordmark em{font-family:'Montserrat',sans-serif;font-style:normal;opacity:0.55;font-size:10px;display:block;margin-top:2px;letter-spacing:0.22em;text-transform:uppercase}
+.greeting{font-size:12px;font-weight:300;opacity:0.65;margin-top:18px}
+.patient-name{font-family:'Italiana',serif;font-size:24px;margin-top:2px;letter-spacing:0.03em}
+.screen-title-bar{background:var(--noir);padding:20px 20px 18px;color:#fff}
+.screen-title{font-family:'Italiana',serif;font-size:24px;letter-spacing:0.04em}
+.screen-sub{font-size:12px;opacity:0.6;margin-top:4px}
+.section-label{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);padding:20px 20px 8px}
+.card{background:var(--surface);border-radius:2px;padding:18px;margin:0 16px 12px;box-shadow:0 1px 6px rgba(20,17,20,0.09)}
+.appt-card{background:var(--fuchsia);color:#fff;border-radius:2px;padding:18px;margin:16px 16px 12px}
+.badge{background:rgba(255,255,255,0.25);border-radius:2px;padding:4px 10px;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;float:right}
+.item-ico{width:38px;height:38px;border-radius:2px;background:var(--fuchsia-lt);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.item-name{font-size:13px;font-weight:700;color:var(--text)}
+.item-sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+.chev{color:var(--muted);transition:transform 0.2s}
+.chev.open{transform:rotate(180deg)}
+.expand-body{background:#F8F4F6;padding:13px 16px;font-size:12.5px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border)}
+.chart-label{font-size:10px;fill:var(--muted);font-family:'Montserrat',sans-serif}
+.note-card{background:var(--fuchsia-lt);border-left:3px solid var(--fuchsia);border-radius:2px;padding:16px;margin:0 16px 12px}
+.note-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--fuchsia);margin-bottom:6px}
+.note-text{font-size:13px;color:var(--text);line-height:1.55}
+.option-card{background:var(--surface);border-radius:2px;padding:14px 16px;margin:0 16px 8px;display:flex;align-items:center;gap:12px;cursor:pointer;border:1.5px solid var(--border)}
+.time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 16px}
+.time-chip{background:var(--surface);border-radius:2px;padding:10px 6px;text-align:center;font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);color:var(--text)}
+.time-chip.selected{background:var(--noir);color:#fff;border-color:var(--noir)}
+.time-chip.unavailable{background:#EDE8EB;color:#BFB6BB;cursor:default}
+.confirm-btn{background:var(--noir);color:#fff;border-radius:2px;padding:16px;text-align:center;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;margin:8px 16px 20px;cursor:pointer}
+.success-card{background:var(--noir);color:#fff;border-radius:2px;padding:28px;margin:20px 16px;text-align:center}
+.msg-bubble{max-width:78%;padding:10px 14px;border-radius:2px;font-size:13px;line-height:1.55;margin:4px 16px}
+.msg-bubble.pro{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(20,17,20,0.08)}
+.msg-bubble.user{background:var(--noir);color:#fff;margin-left:auto}
+.msg-time{font-size:10px;color:var(--muted);margin:2px 16px 10px}
+.msg-time.right{text-align:right}
+.msg-sender{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--fuchsia);margin:12px 16px 4px}
+.msg-input-row{background:var(--surface);border-top:1px solid var(--border);padding:12px 16px;display:flex;gap:10px;align-items:center;flex-shrink:0}
+.msg-input{flex:1;background:var(--bg);border-radius:2px;padding:10px 14px;font-size:13px;font-family:'Montserrat',sans-serif;border:1px solid var(--border);outline:none;color:var(--text)}
+.msg-send{width:38px;height:38px;border-radius:2px;background:var(--noir);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+const C="#C22A5E",N="#141114",M="#7E747A",TAB_ON="#FFFFFF",TAB_OFF="#6E656B";
+const Icons={
+  home:a=><svg viewBox="0 0 24 24" fill={a?TAB_ON:"none"} stroke={a?TAB_ON:TAB_OFF} strokeWidth="1.8" className="tab-icon"><path d="M3 9.5L12 3l9 6.5V21H3V9.5z" strokeLinejoin="round"/></svg>,
+  plan:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?TAB_ON:TAB_OFF} strokeWidth="1.8" className="tab-icon"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4" strokeLinecap="round"/></svg>,
+  prog:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?TAB_ON:TAB_OFF} strokeWidth="1.8" className="tab-icon"><path d="M3 17l5-5 4 4 9-9" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  book:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?TAB_ON:TAB_OFF} strokeWidth="1.8" className="tab-icon"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/></svg>,
+  msg:a=><svg viewBox="0 0 24 24" fill="none" stroke={a?TAB_ON:TAB_OFF} strokeWidth="1.8" className="tab-icon"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" strokeLinejoin="round"/></svg>
+};
+const Chev=({open})=><svg viewBox="0 0 24 24" fill="none" stroke={M} strokeWidth="2" width="18" height="18" className={`chev${open?' open':''}`}><path d="M6 9l6 6 6-6"/></svg>;
+
+function Home(){
+  return <div>
+    <div className="app-header">
+      <div className="wordmark">Lorena Morlote<em>Velázquez 69 · Madrid</em></div>
+      <div className="greeting">Bienvenida de nuevo,</div>
+      <div className="patient-name">Daniela Roca</div>
+    </div>
+    <div className="appt-card">
+      <div className="badge">Confirmada</div>
+      <div style={{fontSize:10,opacity:0.75,textTransform:'uppercase',letterSpacing:'0.14em'}}>Próxima cita</div>
+      <div style={{fontFamily:"'Italiana',serif",fontSize:22,marginTop:6}}>Viernes, 11 julio</div>
+      <div style={{fontSize:13,opacity:0.9,marginTop:3}}>Balayage + tratamiento K18 · 16:00h · con Lorena</div>
+    </div>
+    <div className="section-label">Membresía Gold</div>
+    <div className="card" style={{background:N,color:'#fff'}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline'}}>
+        <span style={{fontFamily:"'Italiana',serif",fontSize:19,letterSpacing:'0.04em'}}>1.240 pts</span>
+        <span style={{fontSize:10,opacity:0.6,letterSpacing:'0.14em',textTransform:'uppercase'}}>Nivel Gold</span>
+      </div>
+      <div style={{height:6,background:'rgba(255,255,255,0.15)',borderRadius:3,overflow:'hidden',marginTop:12}}>
+        <div style={{width:'62%',height:'100%',background:'linear-gradient(90deg,#C22A5E,#E88AA8)',borderRadius:3}}/>
+      </div>
+      <div style={{fontSize:11,opacity:0.6,marginTop:8}}>760 pts para nivel Platinum · Tratamiento de regalo al llegar</div>
+    </div>
+    <div className="section-label">Tu color</div>
+    <div className="card">
+      <div style={{display:'flex',gap:14,alignItems:'center'}}>
+        <div style={{width:52,height:52,borderRadius:'50%',background:'linear-gradient(135deg,#6B4A2E,#C99A62)',flexShrink:0,border:'2px solid var(--border)'}}/>
+        <div>
+          <div style={{fontSize:13,fontWeight:700}}>Balayage caramelo · Fórmula #DR-24</div>
+          <div style={{fontSize:11.5,color:M,marginTop:3}}>Base 5N · Mechas 8.3 con matiz beige · Última aplicación: 23 mayo</div>
+        </div>
+      </div>
+    </div>
+    <div className="section-label">Servicios anteriores</div>
+    <div className="card" style={{marginBottom:24}}>
+      {[['Balayage + corte','23 mayo','185€'],['Tratamiento K18','23 mayo','45€'],['Peinado evento','10 mayo','60€']].map(([s,d,p])=>
+        <div key={s+d} style={{display:'flex',alignItems:'center',padding:'11px 0',borderBottom:'1px solid var(--border)'}}>
+          <div style={{flex:1}}><div style={{fontSize:13,fontWeight:600}}>{s}</div><div style={{fontSize:11,color:M,marginTop:2}}>{d}</div></div>
+          <div style={{fontSize:13,fontWeight:700,color:C}}>{p}</div>
+        </div>)}
+    </div>
+  </div>;
+}
+
+function Plan(){
+  const [open,setOpen]=useState(null);
+  const items=[
+    ['🧴','Champú violeta matizador','1 lavado de cada 3','Dejar actuar 3 minutos para neutralizar tonos amarillos. En los demás lavados, champú hidratante sin sulfatos.'],
+    ['💧','Mascarilla de hidratación profunda','2 veces/semana','Aplicar de medios a puntas sobre cabello húmedo escurrido, 10 minutos. Aclarar con agua templada.'],
+    ['🌡','Protector térmico','Siempre antes del calor','Imprescindible antes de secador o plancha. Plancha máximo a 180° en cabello con mechas.'],
+    ['☀️','Protección solar capilar','Diaria en verano','El sol oxida el matiz beige. Usar bruma con filtro UV antes de la exposición y aclarar tras la piscina.'],
+    ['✂️','Repaso de puntas','Cada 10-12 semanas','Mantiene el movimiento del corte y evita que las puntas con decoloración se abran.'],
+  ];
+  return <div>
+    <div className="screen-title-bar"><div className="screen-title">Cuidado en casa</div><div className="screen-sub">Pauta personalizada · by Lorena</div></div>
+    <div style={{height:12}}/>
+    {items.map(([ico,name,freq,det],i)=>
+      <div key={i} style={{background:'#fff',borderRadius:2,margin:'0 16px 10px',overflow:'hidden',boxShadow:'0 1px 6px rgba(20,17,20,0.09)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:12,padding:'14px 18px',cursor:'pointer'}} onClick={()=>setOpen(open===i?null:i)}>
+          <div className="item-ico">{ico}</div>
+          <div style={{flex:1}}><div className="item-name">{name}</div><div className="item-sub">{freq}</div></div>
+          <Chev open={open===i}/>
+        </div>
+        {open===i&&<div className="expand-body">{det}</div>}
+      </div>)}
+    <div className="note-card" style={{marginBottom:24}}>
+      <div className="note-label">Nota de Lorena</div>
+      <div className="note-text">Tu cabello ha recuperado muchísima elasticidad desde que empezamos con K18. El viernes subimos medio tono la zona del contorno para dar más luz al rostro.</div>
+    </div>
+  </div>;
+}
+
+function Progress(){
+  const health=[5,5,6,6,7,7,8,9];
+  const pts=health.map((v,i)=>`${32+i*40},${90-(v/10)*72}`).join(' ');
+  return <div>
+    <div className="screen-title-bar"><div className="screen-title">Salud capilar</div><div className="screen-sub">Diagnóstico en salón · 8 visitas</div></div>
+    <div className="section-label">Índice de salud del cabello</div>
+    <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:12}}>
+        <div style={{fontFamily:"'Italiana',serif",fontSize:28,color:N}}>9<span style={{fontSize:13,color:M,fontFamily:'Montserrat'}}> / 10</span></div>
+        <div style={{fontSize:11,color:C,fontWeight:700,letterSpacing:'0.06em'}}>↑ DESDE 5 · EXCELENTE</div>
+      </div>
+      <svg viewBox="0 0 332 100" style={{width:'100%',height:100,display:'block'}}>
+        {[2,5,8].map(v=><g key={v}><line x1="32" y1={90-(v/10)*72} x2="312" y2={90-(v/10)*72} stroke="#EDE8EB"/><text x="10" y={93-(v/10)*72} className="chart-label">{v}</text></g>)}
+        <polyline points={pts} fill="none" stroke={C} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        {health.map((v,i)=><circle key={i} cx={32+i*40} cy={90-(v/10)*72} r={i===7?4:2.5} fill={i===7?N:C}/>)}
+        {['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago'].map((m,i)=><text key={m} x={32+i*40} y="100" className="chart-label" textAnchor="middle">{m}</text>)}
+      </svg>
+    </div>
+    <div className="section-label">Diagnóstico actual</div>
+    {[['Elasticidad','Alta','88%'],['Hidratación media-puntas','Buena','76%'],['Integridad de la fibra','Muy buena','84%']].map(([l,v,b])=>
+      <div key={l} className="card">
+        <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}>
+          <span style={{fontSize:13,fontWeight:700}}>{l}</span>
+          <span style={{fontSize:12,color:C,fontWeight:700}}>{v}</span>
+        </div>
+        <div style={{height:6,background:'#EDE8EB',borderRadius:3,overflow:'hidden'}}><div style={{width:b,height:'100%',background:'linear-gradient(90deg,#141114,#C22A5E)',borderRadius:3}}/></div>
+      </div>)}
+    <div className="note-card" style={{marginBottom:24}}>
+      <div className="note-label">Historial de color</div>
+      <div className="note-text">Fórmula #DR-24 estable desde marzo. Sin solapamiento de decoloración en los dos últimos servicios: la fibra lo agradece.</div>
+    </div>
+  </div>;
+}
+
+function Bookings(){
+  const [step,setStep]=useState(0),[sel,setSel]=useState({}),[done,setDone]=useState(false);
+  const pros=[['Lorena Morlote','Directora · color y celebrities'],['Rubén Díaz','Corte y styling'],['Ana Peral','Colorista'],['Sofía Marín','Tratamientos y recogidos']];
+  const svcs=[['Balayage completo','desde 160€'],['Corte + peinado','65€'],['Tratamiento K18','45€'],['Recogido de evento','desde 80€']];
+  const times=['10:00','11:00','12:00','13:00','16:00','16:30','17:30','18:30','19:30'];
+  const unav=['11:00','13:00','17:30'];
+  if(done)return <div>
+    <div className="screen-title-bar"><div className="screen-title">Reservas</div></div>
+    <div className="success-card">
+      <div style={{fontFamily:"'Italiana',serif",fontSize:40,marginBottom:8}}>LM</div>
+      <div style={{fontFamily:"'Italiana',serif",fontSize:22,marginBottom:6}}>Cita confirmada</div>
+      <div style={{fontSize:13,opacity:0.8}}>{sel.pro} · {sel.svc}</div>
+      <div style={{fontSize:13,opacity:0.8,marginTop:3}}>Velázquez 69 · {sel.time}</div>
+    </div>
+    <div className="confirm-btn" onClick={()=>{setDone(false);setStep(0);setSel({})}}>Nueva reserva</div>
+  </div>;
+  return <div>
+    <div className="screen-title-bar">
+      <div className="screen-title">Reservas</div>
+      <div style={{display:'flex',gap:6,marginTop:12}}>
+        {['Estilista','Servicio','Hora'].map((s,i)=><div key={s} style={{flex:1,height:3,background:i<=step?C:'rgba(255,255,255,0.2)'}}/>)}
+      </div>
+    </div>
+    {step===0&&<><div className="section-label">Elige estilista</div>
+      {pros.map(([n,r])=><div key={n} className="option-card" onClick={()=>{setSel({...sel,pro:n});setStep(1)}}>
+        <div className="item-ico">💇</div><div><div className="item-name">{n}</div><div className="item-sub">{r}</div></div></div>)}</>}
+    {step===1&&<><div className="section-label">Elige servicio</div>
+      {svcs.map(([n,p])=><div key={n} className="option-card" onClick={()=>{setSel({...sel,svc:n});setStep(2)}}>
+        <div style={{flex:1}}><div className="item-name">{n}</div></div><div style={{fontWeight:700,color:C,fontSize:12.5}}>{p}</div></div>)}</>}
+    {step===2&&<><div className="section-label">Hora · Viernes 11 julio</div>
+      <div className="time-grid">{times.map(t=><div key={t} className={`time-chip${unav.includes(t)?' unavailable':sel.time===t?' selected':''}`} onClick={()=>!unav.includes(t)&&setSel({...sel,time:t})}>{t}</div>)}</div>
+      {sel.time&&<div className="confirm-btn" onClick={()=>setDone(true)}>Confirmar</div>}</>}
+  </div>;
+}
+
+function Messages(){
+  const msgs=[
+    ['pro','Lorena','Daniela, para el viernes ven con el pelo lavado del día anterior, sin mascarilla. Trabajamos mejor el balayage así. ✨','Hace 2 días'],
+    ['user',null,'¡Apuntado! ¿Cuánto durará la sesión más o menos?','Hace 2 días'],
+    ['pro','Lorena','Unas 3 horas con el K18 incluido. Tenemos café, cava y wifi, tú tranquila.','Hace 2 días'],
+    ['pro','Recepción','Tu cita del viernes 11 a las 16:00h está confirmada. Recuerda que como Gold tienes el ritual de cuero cabelludo de cortesía.','Ayer'],
+    ['user',null,'¡Qué ganas! Hasta el viernes.','Hoy'],
+  ];
+  return <div style={{display:'flex',flexDirection:'column',height:'100%'}}>
+    <div className="screen-title-bar" style={{flexShrink:0}}><div className="screen-title">Mensajes</div><div className="screen-sub">Lorena Morlote · Velázquez 69</div></div>
+    <div style={{flex:1,overflowY:'auto',padding:'12px 0'}}>
+      {msgs.map(([from,name,text,time],i)=><div key={i}>
+        {from==='pro'&&<div className="msg-sender">{name}</div>}
+        <div className={`msg-bubble ${from}`}>{text}</div>
+        <div className={`msg-time${from==='user'?' right':''}`}>{time}</div>
+      </div>)}
+    </div>
+    <div className="msg-input-row">
+      <input className="msg-input" placeholder="Escribe un mensaje…" readOnly/>
+      <div className="msg-send"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+    </div>
+  </div>;
+}
+
+function App(){
+  const [tab,setTab]=useState(0);
+  const screens=[Home,Plan,Progress,Bookings,Messages];
+  const S=screens[tab];
+  const tabs=[['Inicio',Icons.home],['Cuidado',Icons.plan],['Cabello',Icons.prog],['Reservas',Icons.book],['Mensajes',Icons.msg]];
+  return <div className="phone">
+    <div className="status-bar"><span>9:41</span>
+      <div style={{display:'flex',gap:6,alignItems:'center'}}>
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="3" width="3" height="9" rx="1" fill="white" opacity="0.4"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white" opacity="0.6"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="white" opacity="0.8"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="white"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="22" height="10" rx="2" stroke="white" strokeWidth="1" fill="none" opacity="0.5"/><rect x="23" y="3.5" width="2" height="5" rx="1" fill="white" opacity="0.5"/><rect x="1.5" y="2.5" width="16" height="7" rx="1" fill="white"/></svg>
+      </div>
+    </div>
+    <div className="screen" key={tab}><S/></div>
+    <div className="tab-bar">{tabs.map(([l,I],i)=><div key={i} className={`tab${tab===i?' active':''}`} onClick={()=>setTab(i)}>{I(tab===i)}<span>{l}</span></div>)}</div>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
